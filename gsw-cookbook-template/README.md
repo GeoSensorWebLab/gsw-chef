@@ -4,7 +4,7 @@ Template for building new Chef cookbooks.
 
 ## Supported Platforms
 
-* Ubuntu Server 16.04 LTS
+* Ubuntu Server 18.04 LTS
 
 ## Usage
 
