@@ -34,6 +34,12 @@ Want to set up a new/existing cloud instance or machine with a cookbook? Here ar
 
 These cookbooks *could* have been separated into individual git repositories. I chose not to as there is only one sys admin/developer (me) at the moment and one repository is less overhead.
 
+## Why I Avoid SuperMarket Cookbooks
+
+Chef SuperMarket has many publicly available cookbooks that can be re-used for great functionality. Unfortunately many are out of date and barely supported or even abandoned. Some may not support more recent OS releases, or work with the latest version of Chef. Some of the maintainers have moved on to other projects, or are no longer employed at the same company/organization. Sometimes major releases have major API changes that I don't have time to implement.
+
+For those reasons I have found it easier to install and configure software in your own cookbooks, especially for really small teams. This also means new developers will not have to look up external cookbook APIs to understand what a cookbook in this repository is doing.
+
 ## License
 
 See each cookbook for individual licensing. *If* no license is specified, then Apache 2.0 is assumed.
