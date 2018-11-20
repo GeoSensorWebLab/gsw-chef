@@ -20,5 +20,5 @@ suites:
       - recipe[crowchild::default]
     verifier:
       inspec_tests:
-        - test/integration
+        - test/smoke/default
     attributes:

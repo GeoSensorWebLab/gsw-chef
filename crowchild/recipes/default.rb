@@ -15,3 +15,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+# 1. Install Icinga Apt Repository
+# https://packages.icinga.com/ubuntu/
+
+apt_repository 'icinga' do
+  uri 'http://packages.icinga.com/ubuntu'
+  distribution 'icinga-bionic'
+  components ['main']
+  key 'https://packages.icinga.com/icinga.key'
+end
