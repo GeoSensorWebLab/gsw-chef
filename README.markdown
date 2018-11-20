@@ -20,6 +20,12 @@ About the names: cloud instances are named after ["trail" roads][roads] in Calga
 
 Template for new cookbooks. Contains test-kitchen configuration for local testing with VirtualBox/vagrant.
 
+## Creating New Cookbooks
+
+1. Duplicate the template: `cp -r gsw-cookbook-template node-cookbook`
+2. Edit `node-cookbook` to replace `gsw-cookbook-template` in recipes, metadata, etc
+3. Add `node-cookbook` to the git repository and push to origin
+
 ## Bootstrapping Instructions
 
 Want to set up a new/existing cloud instance or machine with a cookbook? Here are the step-by-step instructions. (TODO)
