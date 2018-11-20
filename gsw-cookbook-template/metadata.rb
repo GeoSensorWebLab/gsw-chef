@@ -1,7 +1,7 @@
 name             'gsw-cookbook-template'
 maintainer       'The Authors'
 maintainer_email 'jpbadger@ucalgary.ca'
-license          'all_rights'
+license          'Apache-2.0'
 description      'Installs/Configures gsw-cookbook-template'
 long_description 'Installs/Configures gsw-cookbook-template'
 # issues_url 'https://github.com/<insert_org_here>/gsw-cookbook-template/issues' if respond_to?(:issues_url)
