@@ -26,3 +26,14 @@ apt_repository 'icinga' do
   components ['main']
   key 'https://packages.icinga.com/icinga.key'
 end
+
+# 2. Install Icinga 2
+# https://icinga.com/docs/icinga2/latest/doc/02-getting-started/
+
+package 'icinga2'
+
+# 3. Install Apache, PHP
+# 4. Install HTTPS certificates
+# 5. Icinga Web 2
+# 6. Install Munin (primary controller)
+# 7. Install Munin Node (for this node/machine)

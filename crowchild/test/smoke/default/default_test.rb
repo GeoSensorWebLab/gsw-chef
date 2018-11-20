@@ -10,3 +10,18 @@ describe apt('http://packages.icinga.com/ubuntu') do
   it { should exist }
   it { should be_enabled }
 end
+
+# Icinga 2
+describe package('icinga2') do
+  it { should be_installed }
+end
+
+describe service('icinga2') do
+  it { should be_enabled }
+  it { should be_installed }
+  it { should be_running }
+end
+
+describe directory('/etc/icinga2') do
+  it { should exist }
+end
