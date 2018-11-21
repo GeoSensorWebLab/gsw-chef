@@ -3,6 +3,8 @@ driver:
   name: vagrant
   customize:
     cableconnected1: 'on'
+  network:
+    - ["private_network", { ip: "192.168.33.99" }]
 
 provisioner:
   name: chef_zero
