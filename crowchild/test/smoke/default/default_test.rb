@@ -64,3 +64,8 @@ describe port(80) do
   it { should be_listening }
   its('processes') {should include 'apache2'}
 end
+
+# Ensure 2 icinga web users were created
+describe command('sudo -u postgres psql icingaweb2 -c "select name from icingaweb_user;"') do
+  its('stdout') { should match /2 rows/ }
+end

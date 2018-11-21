@@ -1,5 +1,9 @@
 # /etc/icingaweb2/roles.ini
 
 [admins]
-users               = "admin"
+users               = "<%= @admins.join(",") %>"
 permissions         = "*"
+
+[readers]
+users 				= "<%= @readers.join(",") %>"
+permissions			= "module/monitoring"

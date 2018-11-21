@@ -1,0 +1,6 @@
+{
+	"id": "icinga",
+	"enabled": true,
+	"password": "howdy",
+	"admin": true
+}

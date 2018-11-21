@@ -1,0 +1,6 @@
+{
+	"id": "carol",
+	"enabled": true,
+	"password": "testpassword",
+	"admin": false
+}

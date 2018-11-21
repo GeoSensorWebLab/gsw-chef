@@ -201,23 +201,43 @@ bash 'Load Icinga Web 2 DB' do
   not_if { ::File.exists?('/opt/icinga_web_db_imported') }
 end
 
-# TODO: secure this
-icingaweb_password = "howdy"
+# Create Icinga Web 2 user accounts for all users in "icinga_users" 
+# vault/data bag  who have `enabled = true`
+icingaweb2_admins = []
+icingaweb2_readers = []
+users = search(:icinga_users, "*:*")
 
-# Use PHP on the node to hash the password, so the hash is compatible
-# with Icinga Web 2.
-bash "Add Icinga Web 2 User" do
-  code <<-EOH
-    /usr/bin/php -r "echo password_hash(\"#{icingaweb_password}\", PASSWORD_DEFAULT);" > /tmp/icingaweb2_pw && \
-    /usr/bin/psql -U icingaweb2 -d icingaweb2 -h localhost -p 5432 \
-    -c "INSERT INTO icingaweb_user (name, active, password_hash) \
-    VALUES ('admin', 1, '$(cat /tmp/icingaweb2_pw)') \
-    ON CONFLICT (name) \
-    DO UPDATE SET password_hash = '$(cat /tmp/icingaweb2_pw)' \
-    WHERE icingaweb_user.name = 'admin'" && \
-    rm /tmp/icingaweb2_pw
-    EOH
-  sensitive true
+users.each do |user|
+  d_user = chef_vault_item('icinga_users', user["id"])
+  if d_user["enabled"]
+    
+    username = d_user["id"]
+    password = d_user["password"]
+
+    if d_user["admin"]
+      icingaweb2_admins.push(username)
+    else
+      icingaweb2_readers.push(username)
+    end
+
+    # Use PHP on the node to hash the password, so the hash is 
+    # compatible with Icinga Web 2.
+    bash "Add Icinga Web 2 User" do
+      code <<-EOH
+        /usr/bin/php -r "echo \
+        password_hash(\"#{password}\", PASSWORD_DEFAULT);" \
+        > /tmp/icingaweb2_pw && \
+        /usr/bin/psql -U icingaweb2 -d icingaweb2 -h localhost -p 5432 \
+        -c "INSERT INTO icingaweb_user (name, active, password_hash) \
+        VALUES ('#{username}', 1, '$(cat /tmp/icingaweb2_pw)') \
+        ON CONFLICT (name) \
+        DO UPDATE SET password_hash = '$(cat /tmp/icingaweb2_pw)' \
+        WHERE icingaweb_user.name = '#{username}'" && \
+        rm /tmp/icingaweb2_pw
+        EOH
+      sensitive true
+    end
+  end
 end
 
 template '/etc/apache2/sites-available/icingaweb2.conf' do
@@ -258,6 +278,10 @@ end
 
 template '/etc/icingaweb2/roles.ini' do
   source 'icingaweb2/roles.ini.erb'
+  variables({
+    admins: icingaweb2_admins,
+    readers: icingaweb2_readers
+  })
 end
 
 template '/etc/icingaweb2/config.ini' do
