@@ -102,6 +102,18 @@ bash 'Load Icinga Web 2 DB' do
   not_if { ::File.exists?('/opt/icinga_web_db_imported') }
 end
 
+# Update IDO Configuration
+template '/etc/icinga2/features-available/ido-pgsql.conf' do
+  source 'ido-pgsql.conf.erb'
+  sensitive true
+  variables({
+    db: "icinga",
+    host: "localhost",
+    password: postgres_password,
+    user: "icinga"
+  })
+end
+
 # Enable IDO PostgreSQL module
 execute "Enable IDO PostgreSQL module" do
   command "icinga2 feature enable ido-pgsql"
