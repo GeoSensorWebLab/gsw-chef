@@ -102,6 +102,11 @@ bash 'Load Icinga Web 2 DB' do
   not_if { ::File.exists?('/opt/icinga_web_db_imported') }
 end
 
+# Enable IDO PostgreSQL module
+execute "Enable IDO PostgreSQL module" do
+  command "icinga2 feature enable ido-pgsql"
+  notifies :restart, 'service[icinga2]', :immediately
+end
 
 # 4. Install HTTPS certificates
 # 5. Icinga Web 2
