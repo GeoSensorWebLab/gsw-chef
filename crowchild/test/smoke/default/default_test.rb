@@ -45,4 +45,3 @@ end
 describe package('icinga2-ido-pgsql') do
   it { should be_installed }
 end
-

@@ -22,7 +22,7 @@ TODO: Log collector, searching
 
 ## Usage
 
-## crowchild
+### crowchild
 
 Include `crowchild` in your node's `run_list`:
 
@@ -34,7 +34,15 @@ Include `crowchild` in your node's `run_list`:
 }
 ```
 
-## Attributes
+The recipe requires a Chef vault item. In the following example, a `secrets` vault is created/updated for an `icinga` item, with a `db_password`. It is only decryptable by the `crowchild` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef server.
+
+
+```terminal
+$ knife vault create secrets icinga '{"db_password": "mypassword"}' -C "crowchild" -A "jpbadger"
+```
+
+
+### Attributes
 
 <table>
   <tr>
