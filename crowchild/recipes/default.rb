@@ -120,6 +120,26 @@ execute "Enable IDO PostgreSQL module" do
   notifies :restart, 'service[icinga2]', :immediately
 end
 
+# Enable Icinga 2 REST API
+execute "able Icinga 2 REST API" do
+  command "icinga2 api setup"
+end
+
+icingaweb_rest_password = SecureRandom.alphanumeric(24)
+
+template '/etc/icinga2/conf.d/api-users.conf' do
+  source 'api-users.conf.erb'
+  sensitive true
+  variables({
+    root_password: SecureRandom.alphanumeric(24),
+    users: [{
+      name: 'icingaweb2',
+      password: icingaweb_rest_password,
+      permissions: ["status/query", "actions/*", "objects/modify/*", "objects/query/*"]
+    }]
+  })
+end
+
 # 4. Install HTTPS certificates
 # 5. Icinga Web 2
 # 6. Install Munin (primary controller)

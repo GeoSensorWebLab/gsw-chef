@@ -1,0 +1,17 @@
+/**
+ * The ApiUser objects are used for authentication against the API.
+ */
+object ApiUser "root" {
+  password = "<%= @root_password %>"
+  // client_cn = ""
+
+  permissions = [ "*" ]
+}
+
+<% for user in @users do %>
+object ApiUser "<%= user[:name] %>" {
+  password = "<%= user[:password] %>"
+  permissions = [ <%= user[:permissions].collect {|p| "\"#{p}\"" }.join(", ") %> ]
+}
+
+<% end %>
