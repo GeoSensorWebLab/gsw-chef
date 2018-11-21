@@ -4,6 +4,7 @@ ruby '2.5.1'
 
 gem 'berkshelf'
 gem 'chef', '~> 14.7.17'
+gem 'chef-vault', '~> 3.4.3'
 gem 'cookstyle'
 gem 'foodcritic'
 gem 'kitchen-inspec'
