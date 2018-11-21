@@ -49,3 +49,18 @@ end
 describe file('/opt/icinga_web_db_imported') do
   it { should exist }
 end
+
+describe package('apache2') do
+  it { should be_installed }
+end
+
+describe service('apache2') do
+  it { should be_enabled }
+  it { should be_installed }
+  it { should be_running }
+end
+
+describe port(80) do
+  it { should be_listening }
+  its('processes') {should include 'apache2'}
+end

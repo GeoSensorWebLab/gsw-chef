@@ -138,9 +138,13 @@ template '/etc/icinga2/conf.d/api-users.conf' do
       permissions: ["status/query", "actions/*", "objects/modify/*", "objects/query/*"]
     }]
   })
+  notifies :restart, 'service[icinga2]', :immediately
 end
 
-# 4. Install HTTPS certificates
-# 5. Icinga Web 2
-# 6. Install Munin (primary controller)
-# 7. Install Munin Node (for this node/machine)
+# 4. Install Apache, PHP, Icinga Web 2
+# https://icinga.com/docs/icingaweb2/latest/doc/02-Installation/
+package %w(apache2 libapache2-mod-php icingaweb2 icingacli)
+
+# Install HTTPS certificates
+# Install Munin (primary controller)
+# Install Munin Node (for this node/machine)
