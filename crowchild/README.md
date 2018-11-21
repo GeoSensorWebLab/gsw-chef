@@ -59,6 +59,17 @@ $ knife vault create secrets icinga '{"db_password": "mypassword"}' -C "crowchil
   </tr>
 </table>
 
+## Test Kitchen Tips
+
+If you have a local apt-cacher-ng server, you can use the [vagrant-proxyconf](http://tmatilai.github.io/vagrant-proxyconf/) plugin. Set the `VAGRANT_APT_HTTP_PROXY` environment variable before creating your test kitchen instances:
+
+```terminal
+$ export VAGRANT_APT_HTTP_PROXY="http://192.168.1.33:3142"
+$ kitchen create
+```
+
+Using apt-cacher-ng will speed up package downloads if you are re-creating VM instances.
+
 ## License and Authors
 
 James Badger (jpbadger@ucalgary.ca)
