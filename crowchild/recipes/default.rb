@@ -32,7 +32,18 @@ end
 
 package 'icinga2'
 
-# 3. Install Apache, PHP
+service 'icinga2' do
+  action :nothing
+end
+
+# 3. Install PostgreSQL for Icinga Web 2
+
+postgresql_server_install 'postgresql-10' do
+  version '10'
+end
+
+package 'icinga2-ido-pgsql'
+
 # 4. Install HTTPS certificates
 # 5. Icinga Web 2
 # 6. Install Munin (primary controller)
