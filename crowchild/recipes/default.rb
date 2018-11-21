@@ -38,7 +38,7 @@ service 'icinga2' do
   action :nothing
 end
 
-# 3. Install PostgreSQL for Icinga Web 2
+# 3. Install PostgreSQL for Icinga 2
 
 postgresql_server_install 'postgresql-10' do
   version '10'
@@ -59,21 +59,21 @@ chef_vault_secret 'icinga' do
   action :create
 end
 
-postgres_password = chef_vault_item('secrets', 'icinga')['db_password']
+icinga_db_pass = chef_vault_item('secrets', 'icinga')['db_password']
 # Use new password if none if found from the vault.
 # This happens when using unencrypted databag fallback in test kitchen.
-postgres_password = new_password if (postgres_password.nil? || postgres_password.empty?)
+icinga_db_pass = new_password if (icinga_db_pass.nil? || icinga_db_pass.empty?)
 
 # Create role in Postgres for icinga
 postgresql_user 'icinga' do
-  password postgres_password
+  password icinga_db_pass
   sensitive true
 end
 
 # If the user already exists, the previous resource is skipped but we
 # still need to update the password
 postgresql_user 'icinga' do
-  password postgres_password
+  password icinga_db_pass
   sensitive true
   action :update
 end
@@ -84,22 +84,22 @@ postgresql_database 'icinga' do
 end
 
 file '/root/.pgpass' do
-  content "localhost:5432:icinga:icinga:#{postgres_password}"
+  content "localhost:5432:icinga:icinga:#{icinga_db_pass}"
   owner 'root'
   group 'root'
   mode '0600'
   sensitive true
 end
 
-# Load the database for Icinga Web 2
-bash 'Load Icinga Web 2 DB' do
+# Load the database for Icinga 2
+bash 'Load Icinga 2 DB' do
   code <<-EOH
   psql -U icinga -d icinga -h localhost -p 5432 < /usr/share/icinga2-ido-pgsql/schema/pgsql.sql && \
-  touch /opt/icinga_web_db_imported
+  touch /opt/icinga_db_imported
   EOH
-  sensitive false
+  sensitive true
 
-  not_if { ::File.exists?('/opt/icinga_web_db_imported') }
+  not_if { ::File.exists?('/opt/icinga_db_imported') }
 end
 
 # Update IDO Configuration
@@ -109,7 +109,7 @@ template '/etc/icinga2/features-available/ido-pgsql.conf' do
   variables({
     db: "icinga",
     host: "localhost",
-    password: postgres_password,
+    password: icinga_db_pass,
     user: "icinga"
   })
 end
@@ -144,6 +144,154 @@ end
 # 4. Install Apache, PHP, Icinga Web 2
 # https://icinga.com/docs/icingaweb2/latest/doc/02-Installation/
 package %w(apache2 libapache2-mod-php icingaweb2 icingacli)
+
+service 'apache2' do
+  action :nothing
+end
+
+# Install Icinga Web 2 dependencies
+package %w(php php-intl php-imagick php-gd php-curl php-mbstring php-pgsql)
+
+ruby_block "Set default PHP timezone" do
+  block do
+    fe = Chef::Util::FileEdit.new("/etc/php/7.2/apache2/php.ini")
+    fe.insert_line_if_no_match(/^date.timezone = America\/Edmonton$/,
+                               "date.timezone = America\/Edmonton")
+    fe.write_file
+  end
+end
+
+icingaweb2_db_pass = SecureRandom.alphanumeric(24)
+
+# Create role in Postgres for icingaweb2
+postgresql_user 'icingaweb2' do
+  password icingaweb2_db_pass
+  sensitive true
+end
+
+# If the user already exists, the previous resource is skipped but we
+# still need to update the password
+postgresql_user 'icingaweb2' do
+  password icingaweb2_db_pass
+  sensitive true
+  action :update
+end
+
+# Create DB for icingaweb2
+postgresql_database 'icingaweb2' do
+  owner 'icingaweb2'
+end
+
+file '/root/.pgpass' do
+  content "localhost:5432:icingaweb2:icingaweb2:#{icingaweb2_db_pass}"
+  owner 'root'
+  group 'root'
+  mode '0600'
+  sensitive true
+end
+
+# Load the database for Icinga Web 2
+bash 'Load Icinga Web 2 DB' do
+  code <<-EOH
+  psql -U icingaweb2 -d icingaweb2 -h localhost -p 5432 < /usr/share/icingaweb2/etc/schema/pgsql.schema.sql && \
+  touch /opt/icinga_web_db_imported
+  EOH
+  sensitive true
+
+  not_if { ::File.exists?('/opt/icinga_web_db_imported') }
+end
+
+# TODO: secure this
+icingaweb_password = "howdy"
+
+# Use PHP on the node to hash the password, so the hash is compatible
+# with Icinga Web 2.
+bash "Add Icinga Web 2 User" do
+  code <<-EOH
+    /usr/bin/php -r "echo password_hash(\"#{icingaweb_password}\", PASSWORD_DEFAULT);" > /tmp/icingaweb2_pw && \
+    /usr/bin/psql -U icingaweb2 -d icingaweb2 -h localhost -p 5432 \
+    -c "INSERT INTO icingaweb_user (name, active, password_hash) \
+    VALUES ('admin', 1, '$(cat /tmp/icingaweb2_pw)') \
+    ON CONFLICT (name) \
+    DO UPDATE SET password_hash = '$(cat /tmp/icingaweb2_pw)' \
+    WHERE icingaweb_user.name = 'admin'" && \
+    rm /tmp/icingaweb2_pw
+    EOH
+  sensitive true
+end
+
+template '/etc/apache2/sites-available/icingaweb2.conf' do
+  source 'icingaweb2.conf.erb'
+end
+
+execute "Enable Icinga Web 2 Apache Site" do
+  command 'a2ensite icingaweb2'
+  notifies :restart, 'service[apache2]', :immediately
+end
+
+execute "Create Icinga Web 2 Configuration" do
+  command 'icingacli setup config directory'
+end
+
+# Use Chef to build Icinga Web 2 configuration instead of using web
+# configuration wizard
+template '/etc/icingaweb2/authentication.ini' do
+  source 'icingaweb2/authentication.ini.erb'
+end
+
+directory '/etc/icingaweb2/modules/monitoring' do
+  recursive true
+  action :create
+end
+
+template '/etc/icingaweb2/modules/monitoring/config.ini' do
+  source 'icingaweb2/monitoring/config.ini.erb'
+end
+
+template '/etc/icingaweb2/modules/monitoring/instances.ini' do
+  source 'icingaweb2/monitoring/instances.ini.erb'
+end
+
+template '/etc/icingaweb2/modules/monitoring/backends.ini' do
+  source 'icingaweb2/monitoring/backends.ini.erb'
+end
+
+template '/etc/icingaweb2/roles.ini' do
+  source 'icingaweb2/roles.ini.erb'
+end
+
+template '/etc/icingaweb2/config.ini' do
+  source 'icingaweb2/config.ini.erb'
+end
+
+directory '/etc/icingaweb2/enabledModules' do
+  action :create
+end
+
+template '/etc/icingaweb2/resources.ini' do
+  source 'icingaweb2/resources.ini.erb'
+  variables({
+    db_host: "localhost",
+    db_port: "5432",
+    icingaweb2_db_name: "icingaweb2",
+    icingaweb2_db_user: "icingaweb2",
+    icingaweb2_db_pass: icingaweb2_db_pass,
+    icinga2_db_name: "icinga",
+    icinga2_db_user: "icinga",
+    icinga2_db_pass: icinga_db_pass
+  })
+  sensitive true
+end
+
+directory '/etc/icingaweb2' do
+  owner 'root'
+  group 'icingaweb2'
+  recursive true
+end
+
+execute "Enable Monitoring Module" do
+  command 'icingacli module enable monitoring'
+end
 
 # Install HTTPS certificates
 # Install Munin (primary controller)
