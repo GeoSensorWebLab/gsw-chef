@@ -55,6 +55,7 @@ chef_vault_secret 'icinga' do
   raw_data({ 'db_password' => new_password })
   admins 'admin'
   search '*:*'
+  sensitive true
   action :create
 end
 
@@ -66,6 +67,15 @@ postgres_password = new_password if (postgres_password.nil? || postgres_password
 # Create role in Postgres for icinga
 postgresql_user 'icinga' do
   password postgres_password
+  sensitive true
+end
+
+# If the user already exists, the previous resource is skipped but we
+# still need to update the password
+postgresql_user 'icinga' do
+  password postgres_password
+  sensitive true
+  action :update
 end
 
 # Create DB for icinga
@@ -73,24 +83,25 @@ postgresql_database 'icinga' do
   owner 'icinga'
 end
 
-# Icinga must use MD5 password to access postgres
-postgresql_access 'icinga' do
-  comment 'Icinga Web 2'
-  access_type 'local'
-  access_db 'icinga'
-  access_user 'icinga'
-  access_addr nil
-  access_method 'md5'
+file '/root/.pgpass' do
+  content "localhost:5432:icinga:icinga:#{postgres_password}"
+  owner 'root'
+  group 'root'
+  mode '0600'
+  sensitive true
 end
 
-postgresql_access 'admin access' do
-  comment 'Database administrative login by Unix domain socket'
-  access_type 'local'
-  access_db 'all'
-  access_user 'postgres'
-  access_addr nil
-  access_method 'peer'
+# Load the database for Icinga Web 2
+bash 'Load Icinga Web 2 DB' do
+  code <<-EOH
+  psql -U icinga -d icinga -h localhost -p 5432 < /usr/share/icinga2-ido-pgsql/schema/pgsql.sql && \
+  touch /opt/icinga_web_db_imported
+  EOH
+  sensitive false
+
+  not_if { ::File.exists?('/opt/icinga_web_db_imported') }
 end
+
 
 # 4. Install HTTPS certificates
 # 5. Icinga Web 2

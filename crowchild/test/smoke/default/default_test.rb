@@ -45,3 +45,7 @@ end
 describe package('icinga2-ido-pgsql') do
   it { should be_installed }
 end
+
+describe file('/opt/icinga_web_db_imported') do
+  it { should exist }
+end
