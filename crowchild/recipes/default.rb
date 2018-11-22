@@ -17,8 +17,6 @@
 # limitations under the License.
 require 'securerandom'
 
-include_recipe 'chef-vault'
-
 # 1. Install Icinga Apt Repository
 # https://packages.icinga.com/ubuntu/
 
@@ -46,23 +44,8 @@ end
 
 package 'icinga2-ido-pgsql'
 
-# Generate a random password, if one does not exist
-new_password = SecureRandom.alphanumeric(24)
-
-# Set up chef-vault secrets for DB password
-chef_vault_secret 'icinga' do
-  data_bag 'secrets'
-  raw_data({ 'db_password' => new_password })
-  admins 'admin'
-  search '*:*'
-  sensitive true
-  action :create
-end
-
-icinga_db_pass = chef_vault_item('secrets', 'icinga')['db_password']
-# Use new password if none if found from the vault.
-# This happens when using unencrypted databag fallback in test kitchen.
-icinga_db_pass = new_password if (icinga_db_pass.nil? || icinga_db_pass.empty?)
+# Generate a random password for Icinga DB connection
+icinga_db_pass = SecureRandom.alphanumeric(24)
 
 # Create role in Postgres for icinga
 postgresql_user 'icinga' do
