@@ -40,6 +40,7 @@ end
 
 postgresql_server_install 'postgresql-10' do
   version '10'
+  initdb_locale 'en_US.UTF-8'
 end
 
 package 'icinga2-ido-pgsql'
@@ -64,6 +65,7 @@ end
 # Create DB for icinga
 postgresql_database 'icinga' do
   owner 'icinga'
+  template 'template0'
 end
 
 file '/root/.pgpass' do
@@ -163,6 +165,7 @@ end
 # Create DB for icingaweb2
 postgresql_database 'icingaweb2' do
   owner 'icingaweb2'
+  template 'template0'
 end
 
 file '/root/.pgpass' do
