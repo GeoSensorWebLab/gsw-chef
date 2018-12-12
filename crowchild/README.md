@@ -69,6 +69,23 @@ $ knife vault create secrets icinga '{"db_password": "mypassword"}' -C "crowchil
   </tr>
 </table>
 
+### Data Bags
+
+* `icinga_users`
+
+Example:
+
+```json
+{
+  "id": "icinga",
+  "enabled": true,
+  "password": "howdy",
+  "admin": true
+}
+```
+
+These users will have access to the web interface.
+
 ## Test Kitchen Tips
 
 If you have a local apt-cacher-ng server, you can use the [vagrant-proxyconf](http://tmatilai.github.io/vagrant-proxyconf/) plugin. Set the `VAGRANT_APT_HTTP_PROXY` environment variable before creating your test kitchen instances:
