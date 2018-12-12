@@ -1,0 +1,24 @@
+---
+driver:
+  name: vagrant
+  customize:
+    cableconnected1: 'on'
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: true
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-18.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[gsw-cookbook-template::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:

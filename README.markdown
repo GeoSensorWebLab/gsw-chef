@@ -30,6 +30,10 @@ Template for new cookbooks. Contains test-kitchen configuration for local testin
 
 Want to set up a new/existing cloud instance or machine with a cookbook? Here are the step-by-step instructions. (TODO)
 
+## Setting Up a Chef Server
+
+As an alternative to bootstrapping cookbooks, a centralized Chef Server can be used to manage node attributes and run lists, as well as data bags. See the [Chef Server Cookbook](gsw-chef-server/README.md) for details.
+
 ## Why a Monolithic Repo
 
 These cookbooks *could* have been separated into individual git repositories. I chose not to as there is only one sys admin/developer (me) at the moment and one repository is less overhead.
