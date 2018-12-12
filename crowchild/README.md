@@ -22,6 +22,17 @@ TODO: Log collector, searching
 
 ## Usage
 
+Uploading this cookbook to Chef Server:
+
+```terminal
+$ berks vendor ../berks-cookbooks
+$ bundle exec knife cookbook upload . -ad -o ../berks-cookbooks
+...
+$ knife cookbook list
+...
+crowchild    0.1.0
+```
+
 ### crowchild
 
 Include `crowchild` in your node's `run_list`:
@@ -40,7 +51,6 @@ The recipe requires a Chef vault item. In the following example, a `secrets` vau
 ```terminal
 $ knife vault create secrets icinga '{"db_password": "mypassword"}' -C "crowchild" -A "jpbadger"
 ```
-
 
 ### Attributes
 
