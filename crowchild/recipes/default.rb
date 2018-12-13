@@ -382,3 +382,13 @@ template '/etc/munin/munin.conf' do
 end
 
 # Install/Configure Munin Node (for this node/machine)
+# libwww-perl enables Apache plugins for Munin
+package 'libwww-perl'
+
+execute 'update munin-node configuration' do
+  command 'munin-node-configure --shell | sh'
+end
+
+service 'munin-node' do
+  action :restart
+end
