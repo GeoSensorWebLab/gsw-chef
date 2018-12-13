@@ -14,7 +14,7 @@ Services monitored by Icinga 2 and Munin will be hard-coded in the attributes fi
 
 This server will be accessible by GSW Lab members and partners for checking service availability and potential system issues. It will be available from both the "arcticconnect.ca" domain and the "gswlab.ca" domain; each domain is managed separately by different registrars.
 
-TODO: Log collector, searching
+TODO: Log collector, searching, ZFS for storage
 
 ## Supported Platforms
 
@@ -31,6 +31,13 @@ $ bundle exec knife cookbook upload . -ad -o ../berks-cookbooks
 $ knife cookbook list
 ...
 crowchild    0.1.0
+```
+
+Bootstrapping a node with this cookbook, using Chef Server:
+
+```terminal
+$ knife bootstrap crowchild -N crowchild \
+  --ssh-user ubuntu --sudo --run-list 'recipe[crowchild]'
 ```
 
 ### crowchild
