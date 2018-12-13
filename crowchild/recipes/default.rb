@@ -343,7 +343,7 @@ https_admin_email = node['crowchild']['https_admin_email']
 # Configuration for Certbot. 
 execute 'get certs' do
   command "certbot certonly -n --agree-tos -m #{https_admin_email} \
-  --reinstall --force-renewal --webroot -w '/usr/share/icingaweb2/public' \
+  --webroot -w '/usr/share/icingaweb2/public' \
   -d monitoring.gswlab.ca,monitoring.arcticconnect.ca"
 end
 
