@@ -17,6 +17,12 @@
 # limitations under the License.
 require 'securerandom'
 
+chef_gem 'bcrypt' do
+  action :nothing
+  compile_time false
+end.run_action(:install)
+require 'bcrypt'
+
 # 1. Install Icinga Apt Repository
 # https://packages.icinga.com/ubuntu/
 
@@ -206,21 +212,18 @@ users.each do |user|
       icingaweb2_readers.push(username)
     end
 
-    # Use PHP on the node to hash the password, so the hash is 
-    # compatible with Icinga Web 2.
+    hash_pw = BCrypt::Password.create(password).to_s
+
     bash "Add Icinga Web 2 User" do
       code <<-EOH
-        /usr/bin/php -r "echo \
-        password_hash(\"#{password}\", PASSWORD_DEFAULT);" \
-        > /tmp/icingaweb2_pw && \
-        /usr/bin/psql -U icingaweb2 -d icingaweb2 -h localhost -p 5432 \
-        -c "INSERT INTO icingaweb_user (name, active, password_hash) \
-        VALUES ('#{username}', 1, '$(cat /tmp/icingaweb2_pw)') \
-        ON CONFLICT (name) \
-        DO UPDATE SET password_hash = '$(cat /tmp/icingaweb2_pw)' \
-        WHERE icingaweb_user.name = '#{username}'" && \
-        rm /tmp/icingaweb2_pw
-        EOH
+      /usr/bin/psql -U icingaweb2 -d icingaweb2 -h localhost -p 5432 \
+        <<'EOF'
+        INSERT INTO icingaweb_user (name, active, password_hash) \
+        VALUES ('#{username}', 1, '#{hash_pw}') ON CONFLICT (name) \
+        DO UPDATE SET password_hash = '#{hash_pw}' \
+        WHERE icingaweb_user.name = '#{username}';
+        EOF
+      EOH
       sensitive true
     end
   end
