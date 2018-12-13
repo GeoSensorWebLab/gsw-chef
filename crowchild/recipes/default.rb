@@ -385,6 +385,9 @@ end
 # libwww-perl enables Apache plugins for Munin
 package 'libwww-perl'
 
+# libdbd-pg-perl enables Postgresql plugins for Munin
+package 'libdbd-pg-perl'
+
 execute 'update munin-node configuration' do
   command 'munin-node-configure --shell | sh'
 end
