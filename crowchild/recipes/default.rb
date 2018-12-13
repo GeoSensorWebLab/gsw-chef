@@ -140,6 +140,13 @@ service 'apache2' do
   action :nothing
 end
 
+# Enable the Apache SSL module before a vhost asks for it
+execute "Enable Apache2 SSL Module" do
+  command 'a2enmod ssl'
+  not_if { ::File.exists?('/etc/apache2/mods-enabled/ssl.load') }
+  notifies :restart, 'service[apache2]', :immediately
+end
+
 # Install Icinga Web 2 dependencies
 package %w(php php-intl php-imagick php-gd php-curl php-mbstring php-pgsql)
 
@@ -306,6 +313,47 @@ execute "Enable Monitoring Module" do
   command 'icingacli module enable monitoring'
 end
 
+# Set up HTTPS virtualhosts with self-signed certs
+# Self-signed are used as Apache will fail to start with missing certs,
+# and Apache must be running for certbot to work to fetch real certs.
+
+template '/etc/apache2/sites-available/icingaweb2-ssl.conf' do
+  source 'icingaweb2-ssl.conf.erb'
+  variables({
+    certificate_file: "/etc/ssl/certs/ssl-cert-snakeoil.pem",
+    certificate_key_file: "/etc/ssl/private/ssl-cert-snakeoil.key"
+  })
+end
+
+execute "Enable Icinga Web 2 SSL Apache Site" do
+  command 'a2ensite icingaweb2-ssl'
+  not_if { ::File.exists?('/etc/apache2/sites-enabled/icingaweb2-ssl.conf') }
+  notifies :restart, 'service[apache2]', :immediately
+end
+
 # Install HTTPS certificates
+apt_repository 'certbot' do
+  uri 'ppa:certbot/certbot'
+end
+
+package 'certbot'
+
+webroot = '/usr/share/icingaweb2/public'
+domain = 'monitoring.gswlab.ca'
+https_admin_email = node['crowchild']['https_admin_email']
+
+execute 'get certs' do
+  command "certbot certonly -n --agree-tos -m #{https_admin_email} --webroot -w #{webroot} -d #{domain}"
+end
+
+template '/etc/apache2/sites-available/icingaweb2-ssl.conf' do
+  source 'icingaweb2-ssl.conf.erb'
+  variables({
+    certificate_file: "/etc/letsencrypt/live/#{domain}/cert.pem",
+    certificate_key_file: "/etc/letsencrypt/live/#{domain}/privkey.pem"
+  })
+  notifies :restart, 'service[apache2]', :immediately
+end
+
 # Install Munin (primary controller)
 # Install Munin Node (for this node/machine)
