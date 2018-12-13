@@ -236,12 +236,12 @@ users.each do |user|
   end
 end
 
-template '/etc/apache2/sites-available/icingaweb2.conf' do
-  source 'icingaweb2.conf.erb'
+template '/etc/apache2/sites-available/monitoring.conf' do
+  source 'monitoring.conf.erb'
 end
 
 execute "Enable Icinga Web 2 Apache Site" do
-  command 'a2ensite icingaweb2'
+  command 'a2ensite monitoring'
   notifies :restart, 'service[apache2]', :immediately
 end
 
@@ -317,8 +317,8 @@ end
 # Self-signed are used as Apache will fail to start with missing certs,
 # and Apache must be running for certbot to work to fetch real certs.
 
-template '/etc/apache2/sites-available/icingaweb2-ssl.conf' do
-  source 'icingaweb2-ssl.conf.erb'
+template '/etc/apache2/sites-available/monitoring-ssl.conf' do
+  source 'monitoring-ssl.conf.erb'
   variables({
     certificate_file: "/etc/ssl/certs/ssl-cert-snakeoil.pem",
     certificate_key_file: "/etc/ssl/private/ssl-cert-snakeoil.key"
@@ -326,8 +326,8 @@ template '/etc/apache2/sites-available/icingaweb2-ssl.conf' do
 end
 
 execute "Enable Icinga Web 2 SSL Apache Site" do
-  command 'a2ensite icingaweb2-ssl'
-  not_if { ::File.exists?('/etc/apache2/sites-enabled/icingaweb2-ssl.conf') }
+  command 'a2ensite monitoring-ssl'
+  not_if { ::File.exists?('/etc/apache2/sites-enabled/monitoring-ssl.conf') }
   notifies :restart, 'service[apache2]', :immediately
 end
 
