@@ -347,14 +347,38 @@ execute 'get certs' do
   -d monitoring.gswlab.ca,monitoring.arcticconnect.ca"
 end
 
-template '/etc/apache2/sites-available/icingaweb2-ssl.conf' do
-  source 'icingaweb2-ssl.conf.erb'
+template '/etc/apache2/sites-available/monitoring-ssl.conf' do
+  source 'monitoring-ssl.conf.erb'
   variables({
     certificate_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/cert.pem",
     certificate_key_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/privkey.pem"
   })
-  notifies :restart, 'service[apache2]', :immediately
+  notifies :restart, 'service[apache2]', :delayed
 end
 
-# Install Munin (primary controller)
-# Install Munin Node (for this node/machine)
+# Install/Configure Munin (primary controller)
+package 'munin'
+
+template '/etc/apache2/sites-available/monitoring.conf' do
+  source 'monitoring.conf.erb'
+  variables({
+    enable_munin: true
+  })
+  notifies :restart, 'service[apache2]', :delayed
+end
+
+template '/etc/apache2/sites-available/monitoring-ssl.conf' do
+  source 'monitoring-ssl.conf.erb'
+  variables({
+    certificate_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/cert.pem",
+    certificate_key_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/privkey.pem",
+    enable_munin: true
+  })
+  notifies :restart, 'service[apache2]', :delayed
+end
+
+template '/etc/munin/munin.conf' do
+  source 'munin.conf.erb'
+end
+
+# Install/Configure Munin Node (for this node/machine)

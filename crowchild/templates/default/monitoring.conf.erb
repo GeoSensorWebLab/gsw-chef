@@ -46,4 +46,16 @@
           ErrorDocument 404 /error_norewrite.html
       </IfModule>
   </Directory>
+
+  <% if @enable_munin %>
+  Alias /munin/static/ /etc/munin/static/
+  <Directory /etc/munin/static>
+      Require all granted
+  </Directory>
+
+  Alias /munin /var/cache/munin/www
+  <Directory /var/cache/munin/www>
+      Require all granted
+  </Directory>
+  <% end %>
 </VirtualHost>

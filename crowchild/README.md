@@ -3,8 +3,8 @@
 Cookbook for setting up a node with monitoring services:
 
 * Icinga 2
-* Icinga 2 Web
-* Munin
+* Icinga 2 Web (https://monitoring.gswlab.ca)
+* Munin (https://monitoring.gswlab.ca/munin/)
 * Munin Node
 * HTTPS certificate from Let's Encrypt
     * domain: monitoring.arcticconnect.ca
