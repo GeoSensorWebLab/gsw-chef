@@ -9,6 +9,7 @@ Cookbook for setting up a node with monitoring services:
 * HTTPS certificate from Let's Encrypt
     * domain: monitoring.arcticconnect.ca
     * domain: monitoring.gswlab.ca
+* Local-only NTP service for clock synchronization
 
 Services monitored by Icinga 2 and Munin will be hard-coded in the attributes file for this cookbook. Eventually these will be auto-configured from other node's cookbooks using attributes or data bags managed by a Chef Server.
 

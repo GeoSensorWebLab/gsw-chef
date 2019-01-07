@@ -364,6 +364,9 @@ unless node['crowchild']['ignore_real_certs']
   end
 end
 
+# Install NTP for local clock synchronization
+package 'ntp'
+
 # Install/Configure Munin (primary controller)
 package 'munin'
 
