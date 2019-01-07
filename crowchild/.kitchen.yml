@@ -30,5 +30,7 @@ suites:
       inspec_tests:
         - test/smoke/default
     attributes:
+      crowchild:
+        ignore_real_certs: true
       chef_vault:
         databags_fallback: true

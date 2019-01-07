@@ -345,20 +345,23 @@ package 'certbot'
 
 https_admin_email = node['crowchild']['https_admin_email']
 
-# Configuration for Certbot. 
-execute 'get certs' do
-  command "certbot certonly -n --agree-tos -m #{https_admin_email} \
-  --webroot -w '/usr/share/icingaweb2/public' \
-  -d monitoring.gswlab.ca,monitoring.arcticconnect.ca"
-end
+# Configuration for Certbot.
+# Do not get real certs if running under test kitchen.
+unless node['crowchild']['ignore_real_certs']
+  execute 'get certs' do
+    command "certbot certonly -n --agree-tos -m #{https_admin_email} \
+    --webroot -w '/usr/share/icingaweb2/public' \
+    -d monitoring.gswlab.ca,monitoring.arcticconnect.ca"
+  end
 
-template '/etc/apache2/sites-available/monitoring-ssl.conf' do
-  source 'monitoring-ssl.conf.erb'
-  variables({
-    certificate_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/cert.pem",
-    certificate_key_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/privkey.pem"
-  })
-  notifies :restart, 'service[apache2]', :delayed
+  template '/etc/apache2/sites-available/monitoring-ssl.conf' do
+    source 'monitoring-ssl.conf.erb'
+    variables({
+      certificate_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/cert.pem",
+      certificate_key_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/privkey.pem"
+    })
+    notifies :restart, 'service[apache2]', :delayed
+  end
 end
 
 # Install/Configure Munin (primary controller)
@@ -372,14 +375,16 @@ template '/etc/apache2/sites-available/monitoring.conf' do
   notifies :restart, 'service[apache2]', :delayed
 end
 
-template '/etc/apache2/sites-available/monitoring-ssl.conf' do
-  source 'monitoring-ssl.conf.erb'
-  variables({
-    certificate_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/cert.pem",
-    certificate_key_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/privkey.pem",
-    enable_munin: true
-  })
-  notifies :restart, 'service[apache2]', :delayed
+unless node['crowchild']['ignore_real_certs']
+  template '/etc/apache2/sites-available/monitoring-ssl.conf' do
+    source 'monitoring-ssl.conf.erb'
+    variables({
+      certificate_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/cert.pem",
+      certificate_key_file: "/etc/letsencrypt/live/monitoring.gswlab.ca/privkey.pem",
+      enable_munin: true
+    })
+    notifies :restart, 'service[apache2]', :delayed
+  end
 end
 
 template '/etc/munin/munin.conf' do
