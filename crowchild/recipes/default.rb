@@ -17,6 +17,11 @@
 # limitations under the License.
 require 'securerandom'
 
+# Install build tools for Ruby
+package 'build-essential' do
+  action :nothing
+end.run_action(:install)
+
 chef_gem 'bcrypt' do
   action :nothing
   compile_time false
