@@ -408,3 +408,19 @@ end
 service 'munin-node' do
   action :restart
 end
+
+# Update Icinga Configuration
+#
+# Icinga2: Hosts
+hosts = node['icinga2']['host_objects']
+
+template '/etc/icinga2/conf.d/hosts.conf' do
+  source 'icinga2/hosts.conf.erb'
+  variables({
+    host_objects: hosts
+  })
+end
+
+service 'icinga2' do
+  action :reload
+end

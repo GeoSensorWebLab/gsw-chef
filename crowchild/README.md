@@ -77,6 +77,8 @@ $ knife vault create secrets icinga '{"db_password": "mypassword"}' -C "crowchil
   </tr>
 </table>
 
+Icinga 2 HOSTS are defined in the attributes file `attributes/default.rb`. See the attributes file for examples. Only some Host Object attributes are supported.
+
 ### Data Bags
 
 * `icinga_users`
