@@ -43,3 +43,7 @@ object ServiceGroup "disk" {
 
   assign where match("disk*", service.check_command)
 }
+
+object ServiceGroup "arcticconnect" {
+  display_name = "ArcticConnect"
+}

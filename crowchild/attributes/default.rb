@@ -114,8 +114,8 @@ default['icinga2']['service_objects'] = [
   display_name: "ArcticConnect Portal",
   check_command: "http",
   check_interval: "600s",
-  retry_interval: "600s",
-  groups: [],
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
   vars: {
     "http_address" => "portal.arcticconnect.ca",
     "http_vhost"   => "portal.arcticconnect.ca"
