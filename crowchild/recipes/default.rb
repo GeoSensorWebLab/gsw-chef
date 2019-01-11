@@ -411,6 +411,13 @@ end
 
 # Update Icinga Configuration
 
+# Icinga2: Groups
+template '/etc/icinga2/conf.d/groups.conf' do
+  source 'icinga2/groups.conf.erb'
+  variables()
+  notifies :restart, 'service[icinga2]', :delayed
+end
+
 # If the node does not have ipv6, then ipv6 checks from this Icinga2
 # instance will be omitted
 node_has_ipv6 = !node['network']['default_inet6_interface'].nil?
@@ -427,9 +434,14 @@ template '/etc/icinga2/conf.d/hosts.conf' do
   notifies :restart, 'service[icinga2]', :delayed
 end
 
-# Icinga2: Groups
-template '/etc/icinga2/conf.d/groups.conf' do
-  source 'icinga2/groups.conf.erb'
-  variables()
+# Icinga2: Services
+services = node['icinga2']['service_objects']
+
+template '/etc/icinga2/conf.d/services.conf' do
+  source 'icinga2/services.conf.erb'
+  variables({
+    has_ipv6: node_has_ipv6,
+    service_objects: services
+  })
   notifies :restart, 'service[icinga2]', :delayed
 end

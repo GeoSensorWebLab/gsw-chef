@@ -90,3 +90,35 @@ default['icinga2']['host_objects'] = [
   check_command: "hostalive"
 }
 ]
+
+# Service Definitions for Icinga2
+# 
+# Sample Host:
+#   name (string, mandatory) icinga2 object name
+#   host_name (string, mandatory) icinga2 host this service belongs to
+#   display_name (string, mandatory) icinga2 UI display name
+#   check_command (string, mandatory) icinga2 check command to use
+#   check_interval (duration string, mandatory) Check interval with `s`
+#       suffix
+#   retry_interval (duration string, mandatory) Retry interval with `s`
+#       suffix
+#   groups: (array of strings, optional)
+#   vars: (hash, optional) Hash of key/value pairs for "vars" in an 
+#       object. All values will be double-quoted.
+#   
+# I recommend keeping this array sorted by names.
+default['icinga2']['service_objects'] = [
+{
+  name: "portal.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "ArcticConnect Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "600s",
+  groups: [],
+  vars: {
+    "http_address" => "portal.arcticconnect.ca",
+    "http_vhost"   => "portal.arcticconnect.ca"
+  }
+}
+]
