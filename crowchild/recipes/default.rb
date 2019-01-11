@@ -113,7 +113,7 @@ end
 # Enable IDO PostgreSQL module
 execute "Enable IDO PostgreSQL module" do
   command "icinga2 feature enable ido-pgsql"
-  notifies :restart, 'service[icinga2]', :immediately
+  notifies :restart, 'service[icinga2]', :delayed
 end
 
 # Enable Icinga 2 REST API
@@ -134,7 +134,7 @@ template '/etc/icinga2/conf.d/api-users.conf' do
       permissions: ["status/query", "actions/*", "objects/modify/*", "objects/query/*"]
     }]
   })
-  notifies :restart, 'service[icinga2]', :immediately
+  notifies :restart, 'service[icinga2]', :delayed
 end
 
 # 4. Install Apache, PHP, Icinga Web 2
@@ -424,8 +424,5 @@ template '/etc/icinga2/conf.d/hosts.conf' do
     has_ipv6: node_has_ipv6,
     host_objects: hosts
   })
-end
-
-service 'icinga2' do
-  action :reload
+  notifies :restart, 'service[icinga2]', :delayed
 end
