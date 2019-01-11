@@ -106,8 +106,118 @@ default['icinga2']['host_objects'] = [
 #   vars: (hash, optional) Hash of key/value pairs for "vars" in an 
 #       object. All values will be double-quoted.
 #   
-# I recommend keeping this array sorted by names.
+# I recommend keeping this array sorted by category, then by names.
+# Categories:
+# * HTTP
+# * HTTPS
+# * DNS
+# * Other
 default['icinga2']['service_objects'] = [
+  # HTTP Services
+{
+  name: "aafc.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "AAFC Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "aafc.gswlab.ca",
+    "http_vhost"   => "aafc.gswlab.ca"
+  }
+},
+{
+  name: "chef.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "GSWLab Chef Server",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "chef.gswlab.ca",
+    "http_vhost"   => "chef.gswlab.ca"
+  }
+},
+{
+  name: "dataservice.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "Data Service",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "dataservice.gswlab.ca",
+    "http_vhost"   => "dataservice.gswlab.ca"
+  }
+},
+{
+  name: "dataservice-web.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "Data Service Proxy",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "dataservice-web.gswlab.ca",
+    "http_vhost"   => "dataservice-web.gswlab.ca"
+  }
+},
+{
+  name: "geocens.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "GeoCENS Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "geocens.gswlab.ca",
+    "http_vhost"   => "geocens.gswlab.ca"
+  }
+},
+{
+  name: "eaglewatch.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "Eagle Watch Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "eaglewatch.gswlab.ca",
+    "http_vhost"   => "eaglewatch.gswlab.ca"
+  }
+},
+{
+  name: "errbit.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "Errbit",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "errbit.gswlab.ca",
+    "http_vhost"   => "errbit.gswlab.ca"
+  }
+},
+{
+  name: "ows-search.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "OGC Web Services search",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "ows-search.gswlab.ca",
+    "http_vhost"   => "ows-search.gswlab.ca"
+  }
+},
 {
   name: "portal.arcticconnect.ca",
   host_name: "sarcee",
@@ -120,5 +230,135 @@ default['icinga2']['service_objects'] = [
     "http_address" => "portal.arcticconnect.ca",
     "http_vhost"   => "portal.arcticconnect.ca"
   }
-}
+},
+{
+  name: "records.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Scholar Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "records.arcticconnect.ca",
+    "http_vhost"   => "records.arcticconnect.ca"
+  }
+},
+{
+  name: "rockyview.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "RVC Redirect",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "rockyview.gswlab.ca",
+    "http_vhost"   => "rockyview.gswlab.ca"
+  }
+},
+{
+  name: "scholar.arcticconnect.ca",
+  host_name: "macleod",
+  display_name: "Arctic Scholar API",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "scholar.arcticconnect.ca",
+    "http_vhost"   => "scholar.arcticconnect.ca"
+  }
+},
+{
+  name: "sensors.arcticconnect.ca",
+  host_name: "macleod",
+  display_name: "Arctic Sensor Web Expansion",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "sensors.arcticconnect.ca",
+    "http_vhost"   => "sensors.arcticconnect.ca"
+  }
+},
+{
+  name: "sensorweb.arcticconnect.ca",
+  host_name: "macleod",
+  display_name: "Arctic Sensor Web",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "sensorweb.arcticconnect.ca",
+    "http_vhost"   => "sensorweb.arcticconnect.ca"
+  }
+},
+{
+  name: "sightings.arcticconnect.ca",
+  host_name: "macleod",
+  display_name: "Arctic Bio Map Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "sightings.arcticconnect.ca",
+    "http_vhost"   => "sightings.arcticconnect.ca"
+  }
+},
+{
+  name: "visualize.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "STA Visualization",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "visualize.gswlab.ca",
+    "http_vhost"   => "visualize.gswlab.ca"
+  }
+},
+{
+  name: "webmap.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Web Map",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "webmap.arcticconnect.ca",
+    "http_vhost"   => "webmap.arcticconnect.ca"
+  }
+},
+{
+  name: "workbench.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "RPI Workbench",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "workbench.gswlab.ca",
+    "http_vhost"   => "workbench.gswlab.ca"
+  }
+},
+{
+  name: "www.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Connect Landing Page",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "www.arcticconnect.ca",
+    "http_vhost"   => "www.arcticconnect.ca"
+  }
+},
 ]
