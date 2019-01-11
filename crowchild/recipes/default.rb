@@ -426,3 +426,10 @@ template '/etc/icinga2/conf.d/hosts.conf' do
   })
   notifies :restart, 'service[icinga2]', :delayed
 end
+
+# Icinga2: Groups
+template '/etc/icinga2/conf.d/groups.conf' do
+  source 'icinga2/groups.conf.erb'
+  variables()
+  notifies :restart, 'service[icinga2]', :delayed
+end
