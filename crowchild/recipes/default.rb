@@ -277,6 +277,13 @@ template '/etc/icingaweb2/modules/monitoring/backends.ini' do
   source 'icingaweb2/monitoring/backends.ini.erb'
 end
 
+template '/etc/icingaweb2/modules/monitoring/commandtransports.ini' do
+  source 'icingaweb2/monitoring/commandtransports.ini.erb'
+  variables({
+    password: icingaweb_rest_password
+  })
+end
+
 template '/etc/icingaweb2/roles.ini' do
   source 'icingaweb2/roles.ini.erb'
   variables({
