@@ -130,7 +130,11 @@ object Service "<%= service[:name] %>" {
   check_command = "<%= service[:check_command] %>"
 
   <% service[:vars].each do |key, value| -%>
-  vars.<%= key.to_s %> = "<%= value %>"
+	  <% if value == "true" || value == "false" -%>
+	  vars.<%= key.to_s %> = <%= value %>
+	  <% else -%>
+	  vars.<%= key.to_s %> = "<%= value %>"
+	  <% end -%>
   <% end -%>
 
   check_interval = <%= service[:check_interval] %>

@@ -110,10 +110,21 @@ default['icinga2']['host_objects'] = [
 # Categories:
 # * HTTP
 # * HTTPS
-# * DNS
-# * Other
 default['icinga2']['service_objects'] = [
-  # HTTP Services
+# HTTP Services
+{
+  name: "arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Connect Landing Page",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "arcticconnect.ca",
+    "http_vhost"   => "arcticconnect.ca"
+  }
+},
 {
   name: "aafc.gswlab.ca",
   host_name: "sarcee",
@@ -272,7 +283,7 @@ default['icinga2']['service_objects'] = [
 },
 {
   name: "sensors.arcticconnect.ca",
-  host_name: "macleod",
+  host_name: "blackfoot",
   display_name: "Arctic Sensor Web Expansion",
   check_command: "http",
   check_interval: "600s",
@@ -285,7 +296,7 @@ default['icinga2']['service_objects'] = [
 },
 {
   name: "sensorweb.arcticconnect.ca",
-  host_name: "macleod",
+  host_name: "sarcee",
   display_name: "Arctic Sensor Web",
   check_command: "http",
   check_interval: "600s",
@@ -298,7 +309,7 @@ default['icinga2']['service_objects'] = [
 },
 {
   name: "sightings.arcticconnect.ca",
-  host_name: "macleod",
+  host_name: "sarcee",
   display_name: "Arctic Bio Map Portal",
   check_command: "http",
   check_interval: "600s",
@@ -348,17 +359,118 @@ default['icinga2']['service_objects'] = [
     "http_vhost"   => "workbench.gswlab.ca"
   }
 },
+
+# HTTPS Services
 {
-  name: "www.arcticconnect.ca",
+  name: "https-chef.gswlab.ca",
   host_name: "sarcee",
-  display_name: "Arctic Connect Landing Page",
+  display_name: "https-HTTPS GSWLab Chef Server",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "chef.gswlab.ca",
+    "http_vhost"   => "chef.gswlab.ca",
+    "http_ssl"     => true
+  }
+},
+{
+  name: "https-portal.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "https-HTTPS ArcticConnect Portal",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
   groups: ["arcticconnect"],
   vars: {
-    "http_address" => "www.arcticconnect.ca",
-    "http_vhost"   => "www.arcticconnect.ca"
+    "http_address" => "portal.arcticconnect.ca",
+    "http_vhost"   => "portal.arcticconnect.ca",
+    "http_ssl"     => true
   }
 },
+{
+  name: "https-records.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "https-HTTPS Arctic Scholar Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "records.arcticconnect.ca",
+    "http_vhost"   => "records.arcticconnect.ca",
+    "http_ssl"     => true
+  }
+},
+{
+  name: "https-scholar.arcticconnect.ca",
+  host_name: "macleod",
+  display_name: "https-HTTPS Arctic Scholar API",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "scholar.arcticconnect.ca",
+    "http_vhost"   => "scholar.arcticconnect.ca",
+    "http_ssl"     => true
+  }
+},
+{
+  name: "https-sensors.arcticconnect.ca",
+  host_name: "blackfoot",
+  display_name: "https-HTTPS Arctic Sensor Web Expansion",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "sensors.arcticconnect.ca",
+    "http_vhost"   => "sensors.arcticconnect.ca",
+    "http_ssl"     => true
+  }
+},
+{
+  name: "https-sensorweb.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "https-HTTPS Arctic Sensor Web",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "sensorweb.arcticconnect.ca",
+    "http_vhost"   => "sensorweb.arcticconnect.ca",
+    "http_ssl"     => true
+  }
+},
+{
+  name: "https-sightings.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "https-HTTPS Arctic Bio Map Portal",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "sightings.arcticconnect.ca",
+    "http_vhost"   => "sightings.arcticconnect.ca",
+    "http_ssl"     => true
+  }
+},
+{
+  name: "https-webmap.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "https-HTTPS Arctic Web Map",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "webmap.arcticconnect.ca",
+    "http_vhost"   => "webmap.arcticconnect.ca",
+    "http_ssl"     => true
+  }
+}
 ]
