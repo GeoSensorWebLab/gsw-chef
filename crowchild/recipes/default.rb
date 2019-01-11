@@ -410,13 +410,18 @@ service 'munin-node' do
 end
 
 # Update Icinga Configuration
-#
+
+# If the node does not have ipv6, then ipv6 checks from this Icinga2
+# instance will be omitted
+node_has_ipv6 = !node['network']['default_inet6_interface'].nil?
+
 # Icinga2: Hosts
 hosts = node['icinga2']['host_objects']
 
 template '/etc/icinga2/conf.d/hosts.conf' do
   source 'icinga2/hosts.conf.erb'
   variables({
+    has_ipv6: node_has_ipv6,
     host_objects: hosts
   })
 end

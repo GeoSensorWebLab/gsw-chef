@@ -1,4 +1,8 @@
 /*
+ * This file is managed by Chef.
+ */
+
+/*
  * Host definitions with object attributes
  * used for apply rules for Service, Notification,
  * Dependency and ScheduledDowntime objects.
@@ -50,20 +54,20 @@ object Host NodeName {
   }
 }
 
-<% @host_objects.each do |host| %>
+<% @host_objects.each do |host| -%>
 object Host "<%= host[:name] %>" {
   import "generic-host"
 
-  <% if host[:address] %>
+  <% if host[:address] -%>
   address = "<%= host[:address] %>"
-  <% end %>
+  <% end -%>
 
-  <% if host[:address6] %>
+  <%- if host[:address6] && @has_ipv6 -%>
   address6 = "<%= host[:address6] %>"
-  <% end %>
+  <% end -%>
 
   groups = <%= host[:groups].to_s || "[]" %>
 
   check_command = "<%= host[:check_command] %>"
 }
-<% end %>
+<% end -%>
