@@ -364,7 +364,7 @@ default['icinga2']['service_objects'] = [
 {
   name: "https-chef.gswlab.ca",
   host_name: "sarcee",
-  display_name: "https-HTTPS GSWLab Chef Server",
+  display_name: "HTTPS GSWLab Chef Server",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
@@ -378,7 +378,7 @@ default['icinga2']['service_objects'] = [
 {
   name: "https-portal.arcticconnect.ca",
   host_name: "sarcee",
-  display_name: "https-HTTPS ArcticConnect Portal",
+  display_name: "HTTPS ArcticConnect Portal",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
@@ -392,7 +392,7 @@ default['icinga2']['service_objects'] = [
 {
   name: "https-records.arcticconnect.ca",
   host_name: "sarcee",
-  display_name: "https-HTTPS Arctic Scholar Portal",
+  display_name: "HTTPS Arctic Scholar Portal",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
@@ -420,7 +420,7 @@ default['icinga2']['service_objects'] = [
 {
   name: "https-sensors.arcticconnect.ca",
   host_name: "blackfoot",
-  display_name: "https-HTTPS Arctic Sensor Web Expansion",
+  display_name: "HTTPS Arctic Sensor Web Expansion",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
@@ -434,7 +434,7 @@ default['icinga2']['service_objects'] = [
 {
   name: "https-sensorweb.arcticconnect.ca",
   host_name: "sarcee",
-  display_name: "https-HTTPS Arctic Sensor Web",
+  display_name: "HTTPS Arctic Sensor Web",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
@@ -448,7 +448,7 @@ default['icinga2']['service_objects'] = [
 {
   name: "https-sightings.arcticconnect.ca",
   host_name: "sarcee",
-  display_name: "https-HTTPS Arctic Bio Map Portal",
+  display_name: "HTTPS Arctic Bio Map Portal",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
@@ -462,7 +462,7 @@ default['icinga2']['service_objects'] = [
 {
   name: "https-webmap.arcticconnect.ca",
   host_name: "sarcee",
-  display_name: "https-HTTPS Arctic Web Map",
+  display_name: "HTTPS Arctic Web Map",
   check_command: "http",
   check_interval: "600s",
   retry_interval: "300s",
@@ -472,5 +472,127 @@ default['icinga2']['service_objects'] = [
     "http_vhost"   => "webmap.arcticconnect.ca",
     "http_ssl"     => true
   }
-}
+},
+
+# SSL
+{
+  name: "ssl-chef.gswlab.ca",
+  host_name: "sarcee",
+  display_name: "GSWLab Chef Server Certificate",
+  check_command: "ssl",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: [],
+  vars: {
+    "ssl_address"                  => "chef.gswlab.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
+{
+  name: "ssl-portal.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "ArcticConnect Portal Certificate",
+  check_command: "http",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "ssl_address"                  => "portal.arcticconnect.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
+{
+  name: "ssl-records.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Scholar Portal Certificate",
+  check_command: "http",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "ssl_address"                  => "records.arcticconnect.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
+{
+  name: "ssl-scholar.arcticconnect.ca",
+  host_name: "macleod",
+  display_name: "Arctic Scholar API Certificate",
+  check_command: "http",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "ssl_address"                  => "scholar.arcticconnect.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
+{
+  name: "ssl-sensors.arcticconnect.ca",
+  host_name: "blackfoot",
+  display_name: "Arctic Sensor Web Expansion Certificate",
+  check_command: "http",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "ssl_address"                  => "sensors.arcticconnect.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
+{
+  name: "ssl-sensorweb.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Sensor Web Certificate",
+  check_command: "http",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "ssl_address"                  => "sensorweb.arcticconnect.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
+{
+  name: "ssl-sightings.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Bio Map Portal Certificate",
+  check_command: "http",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "ssl_address"                  => "sightings.arcticconnect.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
+{
+  name: "ssl-webmap.arcticconnect.ca",
+  host_name: "sarcee",
+  display_name: "Arctic Web Map Certificate",
+  check_command: "http",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "ssl_address"                  => "webmap.arcticconnect.ca",
+    "ssl_cert_valid_days_warn"     => "25",
+    "ssl_cert_valid_days_critical" => "10",
+    "ssl_timeout"                  => "20"
+  }
+},
 ]
