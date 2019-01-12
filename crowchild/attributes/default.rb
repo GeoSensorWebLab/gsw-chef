@@ -139,19 +139,6 @@ default['icinga2']['service_objects'] = [
   }
 },
 {
-  name: "chef.gswlab.ca",
-  host_name: "sarcee",
-  display_name: "GSWLab Chef Server",
-  check_command: "http",
-  check_interval: "600s",
-  retry_interval: "300s",
-  groups: [],
-  vars: {
-    "http_address" => "chef.gswlab.ca",
-    "http_vhost"   => "chef.gswlab.ca"
-  }
-},
-{
   name: "dataservice.gswlab.ca",
   host_name: "sarcee",
   display_name: "Data Service",
@@ -283,7 +270,7 @@ default['icinga2']['service_objects'] = [
 },
 {
   name: "sensors.arcticconnect.ca",
-  host_name: "blackfoot",
+  host_name: "stoney",
   display_name: "Arctic Sensor Web Expansion",
   check_command: "http",
   check_interval: "600s",
@@ -363,7 +350,7 @@ default['icinga2']['service_objects'] = [
 # HTTPS Services
 {
   name: "https-chef.gswlab.ca",
-  host_name: "sarcee",
+  host_name: "barlow",
   display_name: "HTTPS GSWLab Chef Server",
   check_command: "http",
   check_interval: "600s",
@@ -419,7 +406,7 @@ default['icinga2']['service_objects'] = [
 },
 {
   name: "https-sensors.arcticconnect.ca",
-  host_name: "blackfoot",
+  host_name: "stoney",
   display_name: "HTTPS Arctic Sensor Web Expansion",
   check_command: "http",
   check_interval: "600s",
@@ -537,7 +524,7 @@ default['icinga2']['service_objects'] = [
 },
 {
   name: "ssl-sensors.arcticconnect.ca",
-  host_name: "blackfoot",
+  host_name: "stoney",
   display_name: "Arctic Sensor Web Expansion Certificate",
   check_command: "ssl",
   check_interval: "86400s",
