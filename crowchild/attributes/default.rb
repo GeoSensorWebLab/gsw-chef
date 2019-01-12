@@ -41,13 +41,6 @@ default['icinga2']['host_objects'] = [
   check_command: "hostalive"
 },
 {
-  name: "crowchild",
-  address: "162.246.156.119",
-  address6: "2605:fd00:4:1000:f816:3eff:feeb:5155",
-  groups: ["geocens"],
-  check_command: "hostalive"
-},
-{
   name: "ctscience",
   address: "10.1.0.194",
   address6: "2605:fd00:4:1000:f816:3eff:feb4:809e",
