@@ -1,6 +1,8 @@
 default['crowchild']['https_admin_email'] = "jpbadger@ucalgary.ca"
 default['crowchild']['ignore_real_certs'] = false
 
+default['icinga2']['plugins_directory'] = '/usr/lib/nagios/plugins'
+
 # Host Definitions for Icinga2
 # 
 # Sample Host:
@@ -103,8 +105,12 @@ default['icinga2']['host_objects'] = [
 # Categories:
 # * HTTP
 # * HTTPS
+# * SSL
+# * Domain Expiration
 default['icinga2']['service_objects'] = [
-# HTTP Services
+#########################
+# HTTP Services Section #
+#########################
 {
   name: "arcticconnect.ca",
   host_name: "sarcee",
@@ -339,8 +345,9 @@ default['icinga2']['service_objects'] = [
     "http_vhost"   => "workbench.gswlab.ca"
   }
 },
-
-# HTTPS Services
+##########################
+# HTTPS Services Section #
+##########################
 {
   name: "https-chef.gswlab.ca",
   host_name: "barlow",
@@ -453,8 +460,9 @@ default['icinga2']['service_objects'] = [
     "http_ssl"     => true
   }
 },
-
-# SSL
+###############
+# SSL Section #
+###############
 {
   name: "ssl-chef.gswlab.ca",
   host_name: "barlow",
@@ -573,6 +581,51 @@ default['icinga2']['service_objects'] = [
     "ssl_cert_valid_days_warn"     => "25",
     "ssl_cert_valid_days_critical" => "10",
     "ssl_timeout"                  => "20"
+  }
+},
+#############################
+# Domain Expiration Section #
+#############################
+{
+  name: "arcticconnect.ca domain",
+  host_name: "stoney",
+  display_name: "ArcticConnect.ca Domain",
+  check_command: "domain_expiration",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "domain_check"    => "arcticconnect.ca",
+    "domain_warning"  => "30",
+    "domain_critical" => "10"
+  }
+},
+{
+  name: "gswlab.ca domain",
+  host_name: "stoney",
+  display_name: "GSWLab.ca Domain",
+  check_command: "domain_expiration",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: [],
+  vars: {
+    "domain_check"    => "gswlab.ca",
+    "domain_warning"  => "30",
+    "domain_critical" => "10"
+  }
+},
+{
+  name: "arcticconnect.org domain",
+  host_name: "stoney",
+  display_name: "ArcticConnect.org Domain",
+  check_command: "domain_expiration",
+  check_interval: "86400s",
+  retry_interval: "86400s",
+  groups: ["arcticconnect"],
+  vars: {
+    "domain_check"    => "arcticconnect.org",
+    "domain_warning"  => "30",
+    "domain_critical" => "10"
   }
 },
 ]

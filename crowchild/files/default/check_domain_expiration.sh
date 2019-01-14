@@ -78,7 +78,7 @@ check_domain()
 		EXP_DAYS=$(( ( $(date -ud ${EXDATE} +'%s') - $(date -ud `date +%Y-%m-%d` +'%s') )/60/60/24 ))
 	elif [ "$DTYPE" == "ca" ]
 	then
-		EXDATE=$(${WHOIS} -h whois.cira.ca "${1}" | ${AWK} '/Expiry Date:/ { print $3 }')
+		EXDATE=$(${WHOIS} -h whois.cira.ca "${1}" | ${AWK} '/Expiry date:/ { print $3 }')
 		EXP_DAYS=$(( ( $(date -ud ${EXDATE} +'%s') - $(date -ud `date +%Y-%m-%d` +'%s') )/60/60/24 ))
 	else
 		echo "UNKNOWN - "$DTYPE" unsupported"

@@ -418,6 +418,26 @@ end
 
 # Update Icinga Configuration
 
+# Custom Plugins
+plugins_directory = node['icinga2']['plugins_directory']
+
+# Custom Plugin: Domain Expiration Check
+package 'whois'
+
+cookbook_file "#{plugins_directory}/check_domain_expiration" do
+  source 'check_domain_expiration.sh'
+  owner 'root'
+  group 'root'
+  mode '0755'
+end
+
+# Icinga2: Commands
+template '/etc/icinga2/conf.d/commands.conf' do
+  source 'icinga2/commands.conf.erb'
+  variables()
+  notifies :restart, 'service[icinga2]', :delayed
+end
+
 # Icinga2: Groups
 template '/etc/icinga2/conf.d/groups.conf' do
   source 'icinga2/groups.conf.erb'
