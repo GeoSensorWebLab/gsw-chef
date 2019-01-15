@@ -2,7 +2,7 @@
 
 Cookbook for setting up a node with a database server that can be accessed by multiple other nodes.
 
-* PostgreSQL
+* PostgreSQL 11
 * PostGIS
 * Databases
 * Database users
