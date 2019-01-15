@@ -23,3 +23,33 @@ postgresql_server_install 'postgresql-11' do
 end
 
 package %w(postgresql-11-postgis-2.5 postgis)
+
+# Create databases for each web app
+apps = search(:apps, "*:*")
+
+apps.each do |app|
+  db = app["database"]
+  
+  postgresql_user db["user"] do
+    password db["password"]
+  end
+
+  postgresql_database db["database_name"] do
+    owner db["user"]
+  end
+end
+
+# Grant access to hosts on subnet
+# host    all             all             10.1.0.1/16           md5
+postgresql_access 'subnet_access' do
+  comment       'Access for servers on subnet'
+  access_type   'host'
+  access_db     'all'
+  access_user   'all'
+  access_addr   '10.1.0.1/16'
+  access_method 'md5'
+end
+
+service 'postgresql' do
+  action :restart
+end

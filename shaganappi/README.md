@@ -37,7 +37,7 @@ $ knife bootstrap shaganappi -N shaganappi \
   --ssh-user ubuntu --sudo --run-list 'recipe[shaganappi]'
 ```
 
-## gsw-cookbook-template
+### gsw-cookbook-template
 
 Include `shaganappi` in your node's `run_list`:
 
@@ -49,7 +49,7 @@ Include `shaganappi` in your node's `run_list`:
 }
 ```
 
-## Attributes
+### Attributes
 
 <table>
   <tr>
@@ -65,6 +65,25 @@ Include `shaganappi` in your node's `run_list`:
     <td><tt>default value</tt></td>
   </tr>
 </table>
+
+### Data Bags
+
+* `apps`
+
+Example:
+
+```json
+{
+  "id": "geocens",
+  "enabled": true,
+  "database": {
+    "type": "postgresql",
+    "database_name": "geocens_production",
+    "user": "geocens_user",
+    "password": "geocens_password"
+  }
+}
+```
 
 ## License and Authors
 

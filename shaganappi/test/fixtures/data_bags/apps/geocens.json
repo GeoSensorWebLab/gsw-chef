@@ -1,0 +1,10 @@
+{
+  "id": "geocens",
+  "enabled": true,
+  "database": {
+    "type": "postgresql",
+    "database_name": "geocens_production",
+    "user": "geocens_user",
+    "password": "geocens_password"
+  }
+}
