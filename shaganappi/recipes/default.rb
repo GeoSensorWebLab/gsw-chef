@@ -22,3 +22,4 @@ postgresql_server_install 'postgresql-11' do
   initdb_locale 'en_US.UTF-8'
 end
 
+package %w(postgresql-11-postgis-2.5 postgis)
