@@ -16,6 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Install ZFS
+package 'zfsutils-linux'
+
 # Install PostgreSQL
 postgresql_server_install 'postgresql-11' do
   version '11'
