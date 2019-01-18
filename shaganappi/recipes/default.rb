@@ -19,13 +19,28 @@
 # Install ZFS
 package 'zfsutils-linux'
 
+# Check for database directory.
+# If a ZFS dataset is used, then it must be set up MANUALLY.
+directory node['postgresql']['data_directory'] do
+  recursive true
+  action :create
+end
+
 # Install PostgreSQL
-postgresql_server_install 'postgresql-11' do
-  version '11'
+postgresql_server_install "postgresql-#{node['postgresql']['version']}" do
+  version node['postgresql']['version']
   initdb_locale 'en_US.UTF-8'
 end
 
-package %w(postgresql-11-postgis-2.5 postgis)
+# Create the database cluster as the Chef resources cannot handle 
+# changing to a different data directory without exploding
+execute 'create postgres cluster' do
+  command "pg_createcluster -d \"#{node['postgresql']['data_directory']}\" \
+  --locale en_US.UTF-8 --start #{node['postgresql']['version']} main"
+  only_if { ::Dir.empty?(node['postgresql']['data_directory']) }
+end
+
+package %W(postgresql-#{node['postgresql']['version']}-postgis-2.5 postgis)
 
 # Create databases for each web app
 apps = search(:apps, "*:*")
