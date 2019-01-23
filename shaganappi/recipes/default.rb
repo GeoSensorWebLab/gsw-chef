@@ -46,7 +46,9 @@ package %W(postgresql-#{node['postgresql']['version']}-postgis-2.5 postgis)
 apps = search(:apps, "*:*")
 
 apps.each do |app|
-  db = app["database"]
+  d_app = chef_vault_item('apps', app["id"])
+
+  db = d_app["database"]
   
   postgresql_user db["user"] do
     password db["password"]

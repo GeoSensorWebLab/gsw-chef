@@ -30,3 +30,5 @@ suites:
       inspec_tests:
         - test/smoke/default
     attributes:
+      chef_vault:
+        databags_fallback: true

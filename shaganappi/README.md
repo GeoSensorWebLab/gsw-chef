@@ -66,7 +66,7 @@ Include `shaganappi` in your node's `run_list`:
   </tr>
 </table>
 
-### Data Bags
+### Chef Vault
 
 * `apps`
 
@@ -83,6 +83,13 @@ Example:
     "password": "geocens_password"
   }
 }
+```
+
+The recipe requires a Chef vault item. In the following example, `apps` vault is created/updated for a `geocens` item. This will open an editor that must use the JSON schema above. It is only decryptable by the `shaganappi` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef server.
+
+
+```terminal
+$ knife vault create apps geocens -C "shaganappi" -A "jpbadger"
 ```
 
 ## License and Authors
