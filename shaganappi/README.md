@@ -6,10 +6,10 @@ Cookbook for setting up a node with a database server that can be accessed by mu
 * PostGIS
 * Databases
 * Database users
-* Automated encrypted backups to Amazon S3
-* Local-only NTP service for clock synchronization
-* Munin Node results pushed to Munin primary server
-* Icinga 2 results pushed to Icinga primary server
+* WIP: Automated encrypted backups to Amazon S3 (see [BACKUP.md](BACKUP.md))
+* WIP: Local-only NTP service for clock synchronization
+* WIP: Munin Node results pushed to Munin primary server
+* WIP: Icinga 2 results pushed to Icinga primary server
 
 Databases and users will be created from encrypted Chef Data Bags stored on the Chef Server. If the database and/or user already exists, a new one will not be created.
 
@@ -91,6 +91,10 @@ The recipe requires a Chef vault item. In the following example, `apps` vault is
 ```terminal
 $ knife vault create apps geocens -C "shaganappi" -A "jpbadger"
 ```
+
+## Developer Notes
+
+For future cookbook editors/developers: be careful upgrading the PostgreSQL version as there is no automated cluster upgrade code in this cookbook. Also be sure to make sure it works with pgbackrest backup and restore.
 
 ## License and Authors
 
