@@ -58,7 +58,7 @@ apps.each do |app|
 end
 
 # Grant access to hosts on subnet
-# host    all             all             10.1.0.1/16           md5
+# 10.1.0.1 to 10.1.255.255
 postgresql_access 'subnet_access' do
   comment       'Access for servers on subnet'
   access_type   'host'
