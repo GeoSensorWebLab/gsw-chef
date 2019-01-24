@@ -10,9 +10,15 @@ Backups are:
 * Encrypted using GPG so only public keys are kept on server
 * Uploaded to S3 on a different cloud platform
 
+pgbackrest is located in the Debian/Ubuntu repositories, and is well documented. It is specific to PostgreSQL, and that should make it more reliable than a `pg_dumpall` solution.
+
 ## How It Works
 
-TODO: Explain how pgbackrest works, in short
+The backup program will make a dump of the postgres database, and use incremental backups to make additional archives with newer data. This allows us to run more backups more often without requiring significantly more storage space.
+
+In-progress backups are stored in the "repository". This is located in the `/db-pool/pgbackrest` directory.
+
+Configuration for pgbackrest is in the `/etc/pgbackrest.conf` file.
 
 For more detailed information, please refer to the [pgbackrest User Guide](https://pgbackrest.org/user-guide.html).
 
