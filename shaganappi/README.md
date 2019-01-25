@@ -6,7 +6,8 @@ Cookbook for setting up a node with a database server that can be accessed by mu
 * PostGIS
 * Databases
 * Database users
-* WIP: Automated encrypted backups to Amazon S3 (see [BACKUP.md](BACKUP.md))
+* Automated encrypted backups (see [BACKUP.md](BACKUP.md))
+* WIP: Upload backups to Amazon S3
 * WIP: Local-only NTP service for clock synchronization
 * WIP: Munin Node results pushed to Munin primary server
 * WIP: Icinga 2 results pushed to Icinga primary server
@@ -68,7 +69,9 @@ Include `shaganappi` in your node's `run_list`:
 
 ### Chef Vault
 
-* `apps`
+The recipe requires Chef vault items.
+
+#### `apps`
 
 Example:
 
@@ -85,11 +88,26 @@ Example:
 }
 ```
 
-The recipe requires a Chef vault item. In the following example, `apps` vault is created/updated for a `geocens` item. This will open an editor that must use the JSON schema above. It is only decryptable by the `shaganappi` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef server.
+In the following example, `apps` vault is created/updated for a `geocens` item. This will open an editor that must use the JSON schema above. It is only decryptable by the `shaganappi` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef server.
 
 
 ```terminal
 $ knife vault create apps geocens -C "shaganappi" -A "jpbadger"
+```
+
+#### `secrets`
+
+Example:
+
+```json
+{
+  "id": "pgbackrest",
+  "cipher_pass": "mypassword"
+}
+```
+
+```terminal
+$ knife vault create secrets pgbackrest -C "shaganappi" -A "jpbadger"
 ```
 
 ## Developer Notes

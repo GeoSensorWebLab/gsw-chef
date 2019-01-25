@@ -1,0 +1,4 @@
+# This file is managed by Chef
+# min	hour	dom	mon	dow	user		command
+30		0		*	*	*	postgres	pgbackrest --type=full --stanza=main backup
+30		1-23	*	*	*	postgres	pgbackrest --type=diff --stanza=main backup

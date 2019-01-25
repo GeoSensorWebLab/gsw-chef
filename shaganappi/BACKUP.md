@@ -7,7 +7,7 @@ Backups are:
 * Automatically scheduled to minimize data loss
 * Incremental to minimize size of backup archive
 * Compressed to reduce backup archive size
-* Encrypted using GPG so only public keys are kept on server
+* Encrypted so backups cannot be read without key
 * Uploaded to S3 on a different cloud platform
 
 pgbackrest is located in the Debian/Ubuntu repositories, and is well documented. It is specific to PostgreSQL, and that should make it more reliable than a `pg_dumpall` solution.
