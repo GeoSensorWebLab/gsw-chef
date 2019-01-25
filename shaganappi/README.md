@@ -28,7 +28,7 @@ $ bundle exec knife cookbook upload . -ad -o ../berks-cookbooks
 ...
 $ knife cookbook list
 ...
-shaganappi    0.1.0
+shaganappi    0.2.0
 ```
 
 Bootstrapping a node with this cookbook, using Chef Server:
