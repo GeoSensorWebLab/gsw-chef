@@ -30,6 +30,12 @@ Template for new cookbooks. Contains test-kitchen configuration for local testin
 
 Want to set up a new/existing cloud instance or machine with a cookbook? Here are the step-by-step instructions. (TODO)
 
+For Knife, be sure to add configuration settings for Chef Vault:
+
+```rb
+knife[:vault_mode] = "client"
+```
+
 ## Setting Up a Chef Server
 
 As an alternative to bootstrapping cookbooks, a centralized Chef Server can be used to manage node attributes and run lists, as well as data bags. See the [Chef Server Cookbook](gsw-chef-server/README.md) for details.
