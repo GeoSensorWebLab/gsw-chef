@@ -29,8 +29,6 @@ package 'zfsutils-linux'
 # If a ZFS dataset is used, then it must be set up MANUALLY.
 directory node['postgresql']['data_directory'] do
   recursive true
-  owner 'postgres'
-  group 'postgres'
   mode '0700'
   action :create
 end
@@ -39,6 +37,15 @@ end
 postgresql_server_install "postgresql-#{node['postgresql']['version']}" do
   version node['postgresql']['version']
   initdb_locale 'en_US.UTF-8'
+end
+
+# Update permissions on database directory for postgres
+directory node['postgresql']['data_directory'] do
+  recursive true
+  owner 'postgres'
+  group 'postgres'
+  mode '0700'
+  action :create
 end
 
 # Create the database cluster as the Chef resources cannot handle 
