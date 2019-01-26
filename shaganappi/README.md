@@ -31,9 +31,11 @@ $ knife cookbook list
 shaganappi    0.2.0
 ```
 
-Bootstrapping a node with this cookbook, using Chef Server:
+Below is a quick set of commands for bootstrapping a node with this cookbook, using Chef Server. See the section below for more details on the vault items.
 
 ```terminal
+$ knife vault create apps geocens -S "*:*" -C "shaganappi" -A "jpbadger"
+$ knife vault create secrets pgbackrest -S "*:*" -C "shaganappi" -A "jpbadger"
 $ knife bootstrap shaganappi -N shaganappi \
   --ssh-user ubuntu --sudo --run-list 'recipe[shaganappi]'
 ```
