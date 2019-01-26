@@ -16,6 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+chef_gem 'chef-vault' do
+  compile_time true if respond_to?(:compile_time)
+end
+
+require 'chef-vault'
+
 # Install ZFS
 package 'zfsutils-linux'
 
@@ -129,12 +135,16 @@ apps.each do |app|
 
   db = d_app["database"]
   
-  postgresql_user db["user"] do
-    password db["password"]
-    sensitive true
-  end
+  # Check if the search item is the vault item, as opposed to the 
+  # keys for that item
+  if db
+    postgresql_user db["user"] do
+      password db["password"]
+      sensitive true
+    end
 
-  postgresql_database db["database_name"] do
-    owner db["user"]
+    postgresql_database db["database_name"] do
+      owner db["user"]
+    end
   end
 end
