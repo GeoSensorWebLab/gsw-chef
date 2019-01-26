@@ -112,7 +112,7 @@ postgresql_server_conf 'archiving' do
     "max_wal_senders"  => 3,
     "wal_level"        => "hot_standby"
   })
-  notifies :restart, 'service[postgresql]'
+  notifies :reload, 'service[postgresql]', :immediately
 end
 
 execute 'create pgbackrest stanza' do
