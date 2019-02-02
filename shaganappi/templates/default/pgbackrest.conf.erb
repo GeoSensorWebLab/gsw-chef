@@ -7,6 +7,15 @@ repo1-path=<%= @repo_path %>
 repo1-retention-full=2
 start-fast=y
 stop-auto=y
+<%- if @s3 && @s3[:enabled] %>
+repo1-s3-bucket=<%= @s3[:bucket] %>
+repo1-s3-endpoint=<%= @s3[:endpoint] %>
+repo1-s3-host=<%= @s3[:endpoint] %>
+repo1-s3-key=<%= @s3[:access_key] %>
+repo1-s3-key-secret=<%= @s3[:secret_key] %>
+repo1-s3-region=<%= @s3[:region] %>
+repo1-type=s3
+<% end -%>
 
 <% @clusters.each do |cluster| %>
 [<%= cluster[:name] %>]

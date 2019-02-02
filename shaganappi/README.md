@@ -7,7 +7,7 @@ Cookbook for setting up a node with a database server that can be accessed by mu
 * Databases
 * Database users
 * Automated encrypted backups (see [BACKUP.md](BACKUP.md))
-* WIP: Upload backups to Amazon S3
+* Upload backups to Amazon S3
 * WIP: Local-only NTP service for clock synchronization
 * WIP: Munin Node results pushed to Munin primary server
 * WIP: Icinga 2 results pushed to Icinga primary server
@@ -104,7 +104,14 @@ Example:
 ```json
 {
   "id": "pgbackrest",
-  "cipher_pass": "mypassword"
+  "cipher_pass": "mypassword",
+  "s3": {
+    "bucket": "bucket-name",
+    "endpoint": "s3.amazonaws.com",
+    "access_key": "access_key_ID",
+    "secret_key": "access_secret_key",
+    "region": "us-east-1"
+  }
 }
 ```
 

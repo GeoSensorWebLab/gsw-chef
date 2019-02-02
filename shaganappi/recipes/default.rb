@@ -76,6 +76,33 @@ end
 # Install pgbackrest
 package 'pgbackrest'
 
+# Install dependencies for pgbackrest S3 support
+package %w(libio-socket-ssl-perl libxml-libxml-perl)
+
+# Load S3 Secret Key from Chef Vault. If it is unavailable, disable S3
+# support. Loading secrets from unencrypted data bags is intentionally
+# not supported.
+
+# Use these values if no encrypted vault is available.
+s3_details = {
+  enabled: false
+}
+repo_path = '/db-pool/pgbackrest'
+
+if ChefVault::Item.vault?('secrets', 'pgbackrest')
+  s3_secrets = chef_vault_item('secrets', 'pgbackrest')["s3"]
+
+  s3_details = {
+    enabled: true,
+    bucket: s3_secrets["bucket"],
+    endpoint: s3_secrets["endpoint"],
+    access_key: s3_secrets["access_key"],
+    secret_key: s3_secrets["secret_key"],
+    region: s3_secrets["region"]
+  }
+  repo_path = "/pgbackrest/#{node.name}/"
+end
+
 # Update pgbackrest configuration
 cipher_pass = chef_vault_item('secrets', 'pgbackrest')['cipher_pass']
 
@@ -86,12 +113,14 @@ template '/etc/pgbackrest.conf' do
   group 'postgres'
   variables({
     repo_cipher_pass: cipher_pass,
-    repo_path: '/db-pool/pgbackrest',
+    repo_path: repo_path,
+    s3: s3_details,
     clusters: [{
       name: 'main',
       dbpath: node['postgresql']['data_directory']
     }]
   })
+  sensitive true
 end
 
 # Create pgbackrest repository
