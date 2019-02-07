@@ -100,7 +100,7 @@ if ChefVault::Item.vault?('secrets', 'pgbackrest')
     secret_key: s3_secrets["secret_key"],
     region: s3_secrets["region"]
   }
-  repo_path = "/pgbackrest/#{node.name}/"
+  repo_path = "/pgbackrest/#{node.name}"
 end
 
 # Update pgbackrest configuration
