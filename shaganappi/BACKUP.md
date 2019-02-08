@@ -40,7 +40,9 @@ The first step is to edit the cron file to temporarily disable backups during th
 
 You must restore the same version of PostgreSQL as the backup. It isn't too difficult to manage multiple versions of Postgres on Debian/Ubuntu using `pg_lsclusters` and [its related commands](https://wiki.debian.org/PostgreSql). After restoring to the same version, you can upgrade or do a dump to a different version in a different cluster.
 
-You may need to initialize a new pgbackrest configuration file with the S3 connection details, so that pgbackrest can connect and restore the database. Here is a sample config that could be used as a base:
+**Note**: Restoring directly from S3 seems to be broken (see [issue](https://github.com/pgbackrest/pgbackrest/issues/669)). Instead, we will download the archive from S3 to the local machine and do a local repository restore using pgbackrest. After the restore is confirmed to be working, backup to S3 can be re-enabled.
+
+Create a new pgbackrest configuration file with the local repository location. Here is a sample config that could be used as a base:
 
 ```
 [global]
@@ -48,37 +50,70 @@ You may need to initialize a new pgbackrest configuration file with the S3 conne
 repo1-cipher-pass=<%= @repo_cipher_pass %>
 # The encryption cipher
 repo1-cipher-type=aes-256-cbc
-# The path in S3 for the backups
-repo1-path=<%= @repo_path %>
+repo1-path=/db-pool/pgbackrest-s3/shaganappi-staging
 repo1-retention-full=2
 start-fast=y
 stop-auto=y
-# The S3 bucket name, NOT the ARN
-repo1-s3-bucket=<%= @s3[:bucket] %>
-# The domain for the S3 endpoint, must be specific to the
-# correct region!
-repo1-s3-endpoint=<%= @s3[:endpoint] %>
-# host must be the same as the endpoint or else you will get
-# TLS errors
-repo1-s3-host=<%= @s3[:endpoint] %>
-# AWS IAM Access Key ID that can read from the bucket
-repo1-s3-key=<%= @s3[:access_key] %>
-# AWS IAM Secret Key that can read from the bucket
-repo1-s3-key-secret=<%= @s3[:secret_key] %>
-# AWS S3 Region: default is 'us-east-1'
-repo1-s3-region=<%= @s3[:region] %>
-repo1-type=s3
 
 # Default cluster is 'main'
-[<%= cluster[:name] %>]
+[main]
 # The path where the database is stored on disk,
 # use `pg_lsclusters` to find the default ones
-db-path=<%= cluster[:dbpath] %>
+db-path=/db-pool/postgresql/11/main
 ```
 
-The vaules for the [ERB](https://en.wikipedia.org/wiki/ERuby) tags are stored in an encrypted file, contact James Badger for that information.
+(Contact James Badger for the cipher password.)
 
-It is probably possible to download the S3 directory to disk, and use a *local* pgbackrest repository to do the restore; I haven't tried it yet.
+Next, create the `/db-pool/pgbackrest-s3` directory. From S3, download the `/pgbackrest/shaganappi-staging` directory into `/db-pool/pgbackrest-s3` — the name should match the node you want to restore from. If it is different, the configuration file must also be updated.
 
-TODO: How to download/decrypt the backup and load the backup into a new or existing PostgreSQL database cluster
+I recommend [using the S3 CLI to download from the bucket](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html).
+
+Once downloaded, you get verify that pgbackrest can see the backup:
+
+```terminal
+$ sudo -u postgres pgbackrest info
+stanza: main
+    status: ok
+    cipher: aes-256-cbc
+
+    db (current)
+        wal archive min/max (11-1): 000000010000000000000006 / 000000010000000000000007
+
+        full backup: 20190207-213945F
+            timestamp start/stop: 2019-02-07 21:39:45 / 2019-02-07 21:49:16
+            wal start/stop: 000000010000000000000006 / 000000010000000000000006
+            database size: 30.1MB, backup size: 30.1MB
+            repository size: 3.6MB, repository backup size: 3.6MB
+```
+
+If there are errors, check the paths in your configuration file.
+
+Next, shut down your local Postgres cluster.
+
+```terminal
+$ sudo pg_ctlcluster 11 main stop
+```
+
+If you are doing a FULL restore, then delete the contents of the PG data directory. If you are doing a DELTA restore, skip this step!
+
+```terminal
+$sudo -u postgres pgbackrest --log-level-console=info --stanza=main restore
+```
+
+If you want to do a smaller restore, or a point-in-time-recovery, see the [pgbackrest user guide](https://pgbackrest.org/user-guide.html#pitr).
+
+The restore should work fairly quickly with the backup being on the local disk. Once done, try starting Postgres.
+
+```terminal
+$ sudo pg_ctlcluster 11 main start
+```
+
+If it starts without any errors, great! If not, check the log using `journalctl -xe` and see what went wrong.
+
+If the restore worked, you can now re-enable the backup automation:
+
+1. Update the pgbackrest configuration file to backup to S3
+2. Delete the local copy of the S3 data in `/db-pool/pgbackrest-s3`
+3. Try running a manual backup using `sudo -u postgres pgbackrest --stanza=main --log-level-console=info backup`
+4. Restore the pgbackrest cron file by running `sudo chef-client`
 
