@@ -89,8 +89,9 @@ s3_details = {
 }
 repo_path = '/db-pool/pgbackrest'
 
-if ChefVault::Item.vault?('secrets', 'pgbackrest')
-  s3_secrets = chef_vault_item('secrets', 'pgbackrest')["s3"]
+if ChefVault::Item.vault?('secrets', 'pgbackrest')  && node['pgbackrest']['s3_enabled']
+
+  s3_secrets = chef_vault_item('secrets', 'pgbackrest')['s3']
 
   s3_details = {
     enabled: true,
