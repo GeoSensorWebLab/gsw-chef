@@ -168,7 +168,12 @@ end
 apps = search(:apps, "*:*")
 
 apps.each do |app|
-  d_app = chef_vault_item('apps', app["id"])
+  begin
+    d_app = chef_vault_item('apps', app["id"])
+  rescue ChefVault::Exceptions::SecretDecryption
+    # If we cannot decrypt, then skip the item
+    next
+  end
 
   db = d_app["database"]
   
