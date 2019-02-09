@@ -28,7 +28,7 @@ $ bundle exec knife cookbook upload . -ad -o ../berks-cookbooks
 ...
 $ knife cookbook list
 ...
-shaganappi    0.2.0
+shaganappi    0.3.0
 ```
 
 Below is a quick set of commands for bootstrapping a node with this cookbook, using Chef Server. See the section below for more details on the vault items.

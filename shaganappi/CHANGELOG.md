@@ -1,5 +1,11 @@
 # Changelog for shaganappi
 
+## v0.3.0
+
+* Fix bug where `postgres` user was used before being created by a PostgreSQL installation
+* Add support for using Amazon S3 as a backup repository for `pgbackrest`
+* Add attribute to toggle S3 backups on or off
+* Update backup and restore guide for modified restoration from S3
 
 ## v0.2.0
 
