@@ -190,3 +190,6 @@ apps.each do |app|
     end
   end
 end
+
+# Install NTP for local clock synchronization
+package 'ntp'

@@ -8,7 +8,7 @@ Cookbook for setting up a node with a database server that can be accessed by mu
 * Database users
 * Automated encrypted backups (see [BACKUP.md](BACKUP.md))
 * Upload backups to Amazon S3
-* WIP: Local-only NTP service for clock synchronization
+* Local-only NTP service for clock synchronization
 * WIP: Munin Node results pushed to Munin primary server
 * WIP: Icinga 2 results pushed to Icinga primary server
 
