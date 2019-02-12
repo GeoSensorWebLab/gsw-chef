@@ -282,6 +282,7 @@ template '/etc/icingaweb2/modules/monitoring/commandtransports.ini' do
   variables({
     password: icingaweb_rest_password
   })
+  sensitive true
 end
 
 template '/etc/icingaweb2/roles.ini' do
