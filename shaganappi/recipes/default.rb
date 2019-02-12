@@ -193,3 +193,32 @@ end
 
 # Install NTP for local clock synchronization
 package 'ntp'
+
+# Install/Configure Munin Node Agent
+package 'munin-node'
+
+# Install/Configure Munin Node (for this node/machine)
+# libwww-perl enables Apache plugins for Munin
+package 'libwww-perl'
+
+# libdbd-pg-perl enables Postgresql plugins for Munin
+package 'libdbd-pg-perl'
+
+execute 'update munin-node configuration' do
+  command 'munin-node-configure --shell | sh'
+end
+
+# Servers that are allowed to connect to this munin-node instance
+servers = search(:node, "name:crowchild")
+
+template '/etc/munin/munin-node.conf' do
+  source 'munin-node.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '644'
+  variables(servers: servers)
+end
+
+service 'munin-node' do
+  action :restart
+end

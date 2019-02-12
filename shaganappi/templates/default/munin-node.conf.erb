@@ -1,0 +1,46 @@
+# This file is managed by Chef
+
+# Configure logging
+log_level 4
+log_file /var/log/munin/munin-node.log
+pid_file /var/run/munin/munin-node.pid
+
+# Run in the background
+background 1
+setsid 1
+
+# Run as root
+user root
+group root
+
+# Regexps for files to ignore
+ignore_file ~$
+ignore_file DEADJOE$ 
+ignore_file \.bak$
+ignore_file %$
+ignore_file \.dpkg-(tmp|new|old|dist)$
+ignore_file \.rpm(save|new)$
+ignore_file \.pod$
+
+# To avoid the names of databases from being published in munin, they
+# are ignored. "ALL" plugins are okay though.
+ignore_file postgres_connections_(?!ALL).*$
+ignore_file postgres_locks_(?!ALL).*$
+ignore_file postgres_querylength_(?!ALL).*$
+ignore_file postgres_scans_(?!ALL).*$
+ignore_file postgres_size_(?!ALL).*$
+ignore_file postgres_transactions_(?!ALL).*$
+ignore_file postgres_tuples_.+$
+
+# Set the hostname
+host_name <%= node[:name] -%>
+
+# List on port 4949 on all interfaces
+host *
+port 4949
+
+# List the addresses that are allowed to connect
+allow ^127\.0\.0\.1$
+<% @servers.each do |server| -%>
+allow ^<%= Regexp.quote(server[:ip6address]) %>$
+<% end -%>

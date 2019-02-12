@@ -9,7 +9,7 @@ Cookbook for setting up a node with a database server that can be accessed by mu
 * Automated encrypted backups (see [BACKUP.md](BACKUP.md))
 * Upload backups to Amazon S3
 * Local-only NTP service for clock synchronization
-* WIP: Munin Node results pushed to Munin primary server
+* Munin Node results pushed to Munin primary server
 * WIP: Icinga 2 results pushed to Icinga primary server
 
 Databases and users will be created from encrypted Chef Data Bags stored on the Chef Server. If the database and/or user already exists, a new one will not be created.
