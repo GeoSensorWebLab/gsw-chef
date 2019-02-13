@@ -1,5 +1,12 @@
 # Changelog for crowchild
 
+## v0.3.1
+
+* Do not do a host check on self for Icinga 2
+* Add a plugin to check expiration of domain names
+* Mark some Chef directives as sensitive to prevent logging
+* Query certain nodes for munin data
+
 ## v0.3.0
 
 * Put munin and icinga web 2 under same domain virtual host

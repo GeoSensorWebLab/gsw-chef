@@ -6,7 +6,7 @@ description      'Installs/Configures crowchild'
 long_description 'Installs/Configures crowchild'
 # issues_url 'https://github.com/<insert_org_here>/crowchild/issues' if respond_to?(:issues_url)
 # source_url 'https://github.com/<insert_org_here>/crowchild' if respond_to?(:source_url)
-version          '0.3.0'
+version          '0.3.1'
 privacy          true
 
 # Public Cookbooks
