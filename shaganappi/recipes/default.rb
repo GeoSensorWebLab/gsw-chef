@@ -204,8 +204,53 @@ package 'libwww-perl'
 # libdbd-pg-perl enables Postgresql plugins for Munin
 package 'libdbd-pg-perl'
 
-execute 'update munin-node configuration' do
-  command 'munin-node-configure --shell | sh'
+# Explicitly specify the list of plugins to use for Munin, instead of
+# using munin-node-configure as we want to avoid leaking database names
+# in the plugin names.
+munin_plugin_dir = '/usr/share/munin/plugins'
+active_plugin_dir = '/etc/munin/plugins'
+
+# Wipe the munin plugin directory before it is populated
+directory active_plugin_dir do
+  action :delete
+  recursive true
+end
+
+directory active_plugin_dir do
+  action :create
+  user 'root'
+  group 'munin'
+  mode '755'
+end
+
+# Simple plugins that don't have variants
+plugins_to_activate = %w(cpu df df_inode diskstats entropy forks 
+  fw_packets interrupts irqstats load memory netstat ntp_kernel_err
+  ntp_kernel_pll_freq ntp_kernel_pll_off ntp_offset open_files
+  open_inodes postgres_autovacuum postgres_bgwriter 
+  postgres_checkpoints postgres_users postgres_xlog proc_pri processes
+  swap threads uptime users vmstat)
+
+# Advanced plugins that have custom-named links
+plugins_to_activate.push(
+  %W(if_ if_#{node['network']['default_interface']}),
+  %W(if_err_ if_err_#{node['network']['default_interface']}),
+  %W(postgres_cache_ postgres_cache_ALL)
+)
+
+plugins_to_activate.each do |plugin|
+  if plugin.is_a?(Array)
+    link "#{active_plugin_dir}/#{plugin[1]}" do
+      to "#{munin_plugin_dir}/#{plugin[0]}"
+      link_type :symbolic
+    end
+  else
+    link "#{active_plugin_dir}/#{plugin}" do
+      to "#{munin_plugin_dir}/#{plugin}"
+      link_type :symbolic
+    end
+  end
+
 end
 
 # Servers that are allowed to connect to this munin-node instance

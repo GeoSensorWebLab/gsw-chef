@@ -22,16 +22,6 @@ ignore_file \.dpkg-(tmp|new|old|dist)$
 ignore_file \.rpm(save|new)$
 ignore_file \.pod$
 
-# To avoid the names of databases from being published in munin, they
-# are ignored. "ALL" plugins are okay though.
-ignore_file postgres_connections_(?!ALL).*$
-ignore_file postgres_locks_(?!ALL).*$
-ignore_file postgres_querylength_(?!ALL).*$
-ignore_file postgres_scans_(?!ALL).*$
-ignore_file postgres_size_(?!ALL).*$
-ignore_file postgres_transactions_(?!ALL).*$
-ignore_file postgres_tuples_.+$
-
 # Set the hostname
 host_name <%= node[:name] -%>
 
