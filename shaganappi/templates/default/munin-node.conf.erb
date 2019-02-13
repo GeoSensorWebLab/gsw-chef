@@ -43,4 +43,5 @@ port 4949
 allow ^127\.0\.0\.1$
 <% @servers.each do |server| -%>
 allow ^<%= Regexp.quote(server[:ip6address]) %>$
+allow ^<%= Regexp.quote(server[:ipaddress]) %>$
 <% end -%>
