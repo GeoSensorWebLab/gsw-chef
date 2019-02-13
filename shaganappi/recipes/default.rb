@@ -228,7 +228,7 @@ plugins_to_activate = %w(cpu df df_inode diskstats entropy forks
   fw_packets interrupts irqstats load memory netstat ntp_kernel_err
   ntp_kernel_pll_freq ntp_kernel_pll_off ntp_offset open_files
   open_inodes postgres_autovacuum postgres_bgwriter 
-  postgres_checkpoints postgres_users postgres_xlog proc_pri processes
+  postgres_checkpoints postgres_xlog proc_pri processes
   swap threads uptime users vmstat)
 
 # Advanced plugins that have custom-named links
