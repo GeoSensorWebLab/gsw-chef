@@ -398,8 +398,21 @@ unless node['crowchild']['ignore_real_certs']
   end
 end
 
+# Select all hosts that have munin-node installed
+# I tried to do a node search for nodes that have 'munin-node' installed
+# but for an unknown reason only the 'crowchild' node shows up.
+munin_nodes = ['shaganappi']
+munin_hosts = search(:node, "*:*")
+
+munin_hosts = munin_hosts.select { |n|
+  munin_nodes.include?(n[:name])
+}
+
 template '/etc/munin/munin.conf' do
   source 'munin.conf.erb'
+  variables({
+    hosts: munin_hosts
+  })
 end
 
 # Install/Configure Munin Node (for this node/machine)
