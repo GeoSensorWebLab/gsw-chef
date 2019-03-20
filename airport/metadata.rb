@@ -13,4 +13,4 @@ privacy          true
 # depends 'user'
 
 # Private Cookbooks
-# depends 'gsw-apt-mirror'
+depends 'maps_server'

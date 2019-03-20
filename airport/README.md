@@ -9,6 +9,8 @@ Cookbook for setting up a node with web map generation services:
 * Munin Node
 * Local-only NTP service for clock synchronization
 
+Mapping setup provided using ["maps server"](https://github.com/openfirmware/maps_server) cookbook.
+
 ## Supported Platforms
 
 * Ubuntu Server 18.04 LTS

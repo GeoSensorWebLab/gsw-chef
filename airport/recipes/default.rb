@@ -15,3 +15,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+include_recipe 'maps_server::base_monitoring'
+include_recipe 'maps_server::default'
+include_recipe 'maps_server::monitoring'
+include_recipe 'maps_server::openstreetmap_carto'
