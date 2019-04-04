@@ -5,6 +5,7 @@ Cookbook for setting up a node with web map generation services:
 * PostgreSQL and PostGIS
 * Apache 2 with mod_tile/renderd
 * Default OpenStreetMap stylesheet
+* Arctic Web Map stylesheet v2.0
 * Munin (https://monitoring.gswlab.ca/munin/)
 * Munin Node
 * Local-only NTP service for clock synchronization
