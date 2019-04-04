@@ -18,5 +18,6 @@
 
 include_recipe 'maps_server::base_monitoring'
 include_recipe 'maps_server::default'
-include_recipe 'maps_server::monitoring'
 include_recipe 'maps_server::openstreetmap_carto'
+include_recipe 'maps_server::arcticwebmap'
+include_recipe 'maps_server::monitoring'
