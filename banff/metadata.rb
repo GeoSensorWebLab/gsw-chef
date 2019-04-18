@@ -10,9 +10,9 @@ version          '0.1.0'
 privacy          true
 
 # Public Cookbooks
-depends 'acme', '~> 2.0.0'
+depends 'acme'
 depends 'apt'
-depends 'user'
+depends 'docker'
 
 # Private Cookbooks
 # depends 'gsw-apt-mirror'

@@ -3,4 +3,7 @@ source 'https://supermarket.chef.io'
 metadata
 
 # List Private Cookbooks (not from Chef supermarket) here
-# 
+# We install chef-acme from GitHub until 4.0.1 is released
+cookbook 'acme', git: 'https://github.com/schubergphilis/chef-acme',
+                 ref: '5bd8e5ccdc2b9aa3dfbecc0a96955756127abb5e'
+cookbook 'letsencrypt-boulder-server', git: 'https://github.com/patcon/chef-letsencrypt-boulder-server'

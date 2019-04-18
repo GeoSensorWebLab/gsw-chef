@@ -16,18 +16,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'user::data_bag'
+include_recipe 'acme::default'
 
 # Configure the apt repository for nginx
 apt_repository 'nginx' do
   uri          'http://nginx.org/packages/mainline/ubuntu/'
   components   ['nginx']
   deb_src      true
-  distribution node[:lsb][:codename]
+  distribution node['lsb']['codename']
   key          'http://nginx.org/keys/nginx_signing.key'
 end
 
-# Set up self-signed SSL certificates so HAProxy can load
+# Set up self-signed SSL certificates so nginx can load
 include_recipe 'acme::default'
 
 directory '/etc/ssl/letsencrypt' do
@@ -39,9 +39,10 @@ end
 
 # Create self-signed cert for each HTTPS domain
 # self-signed are needed to start nginx if existing certs don't exist
-node[:banff][:https_domains].each do |domain|
+node['banff']['https_domains'].each do |domain|
   acme_selfsigned domain do
-    chain   "/etc/ssl/letsencrypt/#{domain}.crt"
+    crt     "/etc/ssl/letsencrypt/#{domain}.crt"
+    chain   "/etc/ssl/letsencrypt/#{domain}-chain.crt"
     key     "/etc/ssl/letsencrypt/#{domain}.key"
     owner   'www-data'
   end
@@ -63,6 +64,7 @@ end
 directory '/scratch/nginx' do
   owner 'nginx'
   group 'nginx'
+  recursive true
   action :create
 end
 
@@ -87,7 +89,7 @@ service 'nginx' do
 end
 
 # Create real certificates for https domains
-node[:banff][:https_domains].each do |ssl_domain|
+node['banff']['https_domains'].each do |ssl_domain|
   # Delete cert and key if they are self-signed, so that LE can generate new
   # ones. This openssl command will return 0 if the cert is self-signed.
   bash 'remove self-signed' do
@@ -101,7 +103,7 @@ node[:banff][:https_domains].each do |ssl_domain|
   end
 
   acme_certificate ssl_domain do
-    fullchain "/etc/ssl/letsencrypt/#{ssl_domain}.crt"
+    crt       "/etc/ssl/letsencrypt/#{ssl_domain}.crt"
     key       "/etc/ssl/letsencrypt/#{ssl_domain}.key"
     alt_names ["a.#{ssl_domain}", "b.#{ssl_domain}", "c.#{ssl_domain}"]
     owner     'www-data'

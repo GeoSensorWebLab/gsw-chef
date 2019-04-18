@@ -17,15 +17,13 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[acme::acme_server]
-      - recipe[banff::default]
+      - recipe[banff::acme_server]
+      # - recipe[banff::default]
     verifier:
       inspec_tests:
         - test/smoke/default
     attributes:
-      boulder:
-        revision: 2d33a9900cafe82993744fe73bd341fe47df2171
       acme:
-        endpoint: http://127.0.0.1:4000
+        dir: https://127.0.0.2:14000/dir
         contact:
           - mailto:admin@example.com

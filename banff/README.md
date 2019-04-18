@@ -2,7 +2,6 @@
 
 Cookbook for setting up a node with web map generation services:
 
-* User databags
 * Nginx reverse caching proxy
 * Let's Encrypt certificates
 
