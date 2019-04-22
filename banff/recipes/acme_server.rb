@@ -52,7 +52,7 @@ end
 # Because the Dockerfile uses COPY, we can't use docker_image!
 bash 'build pebble image' do
   code <<-EOH
-  docker build --tag pebble:#{node["pebble"]["version"]} --file docker/pebble/Dockerfile .
+  docker build --tag pebble:#{node["pebble"]["version"]} --file #{dockerfile_path} .
   EOH
   cwd '/opt/src/pebble'
 end

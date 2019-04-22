@@ -13,4 +13,4 @@ default["certbot"]["keyserver"] = "na.pool.sks-keyservers.net"
 default["certbot"]["prefix"] = "/opt/src/certbot"
 
 default["pebble"]["repository"] = "https://github.com/letsencrypt/pebble"
-default["pebble"]["version"] = "v1.0.1"
+default["pebble"]["version"] = "v2.0.2"

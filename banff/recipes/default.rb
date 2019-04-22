@@ -52,11 +52,13 @@ bash 'verify certbot-auto' do
     gpg --trusted-key 4D17C995CD9775F2 --verify certbot-auto.asc certbot-auto
   EOH
   cwd node["certbot"]["prefix"]
+  user 'root'
 end
 
 execute 'install certbot' do
   command "#{certbot_auto} --non-interactive --install-only"
   cwd node["certbot"]["prefix"]
+  user 'root'
 end
 
 directory '/etc/ssl/letsencrypt/live' do
