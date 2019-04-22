@@ -46,11 +46,9 @@ remote_file "#{node["certbot"]["prefix"]}/certbot-auto.asc" do
   action :create
 end
 
-# You may have to use a different key server from the pool:
-# https://sks-keyservers.net/overview-of-pools.php
 bash 'verify certbot-auto' do
   code <<-EOH
-    gpg --keyserver na.pool.sks-keyservers.net --recv-key A2CFB51FA275A7286234E7B24D17C995CD9775F2
+    gpg --keyserver #{node["certbot"]["keyserver"]} --recv-key A2CFB51FA275A7286234E7B24D17C995CD9775F2
     gpg --trusted-key 4D17C995CD9775F2 --verify certbot-auto.asc certbot-auto
   EOH
   cwd node["certbot"]["prefix"]
@@ -126,15 +124,14 @@ end
 
 # Create real certificates for https domains
 # Do not use SSL certificate verification with local testing server.
+verify = ""
 if node['acme']['dir'] == "https://127.0.0.1:14000/dir"
   verify = "--no-verify-ssl"
-else
-  verify = ""
 end
 
 execute "certbot" do
   command <<-EOH
-  #{certbot_auto} certonly --noninteractive --agree-tos -m jpbadger@ucalgary.ca \
+  #{certbot_auto} certonly --noninteractive --agree-tos -m #{node["acme"]["email"]} \
     --webroot --webroot-path /var/www/html \
     --domains #{node['banff']['https_domains'].join(",")} \
     --keep-until-expiring --expand --renew-with-new-domains \
