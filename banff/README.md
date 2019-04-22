@@ -11,8 +11,6 @@ Cookbook for setting up a node with web map generation services:
 
 ## Usage
 
-## gsw-cookbook-template
-
 Include `banff` in your node's `run_list`:
 
 ```json
@@ -22,6 +20,18 @@ Include `banff` in your node's `run_list`:
   ]
 }
 ```
+
+### `banff` recipe
+
+Sets up the node with Nginx for a reverse proxy to one or more upstream tile servers (hard-coded).
+
+Installs `certbot-auto` to automate certificates from "Let's Encrypt". This is needed to provide tiles under HTTPS, which browsers require for some geo-location features.
+
+### `acme_server` recipe
+
+This recipe is for testing locally only with Test Kitchen. The recipe will install Docker and set up a container running [`pebble`][1]. Do not use this in production!
+
+[1]: https://github.com/letsencrypt/pebble
 
 ## Attributes
 
@@ -33,10 +43,10 @@ Include `banff` in your node's `run_list`:
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['banff']['property']</tt></td>
-    <td>String</td>
-    <td>Description</td>
-    <td><tt>default value</tt></td>
+    <td><tt>['banff']['https_domains']</tt></td>
+    <td>Array (String)</td>
+    <td>List of domains for which to request certificates from "Let's Encrypt". The DNS for these domains <strong>must</strong> point to this server.</td>
+    <td><tt>["arctic-web-map-tiles.gswlab.ca"]</tt></td>
   </tr>
 </table>
 
