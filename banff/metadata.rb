@@ -10,7 +10,6 @@ version          '0.1.0'
 privacy          true
 
 # Public Cookbooks
-depends 'acme'
 depends 'apt'
 depends 'docker'
 

@@ -18,12 +18,12 @@ suites:
   - name: default
     run_list:
       - recipe[banff::acme_server]
-      # - recipe[banff::default]
+      - recipe[banff::default]
     verifier:
       inspec_tests:
         - test/smoke/default
     attributes:
       acme:
-        dir: https://127.0.0.2:14000/dir
+        dir: https://127.0.0.1:14000/dir
         contact:
           - mailto:admin@example.com

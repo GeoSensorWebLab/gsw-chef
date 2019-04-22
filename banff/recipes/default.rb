@@ -16,8 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'acme::default'
-
 # Configure the apt repository for nginx
 apt_repository 'nginx' do
   uri          'http://nginx.org/packages/mainline/ubuntu/'
@@ -27,24 +25,62 @@ apt_repository 'nginx' do
   key          'http://nginx.org/keys/nginx_signing.key'
 end
 
-# Set up self-signed SSL certificates so nginx can load
-include_recipe 'acme::default'
+apt_update
 
-directory '/etc/ssl/letsencrypt' do
+# Install certbot auto instead of package, to get the latest version
+directory node["certbot"]["prefix"] do
+  recursive true
+  action :create
+end
+
+certbot_auto = "#{node["certbot"]["prefix"]}/certbot-auto"
+
+remote_file certbot_auto do
+  source 'https://dl.eff.org/certbot-auto'
+  mode '0755'
+  action :create
+end
+
+remote_file "#{node["certbot"]["prefix"]}/certbot-auto.asc" do
+  source 'https://dl.eff.org/certbot-auto.asc'
+  action :create
+end
+
+# You may have to use a different key server from the pool:
+# https://sks-keyservers.net/overview-of-pools.php
+bash 'verify certbot-auto' do
+  code <<-EOH
+    gpg --keyserver na.pool.sks-keyservers.net --recv-key A2CFB51FA275A7286234E7B24D17C995CD9775F2
+    gpg --trusted-key 4D17C995CD9775F2 --verify certbot-auto.asc certbot-auto
+  EOH
+  cwd node["certbot"]["prefix"]
+end
+
+execute 'install certbot' do
+  command "#{certbot_auto} --non-interactive --install-only"
+  cwd node["certbot"]["prefix"]
+end
+
+directory '/etc/ssl/letsencrypt/live' do
   owner 'root'
   group 'root'
   mode '0755'
+  recursive true
   action :create
 end
 
 # Create self-signed cert for each HTTPS domain
 # self-signed are needed to start nginx if existing certs don't exist
 node['banff']['https_domains'].each do |domain|
-  acme_selfsigned domain do
-    crt     "/etc/ssl/letsencrypt/#{domain}.crt"
-    chain   "/etc/ssl/letsencrypt/#{domain}-chain.crt"
-    key     "/etc/ssl/letsencrypt/#{domain}.key"
-    owner   'www-data'
+  openssl_x509_certificate "/etc/ssl/letsencrypt/live/#{domain}.crt" do
+    common_name domain
+    expire 30
+    owner 'www-data'
+    not_if { ::File.exist?("/etc/ssl/letsencrypt/live/#{domain}.crt") }
+  end
+
+  file "/etc/ssl/letsencrypt/live/#{domain}.key" do
+    action :touch
   end
 end
 
@@ -89,26 +125,21 @@ service 'nginx' do
 end
 
 # Create real certificates for https domains
-node['banff']['https_domains'].each do |ssl_domain|
-  # Delete cert and key if they are self-signed, so that LE can generate new
-  # ones. This openssl command will return 0 if the cert is self-signed.
-  bash 'remove self-signed' do
-    cwd '/etc/ssl/letsencrypt'
-    code <<-EOH
-      openssl verify -CAfile #{ssl_domain}.crt #{ssl_domain}.crt 2> /dev/null
-      if [ $? -eq 0 ]; then
-        rm #{ssl_domain}.crt #{ssl_domain}.key
-      fi
-      EOH
-  end
+# Do not use SSL certificate verification with local testing server.
+if node['acme']['dir'] == "https://127.0.0.1:14000/dir"
+  verify = "--no-verify-ssl"
+else
+  verify = ""
+end
 
-  acme_certificate ssl_domain do
-    crt       "/etc/ssl/letsencrypt/#{ssl_domain}.crt"
-    key       "/etc/ssl/letsencrypt/#{ssl_domain}.key"
-    alt_names ["a.#{ssl_domain}", "b.#{ssl_domain}", "c.#{ssl_domain}"]
-    owner     'www-data'
-    wwwroot   '/var/www/html'
-  end
+execute "certbot" do
+  command <<-EOH
+  #{certbot_auto} certonly --noninteractive --agree-tos -m jpbadger@ucalgary.ca \
+    --webroot --webroot-path /var/www/html \
+    --domains #{node['banff']['https_domains'].join(",")} \
+    --keep-until-expiring --expand --renew-with-new-domains \
+    --rsa-key-size 2048 --server #{node['acme']['dir']} #{verify}
+  EOH
 end
 
 service 'nginx' do

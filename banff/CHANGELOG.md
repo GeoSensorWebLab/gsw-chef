@@ -1,4 +1,4 @@
-# Changelog for gsw-cookbook-template
+# Changelog for banff
 
 
 ## v0.1.0

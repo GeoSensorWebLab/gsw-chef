@@ -21,7 +21,8 @@ docker_service 'default' do
   action [:create, :start]
 end
 
-docker_network 'acme' do
+docker_network 'acmenet' do
+  subnet ['10.30.50.0/24']
 end
 
 directory '/opt/src/' do
@@ -30,41 +31,39 @@ directory '/opt/src/' do
 end
  
 git '/opt/src/pebble' do
-  repository 'https://github.com/letsencrypt/pebble'
-  reference 'v2.0.2'
+  repository node["pebble"]["repository"]
+  reference node["pebble"]["version"]
 end
 
-# docker_image 'pebble' do
-#   tag 'v2.0.2'
-#   source '/opt/src/pebble/docker/pebble/linux.Dockerfile'
-#   action :build
-# end
+dockerfile_path = ""
+
+# The path to the Dockerfile is different for v1/v2
+if node["pebble"]["version"].match?(/^v1.+/)
+  dockerfile_path = "docker/pebble/Dockerfile"
+elsif node["pebble"]["version"].match?(/^v2.+/)
+  dockerfile_path = "docker/pebble/linux.Dockerfile"
+else
+  log 'unknown pebble version' do
+    level :warn
+  end
+  dockerfile_path = "docker/pebble/linux.Dockerfile"
+end
 
 # Because the Dockerfile uses COPY, we can't use docker_image!
 bash 'build pebble image' do
   code <<-EOH
-  docker build --tag pebble:v2.0.2 --file docker/pebble/linux.Dockerfile .
+  docker build --tag pebble:#{node["pebble"]["version"]} --file docker/pebble/Dockerfile .
   EOH
   cwd '/opt/src/pebble'
-
 end
 
 docker_container 'pebble' do
   repo 'pebble'
-  tag 'v2.0.2'
+  tag node["pebble"]["version"]
   # HTTPS ACME API
-  port '14000:14000'
-  network_mode 'acme'
+  port ['14000:14000']
+  network_mode 'acmenet'
+  ip_address '10.30.50.2'
   env ['PEBBLE_VA_NOSLEEP=1', 'PEBBLE_VA_ALWAYS_VALID=1', 'PEBBLE_WFE_NONCEREJECT=0']
-  command 'pebble -config /test/config/pebble-config.json -strict'
-end
-
-# Needed for the acme-client gem to continue connecting to pebble;
-# please do NOT do this on production Chef nodes!
-bash 'update Chef trusted certificates store' do
-  code <<-EOC
-  cat /opt/src/pebble/test/certs/pebble.minica.pem >> /opt/chef/embedded/ssl/certs/cacert.pem
-  touch /opt/chef/embedded/ssl/certs/PEBBLE-MINICA-IS-INSTALLED
-  EOC
-  creates '/opt/chef/embedded/ssl/certs/PEBBLE-MINICA-IS-INSTALLED'
+  command 'pebble -config /test/config/pebble-config.json -strict true'
 end

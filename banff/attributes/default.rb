@@ -4,10 +4,7 @@ default["banff"]["https_domains"] = [
   "arctic-web-map-tiles.gswlab.ca"
 ]                               
 
-# ACME
-default["acme"]["contact"] = "mailto:jamesbadger@gmail.com"
 default["acme"]["dir"] = "https://acme-v02.api.letsencrypt.org/directory"
-default["acme"]["renew"] = 30
-default["acme"]["private_key"] = nil
-default["acme"]["gem_version"] = "2.0.1"
-default["acme"]["key_size"]    = 2048
+default["certbot"]["prefix"] = "/opt/src/certbot"
+default["pebble"]["repository"] = "https://github.com/letsencrypt/pebble"
+default["pebble"]["version"] = "v1.0.1"
