@@ -61,26 +61,23 @@ execute 'install certbot' do
   user 'root'
 end
 
-directory '/etc/ssl/letsencrypt/live' do
-  owner 'root'
-  group 'root'
-  mode '0755'
-  recursive true
-  action :create
-end
-
 # Create self-signed cert for each HTTPS domain
 # self-signed are needed to start nginx if existing certs don't exist
 node['banff']['https_domains'].each do |domain|
-  openssl_x509_certificate "/etc/ssl/letsencrypt/live/#{domain}.crt" do
-    common_name domain
-    expire 30
-    owner 'www-data'
-    not_if { ::File.exist?("/etc/ssl/letsencrypt/live/#{domain}.crt") }
+  directory "/etc/letsencrypt/live/#{domain}" do
+    owner 'root'
+    group 'root'
+    mode '0755'
+    recursive true
+    action :create
   end
 
-  file "/etc/ssl/letsencrypt/live/#{domain}.key" do
-    action :touch
+  openssl_x509_certificate "/etc/letsencrypt/live/#{domain}/fullchain.pem" do
+    common_name domain
+    key_file "/etc/letsencrypt/live/#{domain}/privkey.pem"
+    expire 1
+    owner 'www-data'
+    not_if { ::File.exist?("/etc/letsencrypt/live/#{domain}/fullchain.pem") }
   end
 end
 
@@ -125,7 +122,6 @@ service 'nginx' do
   action [:enable, :start, :reload]
 end
 
-# Create real certificates for https domains
 # Do not use SSL certificate verification with local testing server.
 verify = ""
 if node['acme']['dir'] == "https://127.0.0.1:14000/dir"
