@@ -122,7 +122,7 @@ end
 
 # Reload nginx
 service 'nginx' do
-  action :reload
+  action [:enable, :start, :reload]
 end
 
 # Create real certificates for https domains
@@ -143,5 +143,5 @@ execute "certbot" do
 end
 
 service 'nginx' do
-  action [:enable, :start]
+  action :reload
 end
