@@ -138,7 +138,7 @@ execute "certbot" do
     --webroot --webroot-path /var/www/html \
     --domains #{node['banff']['https_domains'].join(",")} \
     --keep-until-expiring --expand --renew-with-new-domains \
-    --rsa-key-size 2048 --server #{node['acme']['dir']} #{verify}
+    --rsa-key-size 2048 --server "#{node['acme']['dir']}" #{verify}
   EOH
 end
 
