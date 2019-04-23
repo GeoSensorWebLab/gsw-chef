@@ -6,7 +6,7 @@ description      'Installs/Configures banff'
 long_description 'Installs/Configures banff'
 # issues_url 'https://github.com/<insert_org_here>/banff/issues' if respond_to?(:issues_url)
 # source_url 'https://github.com/<insert_org_here>/banff' if respond_to?(:source_url)
-version          '0.1.0'
+version          '0.2.0'
 privacy          true
 
 # Public Cookbooks
