@@ -112,11 +112,12 @@ cookbook_file '/etc/nginx/nginx.conf' do
   mode '0644'
 end
 
-cookbook_file '/etc/nginx/conf.d/default.conf' do
-  source 'default.conf'
+template '/etc/nginx/conf.d/default.conf' do
+  source 'default-site.conf.erb'
   owner 'nginx'
   group 'nginx'
   mode '0644'
+  variables(domains: node["banff"]["https_domains"])
 end
 
 # Reload nginx
@@ -142,5 +143,5 @@ execute "certbot" do
 end
 
 service 'nginx' do
-  action :reload
+  action [:enable, :start]
 end
