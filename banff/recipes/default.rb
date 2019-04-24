@@ -144,7 +144,7 @@ node['banff']['https_domains'].each do |domain|
     command <<-EOH
     #{certbot_auto} certonly --noninteractive --agree-tos -m #{node["acme"]["email"]} \
       --webroot --webroot-path /var/www/html \
-      --domains #{domain} \
+      --domains #{domain},a.#{domain},b.#{domain},c.#{domain} \
       --keep-until-expiring --expand --renew-with-new-domains \
       --rsa-key-size 2048 --server "#{node['acme']['dir']}" #{verify}
     EOH
