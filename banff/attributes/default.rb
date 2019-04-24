@@ -1,5 +1,5 @@
 default["banff"]["https_domains"] = [
-  # "tiles.arcticconnect.ca",
+  "tiles.arcticconnect.ca",
   # "tiles.arcticconnect.org",
   "arctic-web-map-tiles.gswlab.ca"
 ]                               

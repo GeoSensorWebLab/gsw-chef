@@ -128,14 +128,27 @@ if node['acme']['dir'] == "https://127.0.0.1:14000/dir"
   verify = "--no-verify-ssl"
 end
 
-execute "certbot" do
-  command <<-EOH
-  #{certbot_auto} certonly --noninteractive --agree-tos -m #{node["acme"]["email"]} \
-    --webroot --webroot-path /var/www/html \
-    --domains #{node['banff']['https_domains'].join(",")} \
-    --keep-until-expiring --expand --renew-with-new-domains \
-    --rsa-key-size 2048 --server "#{node['acme']['dir']}" #{verify}
-  EOH
+node['banff']['https_domains'].each do |domain|
+  # remove self-signed certificates
+  bash "remove self-signed" do
+    cwd "/etc/letsencrypt/live"
+    code <<-EOH
+      openssl verify "#{domain}/fullchain.pem" 2>&1 | grep -q "self signed"
+      if [ $? -eq 0 ]; then
+        rm -rf "/etc/letsencrypt/live/#{domain}"
+      fi
+      EOH
+  end
+
+  execute "certbot" do
+    command <<-EOH
+    #{certbot_auto} certonly --noninteractive --agree-tos -m #{node["acme"]["email"]} \
+      --webroot --webroot-path /var/www/html \
+      --domains #{domain} \
+      --keep-until-expiring --expand --renew-with-new-domains \
+      --rsa-key-size 2048 --server "#{node['acme']['dir']}" #{verify}
+    EOH
+  end
 end
 
 service 'nginx' do
