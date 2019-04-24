@@ -1,11 +1,3 @@
-upstream tilemaker {
-    server gsw-data.gswlab.ca;
-}
-
-upstream airport {
-    server airport.gswlab.ca;
-}
-
 # HTTP
 server {
     listen       80;
@@ -21,20 +13,8 @@ server {
         alias /var/www/html/.well-known/acme-challenge/;
     }
 
-    location ^~ /awm/ {
-        proxy_pass http://airport$request_uri;
-        proxy_cache cache;
-        proxy_cache_key       "$request_uri";
-        proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
-        proxy_connect_timeout 3s;
-        proxy_read_timeout    60s;
-        proxy_send_timeout    60s;
-        proxy_set_header      X-Real-IP       $remote_addr;
-        proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-
     location / {
-        proxy_pass http://tilemaker$request_uri;
+        proxy_pass http://airport.gswlab.ca$request_uri;
         proxy_cache cache;
         proxy_cache_key       "$request_uri";
         proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
@@ -68,20 +48,8 @@ server {
 
     resolver 1.1.1.1 1.0.0.1;
 
-    location /awm/ {
-        proxy_pass http://airport$request_uri;
-        proxy_cache cache;
-        proxy_cache_key       "$request_uri";
-        proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
-        proxy_connect_timeout 3s;
-        proxy_read_timeout    60s;
-        proxy_send_timeout    60s;
-        proxy_set_header      X-Real-IP       $remote_addr;
-        proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-
     location / {
-        proxy_pass http://tilemaker$request_uri;
+        proxy_pass http://airport.gswlab.ca$request_uri;
         proxy_cache cache;
         proxy_cache_key       "$request_uri";
         proxy_cache_use_stale error timeout invalid_header updating http_500 http_502 http_503 http_504;
