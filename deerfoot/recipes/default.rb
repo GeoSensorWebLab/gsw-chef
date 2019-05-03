@@ -66,7 +66,34 @@ bash "extract Tomcat" do
     not_if { ::File.exists?(tomcat_home) }
 end
 
+# Source: https://gist.github.com/ovichiro/d24c53ce4902ef41cc208efeadd596b6
+systemd_unit 'tomcat.service' do
+  content <<-EOU.gsub(/^\s+/, '')
+  [Unit]
+  Description=Apache Tomcat Web Application Container
+  After=syslog.target network.target
 
+  [Service]
+  Type=forking
+  User=tomcat
+  Group=tomcat
+
+  Environment=JAVA_HOME=#{java_home}
+  Environment=CATALINA_PID=#{tomcat_home}/temp/tomcat.pid
+  Environment=CATALINA_HOME=#{tomcat_home}
+  Environment=CATALINA_BASE=#{tomcat_home}
+  Environment=CATALINA_OPTS=
+  Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Xms256m -Xmx2g"
+
+  ExecStart=#{tomcat_home}/bin/startup.sh
+  ExecStop=/bin/kill -15 $MAINPID
+
+  [Install]
+  WantedBy=multi-user.target
+  EOU
+
+  action [:create, :enable]
+end
 
 # Install GDAL
 
