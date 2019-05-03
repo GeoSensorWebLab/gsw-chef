@@ -17,29 +17,56 @@
 # limitations under the License.
 require "uri"
 
+def filename_from_url(url)
+  uri = URI.parse(url)
+  File.basename(uri.path)
+end
+
 # Install OpenJDK
+java_home = "#{node["openjdk"]["prefix"]}/jdk-#{node["openjdk"]["version"]}"
+
 directory node["openjdk"]["prefix"] do
   recursive true
   action :create
 end
 
-jdk_uri = URI.parse(node["openjdk"]["download_url"])
-src_filename = File.basename(jdk_uri.path)
+jdk_filename = filename_from_url(node["openjdk"]["download_url"])
 
-remote_file "#{Chef::Config["file_cache_path"]}/#{src_filename}" do
+remote_file "#{Chef::Config["file_cache_path"]}/#{jdk_filename}" do
   source node["openjdk"]["download_url"]
 end
 
 bash "extract JDK" do
   cwd node["openjdk"]["prefix"]
   code <<-EOH
-    tar xzf "#{Chef::Config["file_cache_path"]}/#{src_filename}" -C .
+    tar xzf "#{Chef::Config["file_cache_path"]}/#{jdk_filename}" -C .
     EOH
+  not_if { ::File.exists?(java_home) }
 end
 
-java_home = "#{node["openjdk"]["prefix"]}/java/jdk-#{node["openjdk"]["version"]}"
-
 # Install Tomcat
+tomcat_home = "#{node["tomcat"]["prefix"]}/apache-tomcat-#{node["tomcat"]["version"]}"
+
+directory node["tomcat"]["prefix"] do
+  recursive true
+  action :create
+end
+
+tomcat_filename = filename_from_url(node["tomcat"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{tomcat_filename}" do
+  source node["tomcat"]["download_url"]
+end
+
+bash "extract Tomcat" do
+  cwd node["tomcat"]["prefix"]
+  code <<-EOH
+    tar xzf "#{Chef::Config["file_cache_path"]}/#{tomcat_filename}" -C .
+    EOH
+    not_if { ::File.exists?(tomcat_home) }
+end
+
+
 
 # Install GDAL
 
