@@ -96,6 +96,39 @@ systemd_unit 'tomcat.service' do
 end
 
 # Install GDAL
+gdal_home = "#{node["gdal"]["prefix"]}/gdal-#{node["gdal"]["version"]}"
+gdal_data = "#{gdal_home}/data"
+
+directory node["gdal"]["prefix"] do
+  recursive true
+  action :create
+end
+
+gdal_filename = filename_from_url(node["gdal"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{gdal_filename}" do
+  source node["gdal"]["download_url"]
+end
+
+bash "extract GDAL" do
+  cwd node["gdal"]["prefix"]
+  code <<-EOH
+    tar xzf "#{Chef::Config["file_cache_path"]}/#{gdal_filename}" -C .
+    EOH
+    not_if { ::File.exists?(gdal_home) }
+end
+
+package "build-essential"
+
+bash "compile GDAL" do
+  cwd gdal_home
+  code <<-EOH
+    ./configure
+    make -j2
+    make install
+  EOH
+  not_if "/usr/local/bin/gdal-config --version | grep -q '#{node["gdal"]["version"]}'"
+end
 
 # Install GeoServer
 
