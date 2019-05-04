@@ -47,7 +47,18 @@ end
 # Install Tomcat
 tomcat_home = "#{node["tomcat"]["prefix"]}/apache-tomcat-#{node["tomcat"]["version"]}"
 
+user node["tomcat"]["user"] do
+  home node["tomcat"]["prefix"]
+  manage_home false
+end
+
+group node["tomcat"]["user"] do
+  members node["tomcat"]["user"]
+end
+
 directory node["tomcat"]["prefix"] do
+  owner node["tomcat"]["user"]
+  group node["tomcat"]["user"]
   recursive true
   action :create
 end
@@ -60,14 +71,15 @@ end
 
 bash "extract Tomcat" do
   cwd node["tomcat"]["prefix"]
+  user node["tomcat"]["user"]
   code <<-EOH
     tar xzf "#{Chef::Config["file_cache_path"]}/#{tomcat_filename}" -C .
     EOH
-    not_if { ::File.exists?(tomcat_home) }
+  not_if { ::File.exists?(tomcat_home) }
 end
 
 # Source: https://gist.github.com/ovichiro/d24c53ce4902ef41cc208efeadd596b6
-systemd_unit 'tomcat.service' do
+systemd_unit "tomcat.service" do
   content <<-EOU.gsub(/^\s+/, '')
   [Unit]
   Description=Apache Tomcat Web Application Container
@@ -75,14 +87,14 @@ systemd_unit 'tomcat.service' do
 
   [Service]
   Type=forking
-  User=tomcat
-  Group=tomcat
+  User=#{node["tomcat"]["user"]}
+  Group=#{node["tomcat"]["user"]}
 
-  Environment=JAVA_HOME=#{java_home}
-  Environment=CATALINA_PID=#{tomcat_home}/temp/tomcat.pid
-  Environment=CATALINA_HOME=#{tomcat_home}
-  Environment=CATALINA_BASE=#{tomcat_home}
-  Environment=CATALINA_OPTS=
+  Environment="JAVA_HOME=#{java_home}"
+  Environment="CATALINA_PID=#{tomcat_home}/temp/tomcat.pid"
+  Environment="CATALINA_HOME=#{tomcat_home}"
+  Environment="CATALINA_BASE=#{tomcat_home}"
+  Environment="CATALINA_OPTS="
   Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Xms256m -Xmx2g"
 
   ExecStart=#{tomcat_home}/bin/startup.sh
@@ -148,10 +160,15 @@ package "unzip"
 
 bash "extract GeoServer" do
   cwd "#{tomcat_home}/webapps"
+  user node["tomcat"]["user"]
   code <<-EOH
     unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" -d .
-    EOH
-    not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver.war") }
+  EOH
+  not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver.war") }
+end
+
+service "tomcat" do
+  action :start
 end
 
 # Install GeoServer GDAL Plugin
