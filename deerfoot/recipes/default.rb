@@ -154,7 +154,7 @@ bash "compile GDAL" do
   environment({
     "ANT_HOME" => ant_home,
     "JAVA_HOME" => java_home,
-    "PATH" => "#{ant_home}/bin:$PATH"
+    "PATH" => "#{ant_home}/bin:#{ENV["PATH"]}"
   })
   code <<-EOH
     ./configure --with-java=#{java_home}
