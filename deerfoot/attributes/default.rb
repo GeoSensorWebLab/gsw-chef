@@ -11,6 +11,12 @@ default["tomcat"]["download_url"] = "http://muug.ca/mirror/apache-dist/tomcat/to
 default["tomcat"]["checksum_url"] = "https://www.apache.org/dist/tomcat/tomcat-9/v9.0.19/bin/apache-tomcat-9.0.19.tar.gz.sha512"
 default["tomcat"]["checksum_type"] = "SHA512"
 
+default["ant"]["version"] = "1.10.5"
+default["ant"]["prefix"] = "/opt/java"
+default["ant"]["download_url"] = "http://apache.mirror.colo-serv.net//ant/binaries/apache-ant-1.10.5-bin.tar.gz"
+default["ant"]["checksum_url"] = "https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz.sha512"
+default["ant"]["checksum_type"] = "SHA512"
+
 default["gdal"]["version"] = "2.4.1"
 default["gdal"]["prefix"] = "/opt/gdal"
 default["gdal"]["download_url"] = "http://download.osgeo.org/gdal/2.4.1/gdal-2.4.1.tar.gz"
@@ -20,3 +26,4 @@ default["gdal"]["checksum_type"] = "MD5"
 default["geoserver"]["version"] = "2.15.1"
 default["geoserver"]["prefix"] = "/opt/geoserver"
 default["geoserver"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.15.1/geoserver-2.15.1-war.zip"
+default["geoserver"]["gdal_plugin"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.15.1/extensions/geoserver-2.15.1-gdal-plugin.zip"

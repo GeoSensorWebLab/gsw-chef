@@ -126,25 +126,48 @@ bash "extract GDAL" do
   cwd node["gdal"]["prefix"]
   code <<-EOH
     tar xzf "#{Chef::Config["file_cache_path"]}/#{gdal_filename}" -C .
-    EOH
-    not_if { ::File.exists?(gdal_home) }
+  EOH
+  not_if { ::File.exists?(gdal_home) }
 end
 
-package "build-essential"
+package %w(build-essential swig)
 
+# Install Apache Ant for Java GDAL bindings
+ant_home = "#{node["ant"]["prefix"]}/apache-ant-#{node["ant"]["version"]}"
+ant_filename = filename_from_url(node["ant"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{ant_filename}" do
+  source node["ant"]["download_url"]
+end
+
+bash "extract ant" do
+  cwd node["ant"]["prefix"]
+  code <<-EOH
+    tar xzf "#{Chef::Config["file_cache_path"]}/#{ant_filename}" -C .
+  EOH
+  not_if { ::File.exists?(ant_home) }
+end
+
+# Compile GDAL, then install GDAL bindings for Java
 bash "compile GDAL" do
   cwd gdal_home
+  environment({
+    "ANT_HOME" => ant_home,
+    "JAVA_HOME" => java_home,
+    "PATH" => "#{ant_home}/bin:$PATH"
+  })
   code <<-EOH
-    ./configure
+    ./configure --with-java=#{java_home}
     make -j2
+    make install
+    cd swig/java
+    make
     make install
   EOH
   not_if "/usr/local/bin/gdal-config --version | grep -q '#{node["gdal"]["version"]}'"
 end
 
 # Install GeoServer
-geoserver_home = "#{node["geoserver"]["prefix"]}/geoserver-#{node["geoserver"]["version"]}"
-
 directory node["geoserver"]["prefix"] do
   recursive true
   action :create
@@ -172,6 +195,22 @@ service "tomcat" do
 end
 
 # Install GeoServer GDAL Plugin
+geoserver_gdal_filename = filename_from_url(node["geoserver"]["gdal_plugin"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_gdal_filename}" do
+  source node["geoserver"]["gdal_plugin"]["download_url"]
+end
+
+bash "extract GeoServer GDAL plugin" do
+  cwd node["geoserver"]["prefix"]
+  user node["tomcat"]["user"]
+  code <<-EOH
+    unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_gdal_filename}" -d geoserver-gdal-plugin
+    cp "geoserver-gdal-plugin/*.jar" "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
+    cp "#{gdal_home}/swig/java/gdal.jar" "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
+  EOH
+  not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-gdal-plugin") }
+end
 
 # Set up tomcat-native
 
