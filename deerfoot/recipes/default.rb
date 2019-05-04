@@ -98,7 +98,8 @@ systemd_unit "tomcat.service" do
   Environment="CATALINA_HOME=#{tomcat_home}"
   Environment="CATALINA_BASE=#{tomcat_home}"
   Environment="CATALINA_OPTS="
-  Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Xms256m -Xmx2g"
+  Environment="GDAL_DATA=/usr/local/share/gdal"
+  Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Djava.library.path=/usr/local/lib -Xms256m -Xmx2g"
 
   ExecStart=#{tomcat_home}/bin/startup.sh
   ExecStop=/bin/kill -15 $MAINPID
@@ -206,15 +207,18 @@ end
 
 bash "extract GeoServer GDAL plugin" do
   cwd node["geoserver"]["prefix"]
-  user node["tomcat"]["user"]
   code <<-EOH
     unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_gdal_filename}" -d geoserver-gdal-plugin
-    cp "geoserver-gdal-plugin/*.jar" "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
+    cp geoserver-gdal-plugin/*.jar "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
     cp "#{gdal_home}/swig/java/gdal.jar" "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
+    chown -R #{node["tomcat"]["user"]} #{tomcat_home}/webapps/geoserver/WEB-INF/lib
   EOH
   not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-gdal-plugin") }
 end
 
+service "tomcat" do
+  action :restart
+end
 # Set up tomcat-native
 
 # Optimize JVM
