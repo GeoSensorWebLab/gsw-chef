@@ -1,7 +1,11 @@
 ---
 driver:
   name: vagrant
+  network:
+    - ["private_network", { ip: "192.168.33.15" }]
   customize:
+    cpus: 2
+    memory: 4096
     cableconnected1: 'on'
 
 provisioner:
