@@ -22,6 +22,9 @@ def filename_from_url(url)
   File.basename(uri.path)
 end
 
+# Install fontconfig so Java apps properly load pages with fonts
+package "fontconfig"
+
 # Install OpenJDK
 java_home = "#{node["openjdk"]["prefix"]}/jdk-#{node["openjdk"]["version"]}"
 
