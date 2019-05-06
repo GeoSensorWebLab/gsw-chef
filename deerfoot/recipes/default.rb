@@ -99,7 +99,8 @@ systemd_unit "tomcat.service" do
   Environment="CATALINA_BASE=#{tomcat_home}"
   Environment="CATALINA_OPTS="
   Environment="GDAL_DATA=/usr/local/share/gdal"
-  Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Djava.library.path=/usr/local/lib -Xms256m -Xmx2g"
+  Environment="LD_LIBRARY_PATH=$LD_LIBRARY_PATH:#{tomcat_home}/lib"
+  Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Djava.library.path=/usr/local/lib:#{tomcat_home}/lib -Xms256m -Xmx2g"
 
   ExecStart=#{tomcat_home}/bin/startup.sh
   ExecStop=/bin/kill -15 $MAINPID
