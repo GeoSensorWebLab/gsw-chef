@@ -11,6 +11,12 @@ default["tomcat"]["download_url"] = "http://muug.ca/mirror/apache-dist/tomcat/to
 default["tomcat"]["checksum_url"] = "https://www.apache.org/dist/tomcat/tomcat-9/v9.0.19/bin/apache-tomcat-9.0.19.tar.gz.sha512"
 default["tomcat"]["checksum_type"] = "SHA512"
 
+default["tomcat-native"]["version"] = "1.2.21"
+default["tomcat-native"]["prefix"] = "/opt/tomcat"
+default["tomcat-native"]["download_url"] = "http://muug.ca/mirror/apache-dist/tomcat/tomcat-connectors/native/1.2.21/source/tomcat-native-1.2.21-src.tar.gz"
+default["tomcat-native"]["checksum_url"] = "https://www.apache.org/dist/tomcat/tomcat-connectors/native/1.2.21/source/tomcat-native-1.2.21-src.tar.gz.sha512"
+default["tomcat-native"]["checksum_type"] = "SHA512"
+
 default["ant"]["version"] = "1.10.5"
 default["ant"]["prefix"] = "/opt/java"
 default["ant"]["download_url"] = "http://apache.mirror.colo-serv.net//ant/binaries/apache-ant-1.10.5-bin.tar.gz"

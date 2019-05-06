@@ -108,7 +108,13 @@ systemd_unit "tomcat.service" do
   WantedBy=multi-user.target
   EOU
 
-  action [:create, :enable]
+  action [:create, :enable, :start]
+end
+
+# Create resource to refer to in other resource notifications
+service 'tomcat' do
+  supports [:start, :stop, :restart]
+  action :nothing
 end
 
 # Install GDAL
@@ -192,10 +198,7 @@ bash "extract GeoServer" do
     unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" -d .
   EOH
   not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver.war") }
-end
-
-service "tomcat" do
-  action :start
+  notifies :restart, 'service[tomcat]'
 end
 
 # Install GeoServer GDAL Plugin
@@ -216,9 +219,38 @@ bash "extract GeoServer GDAL plugin" do
   not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-gdal-plugin") }
 end
 
-service "tomcat" do
-  action :restart
-end
 # Set up tomcat-native
+tomcat_native_home = "#{node["tomcat"]["prefix"]}/tomcat-native-#{node["tomcat-native"]["version"]}-src"
+tomcat_native_filename = filename_from_url(node["tomcat-native"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{tomcat_native_filename}" do
+  source node["tomcat-native"]["download_url"]
+end
+
+bash "extract tomcat-native" do
+  cwd node["tomcat"]["prefix"]
+  user node["tomcat"]["user"]
+  code <<-EOH
+    tar xzf "#{Chef::Config["file_cache_path"]}/#{tomcat_native_filename}" -C .
+  EOH
+  not_if { ::File.exists?(tomcat_native_home) }
+end
+
+package %w(libapr1 libapr1-dev libssl-dev)
+
+# Compile tomcat-native
+bash "compile tomcat-native" do
+  cwd "#{tomcat_native_home}/native"
+  environment({
+    "JAVA_HOME" => java_home
+  })
+  code <<-EOH
+    ./configure --prefix=#{tomcat_home}
+    make -j2
+    make install
+  EOH
+  not_if { ::File.exists?("#{tomcat_home}/lib/libtcnative-1.so") }
+  notifies :restart, 'service[tomcat]'
+end
 
 # Optimize JVM
