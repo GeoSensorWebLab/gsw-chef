@@ -25,7 +25,10 @@ end
 # Install fontconfig so Java apps properly load pages with fonts
 package "fontconfig"
 
+#################
 # Install OpenJDK
+#################
+
 java_home = "#{node["openjdk"]["prefix"]}/jdk-#{node["openjdk"]["version"]}"
 
 directory node["openjdk"]["prefix"] do
@@ -47,7 +50,10 @@ bash "extract JDK" do
   not_if { ::File.exists?(java_home) }
 end
 
+################
 # Install Tomcat
+################
+
 tomcat_home = "#{node["tomcat"]["prefix"]}/apache-tomcat-#{node["tomcat"]["version"]}"
 
 user node["tomcat"]["user"] do
@@ -118,7 +124,9 @@ service 'tomcat' do
   action :nothing
 end
 
+##############
 # Install GDAL
+##############
 
 # Install Proj4 for GDAL
 package %w(libproj-dev proj-bin libproj12)
@@ -182,7 +190,10 @@ bash "compile GDAL" do
   not_if "/usr/local/bin/gdal-config --version | grep -q '#{node["gdal"]["version"]}'"
 end
 
+###################
 # Install GeoServer
+###################
+
 directory node["geoserver"]["prefix"] do
   recursive true
   action :create
@@ -206,7 +217,10 @@ bash "extract GeoServer" do
   notifies :restart, 'service[tomcat]'
 end
 
+###############################
 # Install GeoServer GDAL Plugin
+###############################
+
 geoserver_gdal_filename = filename_from_url(node["geoserver"]["gdal_plugin"]["download_url"])
 
 remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_gdal_filename}" do
@@ -224,7 +238,10 @@ bash "extract GeoServer GDAL plugin" do
   not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-gdal-plugin") }
 end
 
+#################################
 # Install GeoServer GeoCSS Plugin
+#################################
+
 geoserver_css_filename = filename_from_url(node["geoserver"]["css_plugin"]["download_url"])
 
 remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_css_filename}" do
@@ -241,7 +258,10 @@ bash "extract GeoServer CSS plugin" do
   not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-css-plugin") }
 end
 
+######################
 # Set up tomcat-native
+######################
+
 tomcat_native_home = "#{node["tomcat"]["prefix"]}/tomcat-native-#{node["tomcat-native"]["version"]}-src"
 tomcat_native_filename = filename_from_url(node["tomcat-native"]["download_url"])
 
@@ -274,5 +294,3 @@ bash "compile tomcat-native" do
   not_if { ::File.exists?("#{tomcat_home}/lib/libtcnative-1.so") }
   notifies :restart, 'service[tomcat]'
 end
-
-# Optimize JVM
