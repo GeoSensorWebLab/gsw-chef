@@ -220,6 +220,23 @@ bash "extract GeoServer GDAL plugin" do
   not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-gdal-plugin") }
 end
 
+# Install GeoServer GeoCSS Plugin
+geoserver_css_filename = filename_from_url(node["geoserver"]["css_plugin"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_css_filename}" do
+  source node["geoserver"]["css_plugin"]["download_url"]
+end
+
+bash "extract GeoServer CSS plugin" do
+  cwd node["geoserver"]["prefix"]
+  code <<-EOH
+    unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_css_filename}" -d geoserver-css-plugin
+    cp geoserver-css-plugin/*.jar "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
+    chown -R #{node["tomcat"]["user"]} #{tomcat_home}/webapps/geoserver/WEB-INF/lib
+  EOH
+  not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-css-plugin") }
+end
+
 # Set up tomcat-native
 tomcat_native_home = "#{node["tomcat"]["prefix"]}/tomcat-native-#{node["tomcat-native"]["version"]}-src"
 tomcat_native_filename = filename_from_url(node["tomcat-native"]["download_url"])
