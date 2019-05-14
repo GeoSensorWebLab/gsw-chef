@@ -119,6 +119,10 @@ service 'tomcat' do
 end
 
 # Install GDAL
+
+# Install Proj4 for GDAL
+package %w(libproj-dev proj-bin libproj12)
+
 gdal_home = "#{node["gdal"]["prefix"]}/gdal-#{node["gdal"]["version"]}"
 gdal_data = "#{gdal_home}/data"
 
