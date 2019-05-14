@@ -294,3 +294,5 @@ bash "compile tomcat-native" do
   not_if { ::File.exists?("#{tomcat_home}/lib/libtcnative-1.so") }
   notifies :restart, 'service[tomcat]'
 end
+
+package %w(libtiff-tools)
