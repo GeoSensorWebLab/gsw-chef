@@ -1,3 +1,5 @@
+default["jobs"] = 2
+
 default["openjdk"]["version"] = "11.0.2"
 default["openjdk"]["prefix"] = "/opt/java"
 default["openjdk"]["download_url"] = "https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz"

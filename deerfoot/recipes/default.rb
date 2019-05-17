@@ -181,7 +181,7 @@ bash "compile GDAL" do
   })
   code <<-EOH
     ./configure --with-java=#{java_home}
-    make -j2
+    make -j#{node["jobs"]}
     make install
     cd swig/java
     make
@@ -288,7 +288,7 @@ bash "compile tomcat-native" do
   })
   code <<-EOH
     ./configure --prefix=#{tomcat_home}
-    make -j2
+    make -j#{node["jobs"]}
     make install
   EOH
   not_if { ::File.exists?("#{tomcat_home}/lib/libtcnative-1.so") }
