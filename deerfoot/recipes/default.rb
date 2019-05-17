@@ -296,3 +296,11 @@ bash "compile tomcat-native" do
 end
 
 package %w(libtiff-tools)
+
+# Install extra CRS definitions
+cookbook_file "#{tomcat_home}/webapps/geoserver/data/user_projections/epsg.properties" do
+  source "epsg.properties"
+  owner node["tomcat"]["user"]
+  group node["tomcat"]["user"]
+  notifies :restart, 'service[tomcat]'
+end
