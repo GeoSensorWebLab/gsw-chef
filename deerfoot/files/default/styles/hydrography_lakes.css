@@ -1,0 +1,64 @@
+/*
+ * Author: James Badger
+ * Creative Commons Attribution-ShareAlike 4.0 International
+ */  
+
+* {
+  fill: #8fc3d9;
+  
+  label-anchor: 0.5 0.5;
+}
+
+/* Only show large lakes at zoom > 30M */
+[@sd > 30M] {  
+  
+  [Shape_Area  >= 1G] {
+    fill-opacity: 1.0;
+  };
+  
+  [Shape_Area  < 1G] {
+    fill-opacity: 0;
+  };
+}
+
+/* Only show large and medium-large lakes at zoom > 15M */
+[@sd <= 30M][@sd > 15M] {  
+  
+  [Shape_Area  >= 100M] {
+    fill-opacity: 1.0;
+  };
+  
+  [Shape_Area  < 100M] {
+    fill-opacity: 0;
+  };
+}
+
+/* Label large lakes starting at zoom <= 5M */
+[@sd <= 5M] {
+  [Shape_Area  >= 1G] {
+    label: [NAMEEN];
+
+    font-family: "Helvetica", sans-serif;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: bold;
+    color: #000;
+
+    halo-color: white;
+    halo-radius: 2px;
+  };
+}
+
+/* Label all lakes at zoom <= 1M */
+[@sd <= 1M] {
+  label: [NAMEEN];
+
+  font-family: "Helvetica", sans-serif;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: bold;
+  color: #000;
+
+  halo-color: white;
+  halo-radius: 2px;
+}

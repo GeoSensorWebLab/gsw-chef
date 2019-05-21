@@ -1,0 +1,52 @@
+/*
+ * Author: James Badger
+ * Creative Commons Attribution-ShareAlike 4.0 International
+ */  
+
+* {
+  stroke: #8fc3d9;
+  stroke-width: 0.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* Only show long rivers at zoom > 30M */
+[@sd > 30M] {  
+  
+  [Shape_Leng >= 200k] {
+    stroke-opacity: 1.0;
+  };
+  
+  [Shape_Leng < 200k] {
+    stroke-opacity: 0;
+  };
+}
+
+/* Only show long and medium-long rivers at zoom > 7.5M */
+[@sd <= 30M][@sd > 7.5M] {  
+  
+  [Shape_Leng >= 100k] {
+    stroke-opacity: 1.0;
+  };
+  
+  [Shape_Leng < 100k] {
+    stroke-opacity: 0;
+  };
+}
+
+/* Label rivers at zoom <= 1M */
+[@sd <= 1M] {
+  label: [NAMEEN];
+  label-follow-line: true;
+  label-allow-overruns: true;
+
+  font-family: "Helvetica", sans-serif;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: bold;
+  color: #000;
+
+  halo-color: white;
+  halo-radius: 2px;
+}
+
