@@ -1,0 +1,148 @@
+/*
+ * Author: James Badger
+ * Creative Commons Attribution-ShareAlike 4.0 International
+ */  
+
+* {
+  label: [GEONAME];
+  label-anchor: 0.5 0;
+  label-offset: 0 5;
+  label-priority: [REL_SCALE];
+  
+  font-fill: black;
+  font-family: "Helvetica", sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  
+  halo-color: white;
+  halo-radius: 1.0px;
+  
+}
+
+[@sd > 60M] {
+  label: "";
+}
+
+[@sd <= 60M][@sd > 30M] {
+  label: "";
+  [2 * REL_SCALE > 30M] {
+    label: [GEONAME];
+    font-size: 14px;
+  }
+}
+
+[@sd <= 30M][@sd > 15M] {
+  label: "";
+  
+  [2 * REL_SCALE > 15M] {
+    label: [GEONAME];
+    font-size: 12px;
+  };
+  
+  [2 * REL_SCALE > 30M] {
+    label: [GEONAME];
+    font-size: 14px;
+  };
+}
+
+[@sd <= 15M][@sd > 7.5M] {
+  label: "";
+  
+  [2 * REL_SCALE > 7.5M] {
+    label: [GEONAME];
+  };
+  
+  [2 * REL_SCALE > 15M] {
+    label: [GEONAME];
+    font-size: 12px;
+  };
+  
+  [2 * REL_SCALE > 30M] {
+    label: [GEONAME];
+    font-size: 14px;
+  };
+}
+
+[@sd <= 7.5M][@sd > 5M] {
+  label: "";
+  
+  [2 * REL_SCALE > 5M] {
+    label: [GEONAME];
+  };
+  
+  [2 * REL_SCALE > 15M] {
+    label: [GEONAME];
+    font-size: 12px;
+  };
+  
+  [2 * REL_SCALE > 30M] {
+    label: [GEONAME];
+    font-size: 14px;
+  };
+}
+
+[@sd <= 5M][@sd > 2M] {
+  label: "";
+  
+  [2 * REL_SCALE > 2M] {
+    label: [GEONAME];
+  };
+  
+  [2 * REL_SCALE > 15M] {
+    label: [GEONAME];
+    font-size: 12px;
+  };
+  
+  [2 * REL_SCALE > 30M] {
+    label: [GEONAME];
+    font-size: 14px;
+  };
+}
+
+[@sd <= 2M][@sd > 1M] {
+  label: "";
+  
+  [2 * REL_SCALE > 1M] {
+    label: [GEONAME];
+  };
+  
+  [2 * REL_SCALE > 15M] {
+    label: [GEONAME];
+    font-size: 12px;
+  };
+  
+  [2 * REL_SCALE > 30M] {
+    label: [GEONAME];
+    font-size: 14px;
+  };
+}
+
+[@sd <= 1M][@sd > 250k] {
+  label: "";
+  
+  [2 * REL_SCALE > 250k] {
+    label: [GEONAME];
+  };
+  
+  [2 * REL_SCALE > 15M] {
+    label: [GEONAME];
+    font-size: 12px;
+  };
+  
+  [2 * REL_SCALE > 30M] {
+    label: [GEONAME];
+    font-size: 14px;
+  };
+}
+
+[@sd < 250k] {
+  label: [GEONAME];
+}
+
+/* Special Cases */
+[GENERIC = 'Strait'], [GENERIC = 'Basin'], [GENERIC = 'Sea'] {
+  font-style: oblique;
+  font-size: 14px;
+  font-opacity: 0.7;
+}
+

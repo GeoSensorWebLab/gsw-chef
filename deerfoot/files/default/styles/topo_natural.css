@@ -1,0 +1,25 @@
+/*
+ * http://soliton.vm.bytemark.co.uk/pub/cpt-city/fme/feet/tn/natural.png.index.html
+ * Author: Fred M. Erickson, 2005
+ * GPLv2
+ */
+
+* {
+	raster-channels: auto;
+	raster-color-map:
+		color-map-entry(#beffaf, 0, 1.0)
+		color-map-entry(#c3eda5, 1000, 1.0)
+		color-map-entry(#c8d29c, 2000, 1.0)
+		color-map-entry(#cdc293, 3000, 1.0)
+		color-map-entry(#d2b28a, 4000, 1.0)
+		color-map-entry(#d7a281, 5000, 1.0)
+		color-map-entry(#dc9178, 6000, 1.0)
+		color-map-entry(#cf9687, 7000, 1.0)
+		color-map-entry(#c19b96, 8000, 1.0)
+		color-map-entry(#b3a0a5, 9000, 1.0)
+		color-map-entry(#a5a5b4, 10000, 1.0)
+		color-map-entry(#d2d2ff, 11000, 1.0)
+		color-map-entry(#e8e8ff, 12000, 1.0)
+		color-map-entry(#ffffff, 30000, 1.0);
+}
+
