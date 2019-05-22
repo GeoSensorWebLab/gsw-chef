@@ -147,6 +147,8 @@ For each SLD file in `files/default/styles`, create a new style in the `arcticco
 
 For each CSS file in `files/default/styles`, create a new style in the `arcticconnect` workspace with `CSS` format. Name the style after the filename (without extension), pasting in the CSS contents for the style.
 
+## Setting up Layers
+
 ### Uploading Datasets
 
 Please see the `DATA_PREPARATION.markdown` document for instructions on preparing and processing the data from the source files into formats for this project.
@@ -232,7 +234,143 @@ Under "WMS Settings" for "Publishing", change the "Default Style" to the style f
 
 Click "Save", and continue adding the rest of the raster data sources as Stores/Layers.
 
+### Layer Customization: Soper's Map
+
+TODO: Soper's Map will be advertised separately, as we want it to be turned on/off separately from the base layer.
+
 ### Layer Groups
+
+A "Layer Group" is a set of layers merged together and advertised as a single layer in WMS/WMTS/etc. We will be using this to advertise the base layers in a few different projections:
+
+* `EPSG:3413` a.k.a. [NSIDC Sea Ice Polar Stereographic North](http://epsg.io/3413)
+    * `EPSG:3573` a.k.a. [North Pole LAEA Canada](http://epsg.io/3573)
+    * `EPSG:3574` a.k.a. [North Pole LAEA Atlantic](http://epsg.io/3574)
+    * `EPSG:102002` a.k.a. [Canada Lambert Conformal Conic](http://epsg.io/102002)
+* `EPSG:4326` a.k.a. [WGS84](https://epsg.io/4326)
+    * `EPSG:3857` a.k.a. [Pseudo-Mercator](https://epsg.io/3857)
+
+`EPSG:3413` is the base for the polar-projected maps, and `EPSG:4326` is the base for the Mercator-projected maps. These are done separately as there can be some weird rendering errors when you let GeoServer do Mercator-to-polar projections on-the-fly.
+
+We offer 3573/3574 for integration with [Arctic Web Map](https://webmap.arcticconnect.ca), which supports these projections.
+
+We offer 3857 for integration with OSM/Bing Maps/Google Maps, although it isn't recommended due to the distortion in the north.
+
+#### Primary Layer Group `EPSG:3413`
+
+Create a new layer group for the `EPSG:3413` base layer. Most of these fields follow the same rules as individual layers.
+
+```
+Name:           base_map_3413
+Title:          Base Map (EPSG:3413)
+Abstract:
+Base map for Soper's World project (Arctic Institute of North America).
+Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+
+Coordinate Reference System:    EPSG:3413
+Mode:                           Single
+```
+
+Leave "Queryable" enabled, as it allows WMS "GetFeatureInfo" requests.
+
+One-by-one, add the following layers in the following order:
+
+1. `arcticconnect:map_background`
+2. `arcticconnect:ne_10m_bathymetry`
+3. `arcticconnect:coastline`
+4. `arcticconnect:arcticdem_500m_3413_hillshade`
+5. `arcticconnect:arcticdem_500m_3413_slope`
+6. `arcticconnect:arcticdem_500m_3413`
+7. `arcticconnect:hydrography_rivers`
+8. `arcticconnect:hydrography_lakes`
+9. `arcticconnect:glaciers`
+10. `arcticconnect:graticules`
+11. `arcticconnect:cgn_canada_eng`
+
+Note that we use the `EPSG:3413` rasters!
+
+Then click the "Generate Bounds" button, which should fill in the "Bounds" fields.
+
+Save the layer.
+
+#### Secondary Polar Layer Groups
+
+For each of the other polar projections, create a new layer group. Here are the sample fields for one:
+
+```
+Name:           base_map_3574
+Title:          Base Map (EPSG:3574)
+Abstract:
+Base map for Soper's World project (Arctic Institute of North America).
+Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+
+Coordinate Reference System:    EPSG:3574
+Mode:                           Single
+```
+
+Instead of adding each layer one-by-one, add the entire `EPSG:3413` layer group. Generate Bounds and save the layer.
+
+**Note:** For `EPSG:102002`, manually enter the following bounds as they are not properly generated.
+
+```
+Min X:      -5,615,818.3524223
+Min Y:      5.141556829724574
+Max X:      5,849,324.486082172
+Max Y:      11,222,809.102523187
+```
+
+#### Primary Layer Group `EPSG:4326`
+
+Create a new layer group for the `EPSG:4326` base layer. Most of these fields follow the same rules as individual layers.
+
+```
+Name:           base_map_4326
+Title:          Base Map (EPSG:4326)
+Abstract:
+Base map for Soper's World project (Arctic Institute of North America).
+Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+
+Coordinate Reference System:    EPSG:4326
+Mode:                           Single
+```
+
+Leave "Queryable" enabled, as it allows WMS "GetFeatureInfo" requests.
+
+One-by-one, add the following layers in the following order:
+
+1. `arcticconnect:map_background`
+2. `arcticconnect:ne_10m_bathymetry`
+3. `arcticconnect:coastline`
+4. `arcticconnect:arcticdem_500m_4326_hillshade`
+5. `arcticconnect:arcticdem_500m_4326_slope`
+6. `arcticconnect:arcticdem_500m_4326`
+7. `arcticconnect:hydrography_rivers`
+8. `arcticconnect:hydrography_lakes`
+9. `arcticconnect:glaciers`
+10. `arcticconnect:graticules`
+11. `arcticconnect:cgn_canada_eng`
+
+Note that we use the `EPSG:4326` rasters!
+
+Then click the "Generate Bounds" button, which should fill in the "Bounds" fields.
+
+Save the layer.
+
+#### Secondary Mercator Layer Groups
+
+For each of the other mercator projections, create a new layer group. Here are the sample fields for one:
+
+```
+Name:           base_map_3857
+Title:          Base Map (EPSG:3857)
+Abstract:
+Base map for Soper's World project (Arctic Institute of North America).
+Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+
+Coordinate Reference System:    EPSG:3857
+Mode:                           Single
+```
+
+Instead of adding each layer one-by-one, add the entire `EPSG:4326` layer group. Generate Bounds and save the layer.
 
 ## TODO: Caching Configuration
 
