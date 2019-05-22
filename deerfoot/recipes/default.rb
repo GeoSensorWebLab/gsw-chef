@@ -193,6 +193,7 @@ end
 ###################
 # Install GeoServer
 ###################
+geoserver_data = "#{tomcat_home}/webapps/geoserver/data"
 
 directory node["geoserver"]["prefix"] do
   recursive true
@@ -298,9 +299,31 @@ end
 package %w(libtiff-tools)
 
 # Install extra CRS definitions
-cookbook_file "#{tomcat_home}/webapps/geoserver/data/user_projections/epsg.properties" do
+cookbook_file "#{geoserver_data}/user_projections/epsg.properties" do
   source "epsg.properties"
   owner node["tomcat"]["user"]
   group node["tomcat"]["user"]
   notifies :restart, 'service[tomcat]'
+end
+
+#####################
+# Customize GeoServer
+#####################
+
+# Remove default styles that we won't be using
+%w(burg capitals giant_polygon grass_poly green lakes poi poly_landmarks
+pophatch popshade rain restricted simpleRoads simple_streams tiger_roads).each do |style|
+  file "#{geoserver_data}/styles/#{style}.sld" do
+    ignore_failure true
+    action :delete
+  end
+
+  file "#{geoserver_data}/styles/#{style}.xml" do
+    ignore_failure true
+    action :delete
+  end
+end
+
+service "tomcat" do
+  action :restart
 end
