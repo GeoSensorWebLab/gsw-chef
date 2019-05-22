@@ -2,12 +2,8 @@
 
 TODO: This document will explain how to set up GeoServer manually after using Chef to install the software.
 
-* Copy rasters/vectors to server
-* Set up admin account
-* Configure server metadata
 * Importing data as "Stores"
 * Setting up layers
-* Importing SLD and CSS stylesheets
 * GeoWebCache setup
 * Optimizations for production
 
@@ -178,7 +174,36 @@ Upload the following data files to the server:
 
 While it is possible to upload only some of these files to the server and run GDAL there, it is faster to run GDAL locally on your development machine and verify the results *before* uploading.
 
-### Stores
+### Stores: Vector Data
+
+For each vector data source, create a new `Store` with vector data type `GeoPackage`. You only need to fill out `Data Source Name` (the filename), and `database` (the path to the GeoPackage on the server). You can click "Browse…" to manually browse the filesystem on the server to find the `.gpkg` file.
+
+After creating the `Store`, GeoServer will prompt you to publish a layer for the store. Go ahead and "Publish", which will open the "Layer" form. Most of the following data can be filled out based on the details in `DATA_PREPARATION.markdown`.
+
+The "Name" is the machine-readable name of the layer; keep it simple and lowercase.
+
+Make sure the layer is "Enabled" so that we can use it in a Layer Group later. **Disable** advertising the layer, as we do not want to offer it on WMS/WMTS as its own layer.
+
+The "Title" is the human-readable name; keep it simple and grammatically correct.
+
+The "Abstract" is a short description of the layer and should credit any data sources and copyrights.
+
+Ignore "Keywords", "Vocabulary", "Metadata links", "Data links".
+
+Leave the "Native SRS" and "Declared SRS" as default. If "Declared SRS" is empty, click "Find" (or "…") to open a dialog box; type in "4326" and select EPSG:4326 in the results to force that SRS. Leave "SRS handling" at the default value.
+
+For "Native Bounding Box", click "Compute from data". For "Lat/Lon Bounding Box", click "Compute from native bounds".
+
+For "Restrict the features on layer by CQL filter" please refer to the data source details in `DATA_PREPARATION`. This field may be necessary to remove extraneous data before rendering.
+
+Next, click the "Publishing" tab. You do not need to "Save" before switching tabs; that is done automatically.
+
+Under "WMS Settings" for "Publishing", change the "Default Style" to the style for that layer; it should have the same name as the dataset filename.
+
+Click "Save", and continue adding the rest of the vector data sources as Stores/Layers.
+
+### Stores: Raster Data
+
 
 ### Layers
 
