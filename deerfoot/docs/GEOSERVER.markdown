@@ -50,19 +50,6 @@ I have HTTPS set up on a separate cloud server (`stoney`), which then uses HAPro
 
 ## GeoServer Configuration
 
-### Styles
-
-By default, GeoServer includes some sample layers, styles, and data stores. I recommend deleting them to remove the clutter; only the basic default styles should be kept:
-
-* dem
-* generic
-* line
-* point
-* polygon
-* raster
-
-These default styles will be used for layers when they are initially created, but we will be installing a custom style for each layer.
-
 ### Server Status
 
 Under the "Modules" tab, there should be an entry for the extensions that Chef installed:
@@ -147,9 +134,49 @@ Set the "Password encryption" to "Strong PBE". This used to require a special pa
 
 ### Workspaces
 
+Create a new workspace for the project, this will be used to group layers/styles/etc.
+
+```
+Name:           arcticconnect
+Namespace URI:  http://arcticconnect.ca
+Default Workspace Enabled
+Isolated Workspace Disabled
+```
+
 ### Styles
 
+The default GeoServer styles will be trimmed to remove styles we are not using for this project. This is done automatically by Chef.
+
+For each SLD file in `files/default/styles`, create a new style in the `arcticconnect` workspace with `SLD` format. Name the style after the filename (without extension), pasting in the XML contents for the style.
+
+For each CSS file in `files/default/styles`, create a new style in the `arcticconnect` workspace with `CSS` format. Name the style after the filename (without extension), pasting in the CSS contents for the style.
+
 ### Uploading Datasets
+
+Please see the `DATA_PREPARATION.markdown` document for instructions on preparing and processing the data from the source files into formats for this project.
+
+Upload the following data files to the server:
+
+* `background.gpkg`
+* `cgn_canada_eng.gpkg`
+* `coastline.gpkg`
+* `glaciers.gpkg`
+* `hydrography_lakes.gpkg`
+* `hydrography_rivers.gpkg`
+* `ne_10m_bathymetry_all.gpkg`
+* `ne_10m_graticules_15.gpkg`
+* `arcticdem_500m_3413.tif`
+* `arcticdem_500m_3413_hillshade.tif`
+* `arcticdem_500m_3413_slope.tif`
+* `arcticdem_500m_4326.tif`
+* `arcticdem_500m_4326_hillshade.tif`
+* `arcticdem_500m_4326_slope.tif`
+* `soper_map_3413.tif`
+* `soper_map.tif`
+
+**Important:** Place these files in a directory accessible by the `tomcat` user, and change the ownership of the files (AND the enclosing folder) to `tomcat` so that GeoPackages are correctly read by Java.
+
+While it is possible to upload only some of these files to the server and run GDAL there, it is faster to run GDAL locally on your development machine and verify the results *before* uploading.
 
 ### Stores
 
