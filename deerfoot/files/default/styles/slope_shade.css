@@ -1,0 +1,13 @@
+/*
+ * Author: James Badger
+ * Creative Commons Attribution-ShareAlike 4.0 International
+ */
+
+* {
+    raster-channels: auto;
+    raster-opacity: 0.8;
+	raster-color-map:
+		color-map-entry(#ffffff, 0, 1.0)
+		color-map-entry(#000000, 255, 1.0);
+    raster-composite: multiply;
+}
