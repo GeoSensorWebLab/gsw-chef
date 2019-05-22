@@ -172,7 +172,7 @@ Upload the following data files to the server:
 
 **Important:** Place these files in a directory accessible by the `tomcat` user, and change the ownership of the files (AND the enclosing folder) to `tomcat` so that GeoPackages are correctly read by Java.
 
-While it is possible to upload only some of these files to the server and run GDAL there, it is faster to run GDAL locally on your development machine and verify the results *before* uploading.
+(While it is possible to upload only some of these files to the server and run GDAL there, it is faster to run GDAL locally on your development machine and verify the results *before* uploading.)
 
 ### Stores: Vector Data
 
@@ -204,8 +204,35 @@ Click "Save", and continue adding the rest of the vector data sources as Stores/
 
 ### Stores: Raster Data
 
+Adding raster data is similar as to vector data, with a few minor differences due to the formats.
 
-### Layers
+Under the "Stores" page, add a new store for each `TIF` file using "GeoTIFF" as the raster data type. You will only need to fill out `Data Source Name` (the filename), and `URL` (the path to the GeoTIFF on the server).
+
+After creating the Store, GeoServer will ask you to publish a layer for the store; go ahead and do that. This will open the New Layer form.
+
+The "Name" is the machine-readable name of the layer; keep it simple and lowercase.
+
+Make sure the layer is "Enabled" so that we can use it in a Layer Group later. **Disable** advertising the layer, as we do not want to offer it on WMS/WMTS as its own layer.
+
+The "Title" is the human-readable name; keep it simple and grammatically correct.
+
+The "Abstract" is a short description of the layer and should credit any data sources and copyrights.
+
+Ignore "Keywords", "Vocabulary", "Metadata links", "Data links".
+
+Leave the "Native SRS" and "Declared SRS" as default. If either field is **empty**, then there is something wrong with the GeoTIFF — delete the Layer, Store, and re-process the GeoTIFF file.
+
+For "Native Bounding Box", click "Compute from data". For "Lat/Lon Bounding Box", click "Compute from native bounds".
+
+**Safety Check:** under "Coverage Band Details", ensure the "Data type" is *not* `Real 32 bits` — there is a bug in GeoServer that causes these raster to not properly render, and you will get very cryptic errors. If you see this data type, then the file will need to be re-processed properly to change the data type.
+
+Next, click the "Publishing" tab. You do not need to "Save" before switching tabs; that is done automatically.
+
+Under "WMS Settings" for "Publishing", change the "Default Style" to the style for that layer; it should have the same name as the dataset filename.
+
+Click "Save", and continue adding the rest of the raster data sources as Stores/Layers.
+
+### Layer Groups
 
 ## TODO: Caching Configuration
 
