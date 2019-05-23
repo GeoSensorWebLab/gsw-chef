@@ -32,6 +32,14 @@ Some files may have UTF-8 encoding, others may use ISO-8859-1 encoding. This wil
 
 ## Data Sources
 
+### Canadian Geographical Names (31 MB)
+
+[Homepage](https://www.nrcan.gc.ca/earth-sciences/geography/place-names/data/9245)
+
+No license listed; possible [Open Government License](https://open.canada.ca/en/open-government-licence-canada)
+
+Multiple sets of geo-files (CSV, SHP, KML, GML) for provinces, territories, and the entire country. For this project I downloaded the Shapefiles for all of Canada as we need Nunavut, Quebec, and Newfoundland and Labrador.
+
 ### GSHHG Coastline Shapefile (150 MB)
 
 [Homepage](http://www.soest.hawaii.edu/pwessel/gshhg/)
@@ -49,6 +57,21 @@ I recommend creating a new directory for intermediary files, and a new directory
   /intermediate
   /for_upload
 ```
+
+### Canadian Geographical Names
+
+The dataset is already encoded as UTF-8. Save the layer as a new file, with the following settings:
+
+```
+Format:     GeoPackage
+File name:  placenames.gpkg
+Layer name: placenames
+CRS:        EPSG:4326
+Description:
+Canadian Geographical Names v2.0
+```
+
+Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
 ### GSHHG Coastline
 
@@ -76,6 +99,23 @@ Leave other options as default. Save the file in your `for_upload` directory. Di
 ## Metadata for GeoServer
 
 Recommended metadata for the layer fields in GeoServer.
+
+### Canadian Geographical Names
+
+```
+Name:       cgn_canada_eng
+Enabled:    true
+Advertised: false
+Title:      Canadian Geographical Names
+Abstract:
+Canadian Geographical Names v2.0 dataset, only showing Nunavut, Quebec, and Newfoundland and Labrador. Lake/rivers are excluded and labelled in a different dataset.
+
+Restrict the features on layer by CQL filter:
+
+"PROV_TERR" IN ('Nunavut','Quebec','Newfoundland and Labrador') AND "GENERIC" NOT IN ('River','River Junction','River Mouth','River Segment','Rivers','Artificial Lake','Artificial Lakes','Lake','Lakes','Part of  a Lake','Part of a Lake') AND LANGUAGE NOT IN ('French')
+```
+
+The CQL filter will only show places in certain provinces/territories, will hide rivers/lakes/similar features, and not display French placenames. French is not shown as duplicate points exist for the same feature in multiple languages, and GeoServer sometimes renders different languages at different zoom levels and I have not had any luck getting sorting or priority to work in the stylesheet.
 
 ### GSHHG Coastline
 
