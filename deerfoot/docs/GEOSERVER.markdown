@@ -2,8 +2,7 @@
 
 TODO: This document will explain how to set up GeoServer manually after using Chef to install the software.
 
-* Importing data as "Stores"
-* Setting up layers
+* Soper's Map layer setup
 * GeoWebCache setup
 * Optimizations for production
 
@@ -264,7 +263,7 @@ Name:           base_map_3413
 Title:          Base Map (EPSG:3413)
 Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
-Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
 Coordinate Reference System:    EPSG:3413
 Mode:                           Single
@@ -301,7 +300,7 @@ Name:           base_map_3574
 Title:          Base Map (EPSG:3574)
 Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
-Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
 Coordinate Reference System:    EPSG:3574
 Mode:                           Single
@@ -327,7 +326,7 @@ Name:           base_map_4326
 Title:          Base Map (EPSG:4326)
 Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
-Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
 Coordinate Reference System:    EPSG:4326
 Mode:                           Single
@@ -364,7 +363,7 @@ Name:           base_map_3857
 Title:          Base Map (EPSG:3857)
 Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
-Uses ArcticDEM at 500m resolution, GSHHS coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
+Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
 Coordinate Reference System:    EPSG:3857
 Mode:                           Single
