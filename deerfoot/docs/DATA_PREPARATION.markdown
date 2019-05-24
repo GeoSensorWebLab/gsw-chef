@@ -48,6 +48,14 @@ GPLv3
 
 A set of shapefiles for the world coastline. Also available are datasets for "World Data Bank" and "Atlas of the Cryosphere", but we only want the "World Vector Shorelines".
 
+### North American Atlas: Hydrography (13 MB)
+
+[Homepage](http://www.cec.org/tools-and-resources/map-files/lakes-and-rivers-2009)
+
+No license listed.
+
+Contains two sets of shapefiles, one for rivers and one for lakes and both files cover all of North America. This is a revised version of the 2006 data set.
+
 ## Data Processing
 
 I recommend creating a new directory for intermediary files, and a new directory for all output files that are ready to upload for GeoServer.
@@ -96,6 +104,23 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
+### North American Atlas: Lakes (Hydrography)
+
+**Important:** This shapefile uses `ISO-8859-1` encoding. After opening the file in QGIS, open the layer properties and change the encoding to `ISO-8859-1`. Then when you open the attribute table, you should see correctly parsed accents in French words such as "Lake Erie/Lac Érié".
+
+Save the layer as a new file, with the following settings:
+
+```
+Format:     GeoPackage
+File name:  lakes.gpkg
+Layer name: lakes
+CRS:        EPSG:4326
+Description:
+Lakes data from North American Atlas Hydrography dataset, published in 2010.
+```
+
+Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
+
 ## Metadata for GeoServer
 
 Recommended metadata for the layer fields in GeoServer.
@@ -130,3 +155,20 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 ```
 
 Advertising is enabled to comply with GPLv3 modification/redistribution terms.
+
+### North American Atlas: Lakes (Hydrography)
+
+```
+Name:       hydrography_lakes
+Enabled:    true
+Advertised: false
+Title:      Lakes
+Abstract:
+Lakes data from North American Atlas Hydrography dataset, published in 2010.
+
+Restrict the features on layer by CQL filter:
+
+"COUNTRY"  LIKE 'CAN'  AND "TYPE"  = 16
+```
+
+The CQL filter will only show features in Canada, and of type 16 — this excludes the ocean, water boundary lines, coastlines (GSHHG is higher quality), rivers/streams, intermittent streams, and the dataset limit boundary.
