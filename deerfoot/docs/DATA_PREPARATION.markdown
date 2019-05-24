@@ -121,6 +121,23 @@ Lakes data from North American Atlas Hydrography dataset, published in 2010.
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
+### North American Atlas: Rivers (Hydrography)
+
+**Important:** This shapefile uses `ISO-8859-1` encoding. After opening the file in QGIS, open the layer properties and change the encoding to `ISO-8859-1`. Then when you open the attribute table, you should see correctly parsed accents in French words such as "Rivière Saint-Jean".
+
+Save the layer as a new file, with the following settings:
+
+```
+Format:     GeoPackage
+File name:  rivers.gpkg
+Layer name: rivers
+CRS:        EPSG:4326
+Description:
+River data from North American Atlas Hydrography dataset, published in 2010.
+```
+
+Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
+
 ## Metadata for GeoServer
 
 Recommended metadata for the layer fields in GeoServer.
@@ -172,3 +189,20 @@ Restrict the features on layer by CQL filter:
 ```
 
 The CQL filter will only show features in Canada, and of type 16 — this excludes the ocean, water boundary lines, coastlines (GSHHG is higher quality), rivers/streams, intermittent streams, and the dataset limit boundary.
+
+### North American Atlas: Rivers (Hydrography)
+
+```
+Name:       hydrography_rivers
+Enabled:    true
+Advertised: false
+Title:      Rivers
+Abstract:
+River data from North American Atlas Hydrography dataset, published in 2010.
+
+Restrict the features on layer by CQL filter:
+
+"COUNTRY"  LIKE  'CAN' AND "TYPE"  = 17
+```
+
+The CQL filter will only show features in Canada, and of type 17 (rivers/streams).
