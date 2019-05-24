@@ -30,7 +30,7 @@ I use GeoTIFFs as they are the most common and easy to use file type for raster 
 
 Some files may have UTF-8 encoding, others may use ISO-8859-1 encoding. This will only affect how text labels are displayed when rendered — the wrong encoding will display error characters. The "Data Processing" steps below will cover the datasets that must be converted to UTF-8.
 
-## Data Sources
+## Part 1: Data Sources
 
 ### Canadian Geographical Names (31 MB)
 
@@ -48,6 +48,14 @@ GPLv3
 
 A set of shapefiles for the world coastline. Also available are datasets for "World Data Bank" and "Atlas of the Cryosphere", but we only want the "World Vector Shorelines".
 
+### North American Atlas: Glaciers (2 MB)
+
+[Homepage](http://ftp.geogratis.gc.ca/pub/nrcan_rncan/vector/framework_cadre/North_America_Atlas10M/glaciers/)
+
+No license listed.
+
+Contains a shapefile for glacier polygons that cover all of North America, Greenland, and Iceland. This is a revised version of the 2004 data set.
+
 ### North American Atlas: Hydrography (13 MB)
 
 [Homepage](http://www.cec.org/tools-and-resources/map-files/lakes-and-rivers-2009)
@@ -56,7 +64,7 @@ No license listed.
 
 Contains two sets of shapefiles, one for rivers and one for lakes and both files cover all of North America. This is a revised version of the 2006 data set.
 
-## Data Processing
+## Part 2: Data Processing
 
 I recommend creating a new directory for intermediary files, and a new directory for all output files that are ready to upload for GeoServer.
 
@@ -104,6 +112,21 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
+### North American Atlas: Glaciers
+
+Save the layer as a new file, with the following settings:
+
+```
+Format:     GeoPackage
+File name:  glaciers.gpkg
+Layer name: glaciers
+CRS:        EPSG:4326
+Description:
+Permanent glaciers data from North American Atlas Glaciers dataset, published in 2011.
+```
+
+Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
+
 ### North American Atlas: Lakes (Hydrography)
 
 **Important:** This shapefile uses `ISO-8859-1` encoding. After opening the file in QGIS, open the layer properties and change the encoding to `ISO-8859-1`. Then when you open the attribute table, you should see correctly parsed accents in French words such as "Lake Erie/Lac Érié".
@@ -138,7 +161,7 @@ River data from North American Atlas Hydrography dataset, published in 2010.
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
-## Metadata for GeoServer
+## Part 3: Metadata for GeoServer
 
 Recommended metadata for the layer fields in GeoServer.
 
@@ -172,6 +195,17 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 ```
 
 Advertising is enabled to comply with GPLv3 modification/redistribution terms.
+
+### North American Atlas: Glaciers
+
+```
+Name:       glaciers
+Enabled:    true
+Advertised: false
+Title:      Glaciers
+Abstract:
+Permanent glaciers data from North American Atlas Glaciers dataset, published in 2011.
+```
 
 ### North American Atlas: Lakes (Hydrography)
 
