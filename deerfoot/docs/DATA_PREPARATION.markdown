@@ -48,6 +48,16 @@ GPLv3
 
 A set of shapefiles for the world coastline. Also available are datasets for "World Data Bank" and "Atlas of the Cryosphere", but we only want the "World Vector Shorelines".
 
+### Natural Earth Data Bathymetry (16 MB)
+
+[Homepage](https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-bathymetry/)
+
+Public Domain
+
+Optional attribution: "Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com."
+
+Includes 12 shapefiles for different ocean depths.
+
 ### North American Atlas: Glaciers (2 MB)
 
 [Homepage](http://ftp.geogratis.gc.ca/pub/nrcan_rncan/vector/framework_cadre/North_America_Atlas10M/glaciers/)
@@ -111,6 +121,43 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 ```
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
+
+### Natural Earth Data Bathymetry
+
+We will need to join all the layers into a single layer, fix geometries, clip to the bounds of our project, densify, and export to a GeoPackage file. Note that "deeper" layer polygons must sit above lower-depth polygons for rendering to work correctly; the sort order can be modified in GeoServer later.
+
+The first step is to make sure all the layers are using the same data type; some are using `Integer`, others `Integer64`. For the following layers:
+
+* `ne_10m_bathymetry_L_0`
+* `ne_10m_bathymetry_E_6000`
+
+Open the Processing Toolbox and select "Convert Format" under "GDAL - Vector". In the dialog that opens, add `-mapFieldType Integer64=Integer` to the "Additional creation options", and save to a temporary file. After creating the "Converted" layer, rename it as the original layer and remove the original layer from QGIS.
+
+In the Processing Toolbox, select "Merge Vector Layers" from "QGIS" (not SAGA). Select all the layers as input and make sure they are sorted from 10000 to 0. Set the destination CRS to `EPSG:4326`.
+
+The resulting layer will contain all the polygons in a multi-polygon layer, and the rendering will show only the 0-depth bathymetry layer. You can check that the other layers are still working by editing the layer Symbology, expanding "Layer Rendering", enabling "Control feature rendering order", and sort by `depth` ascending (draw low depths first, then deeper layers on top).
+
+**Note:** It may be possible at this point to simplify the geometries and remove overlapping polygons (as lower depths won't be rendered where a higher depth exists). I chose not to do this as it would make the geometries of the lower depth polygons more complex.
+
+Select the "Merged" combined layer, and in the Processing Toolbox select "Fix Geometries". This may fix some issues that could affect rendering later.
+
+Select the "Fixed geometries" layer, and run "Clip Vector by Extent". Use `-180, 180, 40, 90 [EPSG:4326]` as the "Clipping extent".
+
+Select the "Clipped (extent)" layer and use "Densify by Interval". Set the interval to `0.5` (corresponding to 0.5 degrees of latitude or longitude).
+
+With the "Densified" layer, save as a new file with the following settings:
+
+```
+Format:     GeoPackage
+File name:  bathymetry.gpkg
+Layer name: Bathymetry
+CRS:        EPSG:4326
+Description:
+Natural Earth Data bathymetry layers.
+```
+
+Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
+
 
 ### North American Atlas: Glaciers
 
@@ -195,6 +242,17 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 ```
 
 Advertising is enabled to comply with GPLv3 modification/redistribution terms.
+
+### Natural Earth Data Bathymetry
+
+```
+Name:       bathymetry
+Enabled:    true
+Advertised: true
+Title:      Bathymetry
+Abstract:
+Natural Earth Data 1:10,000,000 Bathymetry (merged layers).
+```
 
 ### North American Atlas: Glaciers
 
