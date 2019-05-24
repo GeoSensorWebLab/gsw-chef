@@ -58,6 +58,14 @@ Optional attribution: "Made with Natural Earth. Free vector and raster map data 
 
 Includes 12 shapefiles for different ocean depths.
 
+### Natural Earth Data Graticules (15 degree increments) (77 KB)
+
+[Homepage](https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-graticules/)
+
+Public Domain
+
+Optional attribution: "Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com."
+
 ### North American Atlas: Glaciers (2 MB)
 
 [Homepage](http://ftp.geogratis.gc.ca/pub/nrcan_rncan/vector/framework_cadre/North_America_Atlas10M/glaciers/)
@@ -158,6 +166,26 @@ Natural Earth Data bathymetry layers.
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
+### Natural Earth Data Graticules
+
+Import `ne_10m_graticules_15.shp` into QGIS.
+
+In the Processing Toolbox use "Clip Vector by Extent". Use `-180, 180, 40, 90 [EPSG:4326]` as the "Clipping extent". Save to a temporary file.
+
+Densification is not necessary as the layer has already been pre-densified.
+
+Go to the "Layer" menu and select "Save As…".
+
+```
+Format:     GeoPackage
+File name:  graticules.gpkg
+Layer name: graticules
+CRS:        EPSG:4326
+Description:
+Natural Earth Data 15-degree graticules layer.
+```
+
+Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
 ### North American Atlas: Glaciers
 
@@ -248,10 +276,21 @@ Advertising is enabled to comply with GPLv3 modification/redistribution terms.
 ```
 Name:       bathymetry
 Enabled:    true
-Advertised: true
+Advertised: false
 Title:      Bathymetry
 Abstract:
 Natural Earth Data 1:10,000,000 Bathymetry (merged layers).
+```
+
+### Natural Earth Data Graticules
+
+```
+Name:       graticules
+Enabled:    true
+Advertised: false
+Title:      Graticules
+Abstract:
+Natural Earth Data Graticules in 15 degree intervals.
 ```
 
 ### North American Atlas: Glaciers
