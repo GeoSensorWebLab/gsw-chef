@@ -226,15 +226,17 @@ With the GCPs loaded, select the "Gear" icon and use the following options:
 ```
 Transformation type:        Polynomial 2
 Resampling method:          Lanczos
-Target SRS:                 EPSG:4326
-Output raster:              soper_4326.tif
+Target SRS:                 EPSG:102002
+Output raster:              soper_102002.tif
 ```
 
 Select OK, then select the "Play" or "Transform" icon to run the transformation. This will add a layer to the map. (I had to reload QGIS before the layer would display properly.)
 
 Go ahead and modify the options to create an `EPSG:3413` tiff file as well, then run the transform to create the raster.
 
-Remove both layers from QGIS. Open a terminal and install the `libgeotiff` tools for your OS, then `cd` to the directory with the geotiffs. Next we will edit the TIFF files to create an alpha mask (this removes the black borders around the re-projected image), but first we need to dump the geotiff data so we can re-apply it after editing.
+Use "Warp (Reproject)" from the Processing Toolbox to re-project the `EPSG:102002` raster image to `EPSG:4326`.
+
+Remove all layers from QGIS. Open a terminal and install the `libgeotiff` tools for your OS, then `cd` to the directory with the geotiffs. Next we will edit the TIFF files to create an alpha mask (this removes the black borders around the re-projected image), but first we need to dump the geotiff data so we can re-apply it after editing.
 
 ```terminal
 $ listgeo -no_norm "soper_3413.tif" > soper_3413.geo
