@@ -24,13 +24,29 @@ I am using GeoPackage files instead of Shapefiles as it is easier to keep track 
 
 ## About GeoTIFFs
 
-I use GeoTIFFs as they are the most common and easy to use file type for raster geo-data. The compression options are also decent and well supported by this project's tools (QGIS, GDAL, GeoServer).
+I use GeoTIFFs as they are the most common and easy to use file type for raster geo-data. The compression options are also decent and well supported by this project's tools (QGIS, GDAL, GeoServer). Compression not only decreases the file size, it makes the files faster to read from disk (which is a trade-off against CPU time).
 
 ## About File Encodings
 
 Some files may have UTF-8 encoding, others may use ISO-8859-1 encoding. This will only affect how text labels are displayed when rendered — the wrong encoding will display error characters. The "Data Processing" steps below will cover the datasets that must be converted to UTF-8.
 
 ## Part 1: Data Sources
+
+### ArcticDEM 500 metre mosaic (382 MB)
+
+[Homepage](https://www.pgc.umn.edu/data/arcticdem/)
+
+Copyright, acknowledgement, and citation:
+
+```
+Geospatial support for this work provided by the Polar Geospatial Center under NSF-OPP awards 1043681 and 1559691.
+
+DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 1559691, and 1542736.
+
+Porter, Claire; Morin, Paul; Howat, Ian; Noh, Myoung-Jon; Bates, Brian; Peterman, Kenneth; Keesey, Scott; Schlenk, Matthew; Gardiner, Judith; Tomko, Karen; Willis, Michael; Kelleher, Cole; Cloutier, Michael; Husby, Eric; Foga, Steven; Nakamura, Hitomi; Platson, Melisa; Wethington, Michael, Jr.; Williamson, Cathleen; Bauer, Gregory; Enos, Jeremy; Arnold, Galen; Kramer, William; Becker, Peter; Doshi, Abhijit; D’Souza, Cristelle; Cummens, Pat; Laurier, Fabien; Bojesen, Mikkel, 2018, “ArcticDEM”, https://doi.org/10.7910/DVN/OHHUKH, Harvard Dataverse, V1, [May 2019].
+```
+
+I chose to use the 500 metre mosaic as higher resolutions require considerably more space (100 metre is 7.8 GB). There are some gaps in the coverage, where underlying layers will be shown. The GSHHG coastline polygon is styled to minimize the appearance of these gaps.
 
 ### Canadian Geographical Names (31 MB)
 
@@ -91,6 +107,178 @@ I recommend creating a new directory for intermediary files, and a new directory
   /intermediate
   /for_upload
 ```
+
+### ArcticDEM
+
+We need to prepare six versions of this DEM:
+
+1. The DEM clipped to the GSHHG coastline polygon, in `EPSG:3413`
+2. A hillshade version of #1
+3. A slope calculation version of #1
+4. The DEM from #1 re-projected to `EPSG:4326`
+5. A hillshade version of #4
+6. A slope calculation version of #4
+
+We create a set of rasters for `EPSG:3413` for the layers presented in polar projections, and a separate set of rasters for `EPSG:4326` and the layers presented in Mercator projections. This is necessary as GeoServer will be very slow in re-projecting the rasters on-the-fly from polar to Mercator.
+
+I recommend making a backup of the original DEM, to prevent accidental overwriting.
+
+#### ArcticDEM `EPSG:3413` Processing
+
+Open the `GSHHS_shp/f/GSHHS_f_L1.shp` coastline polygon in QGIS.
+
+In the Processing Toolbox use "Fix Geometries". Create a temporary layer.
+
+In the Processing Toolbox use "Clip Vector by Extent". Use `-180, 180, 40, 90 [EPSG:4326]` as the "Clipping extent".
+
+In the Processing Toolbox use "Densify by Interval". Set the interval to `0.5` (corresponding to 0.5 degrees of latitude or longitude).
+
+Set the project projection to `EPSG:3413`. You should see a clean arc for the edge of the extent across the USA and Asia.
+
+In the Processing Toolbox use "Reproject Layer". Set the Target CRS to `EPSG:3413`. (This also changes the units to metres, which we want for a fixed resolution.)
+
+In the Processing Toolbox, use "Rasterize (Vector to Raster)". Use the following options:
+
+```
+Input Layer:                    Reprojected [EPSG:3413]
+Field to use for a burn-in value: (Empty)
+A fixed value to burn:          1.0
+Output raster size units:       Georeferenced units
+Width/Horizontal Resolution:    50
+Height/Vertical Resolution:     50
+Output extent:                  … -> Use extent from "Reprojected"
+
+Advanced Parameters
+Creation Option:                COMPRESS=PACKBITS
+Creation Option:                NUM_THREADS=ALL_CPUS
+Output data type:               Byte
+```
+
+This creates a 50 metre resolution raster of the coastline; a higher-resolution raster will create a "cleaner" coastline for the ArcticDEM but will also take longer. (For reference, on a high-end desktop, 100 metres takes 5 minutes; 75 metres takes 7 minutes; 50 metres takes 10 minutes.)
+
+After the raster is created, open the 500 metre ArcticDEM in QGIS.
+
+In the "Raster" menu, open the "Raster Calculator". Set the expression to `(rasterized > 0) * arcticdem_500m`. This will copy the ArcticDEM but only in pixels where the rasterized coastline polygon has a value. Set the output layer to save as `arcticDEM_500_clipped.tif` in the `intermediate` directory, with Output CRS `EPSG:3413`.
+
+In the Processing Toolbox, open "Translate (Convert Format)" from GDAL. We will apply compression to the raster to decrease the file size. Select the raster as the input layer, and set the Profile to `High compression`. Save to a GeoTIFF named `arcticDEM_500_3413.tif` in the `intermediate` directory.
+
+Remove all layers aside from the one you just created.
+
+In the Processing Toolbox, open "Hillshade" from GDAL. Use the following options:
+
+```
+Input Layer:                arcticDEM_500_3413
+Z factor:                   1.5
+Azimuth:                    315
+Altitude:                   45
+Multidirectional Shading:   Enabled
+Profile:                    High compression
+Add Creation Option "TILED=YES"
+```
+
+Save the file to `intermediate/arcticDEM_500_3413_hillshade.tif`.
+
+In the Processing Toolbox, open "Slope" from GDAL. Use the following options:
+
+```
+Input Layer:                arcticDEM_500_3413
+Profile:                    High compression
+Add Creation Option "TILED=YES"
+```
+
+Save the file to `intermediate/arcticDEM_500_3413_slope.tif`.
+
+Next, use "Translate (Convert Format)" to convert these three rasters to GeoTIFFs in the `for_upload` directory, with the following options:
+
+```
+Profile:            High compression
+Add Creation Option "TILED=YES"
+Output data type:   Int16
+```
+
+This step is done so that GeoServer will properly read the rasters; it will not read `Float32` rasters in version 2.15.2 (bug?).
+
+#### ArcticDEM `EPSG:4326` Processing
+
+Similar to the process for `EPSG:3413`.
+
+Open the `GSHHS_shp/f/GSHHS_f_L1.shp` coastline polygon in QGIS.
+
+In the Processing Toolbox use "Fix Geometries". Create a temporary layer.
+
+In the Processing Toolbox use "Clip Vector by Extent". Use `-180, 180, 40, 90 [EPSG:4326]` as the "Clipping extent".
+
+In the Processing Toolbox, use "Rasterize (Vector to Raster)". Use the following options:
+
+```
+Input Layer:                    Clipped [EPSG:4326]
+Field to use for a burn-in value: (Empty)
+A fixed value to burn:          1.0
+Output raster size units:       Georeferenced units
+Width/Horizontal Resolution:    0.0001
+Height/Vertical Resolution:     0.0001
+Output extent:                  … -> Use extent from "Reprojected"
+
+Advanced Parameters
+Creation Option:                COMPRESS=PACKBITS
+Creation Option:                NUM_THREADS=ALL_CPUS
+Output data type:               Byte
+```
+
+This creates a 50 metre resolution raster of the coastline. Rename the layer as `coastline_50`. After the raster is created, open the 500 metre ArcticDEM in QGIS.
+
+Open the Processing Toolbox and use "Warp (Reproject)" from GDAL. Use the following options:
+
+```
+Source CRS:             EPSG:3413
+Target CRS:             EPSG:4326
+Resampling:             Bilinear
+Output File Resolution: 0.01
+Profile:                High compression
+Georeferenced Extents:  Use Layer Extent: Coastline raster
+```
+
+`0.01` takes awhile to process. Rename the output layer as `arcticDEM_4326`.
+
+In the "Raster" menu, open the "Raster Calculator". Set the expression to `(coastline_50 > 0) * arcticdem_4326`. Set the output layer to save as `arcticDEM_500_4326_clipped.tif` in the `intermediate` directory, with Output CRS `EPSG:4326`.
+
+In the Processing Toolbox, open "Translate (Convert Format)" from GDAL. We will apply compression to the raster to decrease the file size. Select the raster as the input layer, and set the Profile to `High compression`. Save to a GeoTIFF named `arcticDEM_500_4326.tif` in the `intermediate` directory.
+
+Remove all layers aside from the one you just created.
+
+In the Processing Toolbox, open "Hillshade" from GDAL. Use the following options:
+
+```
+Input Layer:                arcticDEM_500_4326
+Z factor:                   1.5
+Azimuth:                    315
+Altitude:                   45
+Multidirectional Shading:   Enabled
+Profile:                    High compression
+Add Creation Option "TILED=YES"
+```
+
+Save the file to `intermediate/arcticDEM_500_4326_hillshade.tif`.
+
+In the Processing Toolbox, open "Slope" from GDAL. Use the following options:
+
+```
+Input Layer:                arcticDEM_500_4326
+Profile:                    High compression
+Add Creation Option "TILED=YES"
+```
+
+Save the file to `intermediate/arcticDEM_500_4326_slope.tif`.
+
+Next, use "Translate (Convert Format)" to convert these three rasters to GeoTIFFs in the `for_upload` directory, with the following options:
+
+```
+Profile:            High compression
+Add Creation Option "TILED=YES"
+Output data type:   Int16
+```
+
+This step is done so that GeoServer will properly read the rasters; it will not read `Float32` rasters in version 2.15.2 (bug?).
 
 ### Canadian Geographical Names
 
@@ -239,6 +427,25 @@ Leave other options as default. Save the file in your `for_upload` directory. Di
 ## Part 3: Metadata for GeoServer
 
 Recommended metadata for the layer fields in GeoServer.
+
+### ArcticDEM
+
+```
+Name:       arcticdem_500m_3413
+Enabled:    true
+Advertised: false
+Title:      ArcticDEM (EPSG:3413)
+Abstract:
+Modified version of ArcticDEM 500 metre mosaic clipped to GSHHG coastline data.
+
+Geospatial support for this work provided by the Polar Geospatial Center under NSF-OPP awards 1043681 and 1559691.
+
+DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 1559691, and 1542736.
+
+Porter, Claire; Morin, Paul; Howat, Ian; Noh, Myoung-Jon; Bates, Brian; Peterman, Kenneth; Keesey, Scott; Schlenk, Matthew; Gardiner, Judith; Tomko, Karen; Willis, Michael; Kelleher, Cole; Cloutier, Michael; Husby, Eric; Foga, Steven; Nakamura, Hitomi; Platson, Melisa; Wethington, Michael, Jr.; Williamson, Cathleen; Bauer, Gregory; Enos, Jeremy; Arnold, Galen; Kramer, William; Becker, Peter; Doshi, Abhijit; D’Souza, Cristelle; Cummens, Pat; Laurier, Fabien; Bojesen, Mikkel, 2018, “ArcticDEM”, https://doi.org/10.7910/DVN/OHHUKH, Harvard Dataverse, V1, [May 2019].
+```
+
+This metadata is re-used for `EPSG:4326` versions, and for the `hillshade` and `slope` rasters too.
 
 ### Canadian Geographical Names
 
