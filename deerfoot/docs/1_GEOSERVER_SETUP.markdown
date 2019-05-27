@@ -388,4 +388,75 @@ Instead of adding each layer one-by-one, add the entire `EPSG:4326` layer group.
 
 Before setting up GeoWebCache, test out the WMS and WMTS services using QGIS as the client. The layers may be slow to load, but as long as they A) load, and B) look correct, then the slow render is fine and will be fixed by setting up caching.
 
-TODO: Set up of Gridsets, Blob Store, Disk Quota, tile layer configurations, pre-generation of tiles, testing
+### Gridsets
+
+`EPSG:4326` and `EPSG:3857` (as `EPSG:900913`) are already included by default. Here are the ones to create for caching. Add zoom levels up to "level 12". Beyond that level the map can generate on-the-fly.
+
+```
+EPSG:3413
+Gridset Bounds: (Computer from maximum extent of CRS)
+
+EPSG:3573
+Gridset Bounds: (Computer from maximum extent of CRS)
+
+EPSG:3574
+Gridset Bounds: (Computer from maximum extent of CRS)
+
+EPSG:102002
+Gridset Bounds:
+    Min X:      -5,615,818.3524223
+    Min Y:      5.141556829724574
+    Max X:      5,849,324.486082172
+    Max Y:      11,222,809.102523187
+
+```
+
+### BlobStores
+
+```
+Type:                   File BlobStore
+Identifier:             cachestore
+Enabled:                true
+Default:                true
+Base Directory:         /srv/data/tiles
+File System Block Size: 4096
+```
+
+### Disk Quota
+
+```
+Enable disk quota
+Disk quota check frequency: 60
+Maximum tile cache size:    40 GiB
+Use "Least frequently used"
+Disk quota store type:      H2
+```
+
+Enabling the disk quota will allow tracking of disk space used as well.
+
+### Tile Layers
+
+For each layer group, edit the layer and select the "Tile Caching" tab. Enable the creation of a cached layer for the layer group. Remove all the default gridsets, and add the gridset for that specific layer group's CRS.
+
+Additionally, follow the same procedure for both of the "Soper's Map" layers.
+
+Once done, these layers should be listed under the "Tile Layers" main menu item. For each item, select "Seed/Truncate" to open a new window/tab. Use the following options:
+
+```
+Tasks:      2
+Type:       Seed
+Grid Set:   (Default)
+Format:     image/jpeg
+Zoom start: 00
+Zoom stop:  06
+```
+
+This will take a few minutes. You can continue adding other layers to the queue, and the tile generator will eventually get to them.
+
+Go ahead and repeat the tile seed configuration for `image/png` as well, then again for each layer.
+
+Zoom 0 – 6 with 2 tasks on a cloud server will take around 25 minutes to complete per layer per image format.
+
+### Testing Tiles
+
+From the main GeoServer web page (`/geoserver/web`), copy the WMTS Service Capabilities link, and use that for adding WMTS to QGIS. The maps should show up as an option in the source data list. Try adding one of the layers for which you generated tiles, and notice how much faster the tiles are then WMS.
