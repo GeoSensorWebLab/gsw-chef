@@ -10,6 +10,10 @@ I am using GeoPackage files instead of Shapefiles as it is easier to keep track 
 
 I use GeoTIFFs as they are the most common and easy to use file type for raster geo-data. The compression options are also decent and well supported by this project's tools (QGIS, GDAL, GeoServer). Compression not only decreases the file size, it makes the files faster to read from disk (which is a trade-off against CPU time).
 
+### About Overviews
+
+I recommend using overviews, especially for large raster images. I prefer external overviews, as it is easier to remove them and re-generate them with different options. Instructions on adding overviews to the rasters will be a part of the "Optimization" section of the ["GeoServer Setup" document](/1_GEOSERVER_SETUP.markdown).
+
 ### About File Encodings
 
 Some files may have UTF-8 encoding, others may use ISO-8859-1 encoding. This will only affect how text labels are displayed when rendered — the wrong encoding will display error characters. The "Data Processing" steps below will cover the datasets that must be converted to UTF-8.

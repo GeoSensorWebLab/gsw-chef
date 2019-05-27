@@ -73,7 +73,7 @@ Maintainer:         https://github.com/geosensorweblab
 Online Resource:    https://github.com/geosensorweblab
 Title:              ArcticConnect Web Map Service
 Abstract:
-Web Map Service for Arctic Institute of North America. Managed by GeoSensorWeb Lab at the University of Calgary.
+Web Map Service for Arctic Connect platform and related projects. Managed by GeoSensorWeb Lab at the University of Calgary.
 
 Fees:               NONE
 Access Constraints: NONE
@@ -154,21 +154,21 @@ Please see the [`3_DATA_PREPARATION.markdown`](/3_DATA_PREPARATION.markdown) doc
 Upload the following data files to the server:
 
 * `background.gpkg`
-* `cgn_canada_eng.gpkg`
+* `placenames.gpkg`
 * `coastline.gpkg`
 * `glaciers.gpkg`
-* `hydrography_lakes.gpkg`
-* `hydrography_rivers.gpkg`
-* `ne_10m_bathymetry_all.gpkg`
-* `ne_10m_graticules_15.gpkg`
-* `arcticdem_500m_3413.tif`
-* `arcticdem_500m_3413_hillshade.tif`
-* `arcticdem_500m_3413_slope.tif`
-* `arcticdem_500m_4326.tif`
-* `arcticdem_500m_4326_hillshade.tif`
-* `arcticdem_500m_4326_slope.tif`
-* `soper_map_3413.tif`
-* `soper_map.tif`
+* `lakes.gpkg`
+* `rivers.gpkg`
+* `bathymetry.gpkg`
+* `graticules.gpkg`
+* `arcticdem_500_3413.tif`
+* `arcticdem_500_3413_hillshade.tif`
+* `arcticdem_500_3413_slope.tif`
+* `arcticdem_500_4326.tif`
+* `arcticdem_500_4326_hillshade.tif`
+* `arcticdem_500_4326_slope.tif`
+* `soper_3413.tif`
+* `soper_4326.tif`
 
 **Important:** Place these files in a directory accessible by the `tomcat` user, and change the ownership of the files (AND the enclosing folder) to `tomcat` so that GeoPackages are correctly read by Java.
 
