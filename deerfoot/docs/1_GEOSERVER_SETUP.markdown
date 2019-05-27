@@ -1,10 +1,5 @@
 # GeoServer Documentation
 
-TODO: This document will explain how to set up GeoServer manually after using Chef to install the software.
-
-* GeoWebCache setup
-* Optimizations for production
-
 ## First Steps
 
 I would recommend starting with creating a new cloud server (in OpenStack or EC2) with the average hardware requirements: 2 CPUs, 4 GB of RAM, 30 GB of free disk space.
