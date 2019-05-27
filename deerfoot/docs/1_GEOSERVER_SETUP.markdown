@@ -305,10 +305,12 @@ DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 15596
 
 Workspace:                      arcticconnect
 Coordinate Reference System:    EPSG:3574
-Mode:                           Single
+Mode:                           Named Tree
 ```
 
 Instead of adding each layer one-by-one, add the entire `EPSG:3413` layer group. Generate Bounds and save the layer.
+
+We use `Named Tree` otherwise the parent layer group *disappears* from the WMS layer list. Not sure why.
 
 **Note:** For `EPSG:102002`, manually enter the following bounds as they are not properly generated.
 
@@ -374,12 +376,14 @@ DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 15596
 
 Workspace:                      arcticconnect
 Coordinate Reference System:    EPSG:3857
-Mode:                           Single
+Mode:                           Named Tree
 ```
 
 Instead of adding each layer one-by-one, add the entire `EPSG:4326` layer group. Generate Bounds and save the layer.
 
-## TODO: Caching Configuration
+We use `Named Tree` otherwise the parent layer group *disappears* from the WMS layer list. Not sure why.
+
+## Caching Configuration
 
 Before setting up GeoWebCache, test out the WMS and WMTS services using QGIS as the client. The layers may be slow to load, but as long as they A) load, and B) look correct, then the slow render is fine and will be fixed by setting up caching.
 
