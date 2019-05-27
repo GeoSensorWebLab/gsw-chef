@@ -2,7 +2,6 @@
 
 TODO: This document will explain how to set up GeoServer manually after using Chef to install the software.
 
-* Soper's Map layer setup
 * GeoWebCache setup
 * Optimizations for production
 
@@ -235,7 +234,9 @@ Click "Save", and continue adding the rest of the raster data sources as Stores/
 
 ### Layer Customization: Soper's Map
 
-TODO: Soper's Map will be advertised separately, as we want it to be turned on/off separately from the base layer.
+Soper's Map will be advertised separately, as we want it to be turned on/off separately from the base layer.
+
+Import the raster images as new "Stores", and publish the layers using metadata listed in `DATA_PREPARATION.markdown`. It may be necessary to set the "Declared SRS" to `EPSG:3413` or `EPSG:4326` (depending on the input raster).
 
 ### Layer Groups
 
@@ -372,5 +373,7 @@ Mode:                           Single
 Instead of adding each layer one-by-one, add the entire `EPSG:4326` layer group. Generate Bounds and save the layer.
 
 ## TODO: Caching Configuration
+
+Before setting up GeoWebCache, test out the WMS and WMTS services using QGIS as the client. The layers may be slow to load, but as long as they A) load, and B) look correct, then the slow render is fine and will be fixed by setting up caching.
 
 TODO: Set up of Gridsets, Blob Store, Disk Quota, tile layer configurations, pre-generation of tiles, testing
