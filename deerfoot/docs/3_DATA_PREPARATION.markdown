@@ -254,16 +254,14 @@ $ geotifcp -g soper_3413.geo soper_3413_2.tif soper_3413_alpha.tif
 $ geotifcp -g soper_4326.geo soper_4326_2.tif soper_4326_alpha.tif
 ```
 
-Open the `soper_3413_alpha.tif` in QGIS, and it should display in the correct location. Open the layer properties, and in the transparency tab select "Band 4" as the transparency band. Now the black border around the image will be removed for rendering in QGIS. (GeoServer will automatically read band 4 as the alpha layer.)
+Next, use GDAL to fix the alpha bands for GeoServer:
 
-In the Processing Toolbox, select "Translate (Convert Format)" to convert the image for upload. Use the following options:
-
-```
-Profile:            High compression
-Add Creation Option "TILED=YES"
+```terminal
+$ gdal_translate -colorinterp_4 alpha -co COMPRESS=DEFLATE -co PREDICTOR=2 -co ZLEVEL=9 intermediate/soper_3413_alpha.tif for_upload/soper_3413.tif
+$ gdal_translate -colorinterp_4 alpha -co COMPRESS=DEFLATE -co PREDICTOR=2 -co ZLEVEL=9 intermediate/soper_4326_alpha.tif for_upload/soper_4326_alpha.tif
 ```
 
-Save the file in the `for_upload` directory, and do the same for the `soper_4326_alpha.tif` file.
+This command must be run from the command line because `colorinterp_X` isn't supported in QGIS tools yet.
 
 ### GSHHG Coastline
 
