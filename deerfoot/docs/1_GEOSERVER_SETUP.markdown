@@ -394,7 +394,11 @@ Before setting up GeoWebCache, test out the WMS and WMTS services using QGIS as 
 
 ```
 EPSG:3413
-Gridset Bounds: (Computer from maximum extent of CRS)
+Gridset Bounds:
+    Min X:      -12977546.987062823
+    Min Y:      -12977546.987062823
+    Max X:      12977546.987062823
+    Max Y:      12977546.987062823
 
 EPSG:3573
 Gridset Bounds: (Computer from maximum extent of CRS)
@@ -404,10 +408,10 @@ Gridset Bounds: (Computer from maximum extent of CRS)
 
 EPSG:102002
 Gridset Bounds:
-    Min X:      -5,615,818.3524223
+    Min X:      -5615818.3524223
     Min Y:      5.141556829724574
-    Max X:      5,849,324.486082172
-    Max Y:      11,222,809.102523187
+    Max X:      5849324.486082172
+    Max Y:      11222809.102523187
 
 ```
 
@@ -449,6 +453,8 @@ Grid Set:   (Default)
 Format:     image/jpeg
 Zoom start: 00
 Zoom stop:  06
+
+Bounding Box: Use the same as the gridset bounds
 ```
 
 This will take a few minutes. You can continue adding other layers to the queue, and the tile generator will eventually get to them.
