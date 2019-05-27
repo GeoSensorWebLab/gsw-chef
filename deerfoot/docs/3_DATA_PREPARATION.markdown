@@ -12,7 +12,7 @@ I use GeoTIFFs as they are the most common and easy to use file type for raster 
 
 ### About Overviews
 
-I recommend using overviews, especially for large raster images. I prefer external overviews, as it is easier to remove them and re-generate them with different options. Instructions on adding overviews to the rasters will be a part of the "Optimization" section of the ["GeoServer Setup" document](/1_GEOSERVER_SETUP.markdown).
+I recommend using overviews, especially for large raster images. I prefer external overviews, as it is easier to remove them and re-generate them with different options. Instructions on adding overviews to the rasters will be a part of the "Optimization" section of the ["GeoServer Setup" document](1_GEOSERVER_SETUP.markdown).
 
 ### About File Encodings
 

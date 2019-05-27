@@ -149,7 +149,7 @@ For each CSS file in `files/default/styles`, create a new style in the `arcticco
 
 ### Uploading Datasets
 
-Please see the [`3_DATA_PREPARATION.markdown`](/3_DATA_PREPARATION.markdown) document for instructions on preparing and processing the data from the source files into formats for this project.
+Please see the [`3_DATA_PREPARATION.markdown`](3_DATA_PREPARATION.markdown) document for instructions on preparing and processing the data from the source files into formats for this project.
 
 Upload the following data files to the server:
 
@@ -178,7 +178,7 @@ Upload the following data files to the server:
 
 For each vector data source, create a new `Store` with vector data type `GeoPackage`. You only need to fill out `Data Source Name` (the filename), and `database` (the path to the GeoPackage on the server). You can click "Browse…" to manually browse the filesystem on the server to find the `.gpkg` file.
 
-After creating the `Store`, GeoServer will prompt you to publish a layer for the store. Go ahead and "Publish", which will open the "Layer" form. Most of the following data can be filled out based on the details in [`4_LAYER_METADATA.markdown`](/4_LAYER_METADATA.markdown).
+After creating the `Store`, GeoServer will prompt you to publish a layer for the store. Go ahead and "Publish", which will open the "Layer" form. Most of the following data can be filled out based on the details in [`4_LAYER_METADATA.markdown`](4_LAYER_METADATA.markdown).
 
 The "Name" is the machine-readable name of the layer; keep it simple and lowercase.
 
@@ -194,7 +194,7 @@ Leave the "Native SRS" and "Declared SRS" as default. If "Declared SRS" is empty
 
 For "Native Bounding Box", click "Compute from data". For "Lat/Lon Bounding Box", click "Compute from native bounds".
 
-For "Restrict the features on layer by CQL filter" please refer to the data source details in [`4_LAYER_METADATA.markdown`](/4_LAYER_METADATA.markdown). This field may be necessary to remove extraneous data before rendering.
+For "Restrict the features on layer by CQL filter" please refer to the data source details in [`4_LAYER_METADATA.markdown`](4_LAYER_METADATA.markdown). This field may be necessary to remove extraneous data before rendering.
 
 Next, click the "Publishing" tab. You do not need to "Save" before switching tabs; that is done automatically.
 
@@ -236,7 +236,7 @@ Click "Save", and continue adding the rest of the raster data sources as Stores/
 
 Soper's Map will be advertised separately, as we want it to be turned on/off separately from the base layer.
 
-Import the raster images as new "Stores", and publish the layers using metadata listed in [`4_LAYER_METADATA.markdown`](/4_LAYER_METADATA.markdown). It may be necessary to set the "Declared SRS" to `EPSG:3413` or `EPSG:4326` (depending on the input raster).
+Import the raster images as new "Stores", and publish the layers using metadata listed in [`4_LAYER_METADATA.markdown`](4_LAYER_METADATA.markdown). It may be necessary to set the "Declared SRS" to `EPSG:3413` or `EPSG:4326` (depending on the input raster).
 
 ### Layer Groups
 
