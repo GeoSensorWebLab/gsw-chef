@@ -56,6 +56,10 @@ No license listed; possible [Open Government License](https://open.canada.ca/en/
 
 Multiple sets of geo-files (CSV, SHP, KML, GML) for provinces, territories, and the entire country. For this project I downloaded the Shapefiles for all of Canada as we need Nunavut, Quebec, and Newfoundland and Labrador.
 
+### Dewey Soper's Hand Drawn Map (35 MB)
+
+Original format is a 35 MB TIFF (non-geo) at 600 ppi. Please contact someone from AINA for access to the original image.
+
 ### GSHHG Coastline Shapefile (150 MB)
 
 [Homepage](http://www.soest.hawaii.edu/pwessel/gshhg/)
@@ -295,6 +299,54 @@ Canadian Geographical Names v2.0
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
+### Dewey Soper's Hand Drawn Map
+
+The non-georeferenced TIFF image will have to be registered in QGIS. Please review [the QGIS guide to georeferencing](https://www.qgistutorials.com/en/docs/3/georeferencing_basics.html) before starting. Note that in some versions of QGIS the plugin for "Georeferencer" will not show its checkbox in the plugin list, as the checkbox is invisible; you have to click where the checkbox is *supposed* to be to enable the checkbox.
+
+Use the Georeferencer to open the original TIFF image. Select `EPSG:102002` as the target CRS. Optionally, load the Ground Control Points (GCPs) from the `files/default` directory in this Chef cookbook.
+
+With the GCPs loaded, select the "Gear" icon and use the following options:
+
+```
+Transformation type:        Polynomial 2
+Resampling method:          Lanczos
+Target SRS:                 EPSG:4326
+Output raster:              soper_4326.tif
+```
+
+Select OK, then select the "Play" or "Transform" icon to run the transformation. This will add a layer to the map. (I had to reload QGIS before the layer would display properly.)
+
+Go ahead and modify the options to create an `EPSG:3413` tiff file as well, then run the transform to create the raster.
+
+Remove both layers from QGIS. Open a terminal and install the `libgeotiff` tools for your OS, then `cd` to the directory with the geotiffs. Next we will edit the TIFF files to create an alpha mask (this removes the black borders around the re-projected image), but first we need to dump the geotiff data so we can re-apply it after editing.
+
+```terminal
+$ listgeo -no_norm "soper_3413.tif" > soper_3413.geo
+$ listgeo -no_norm "soper_4326.tif" > soper_4326.geo
+```
+
+Next open the TIFF files in Photoshop or a similar image editor that can support Alpha Channels. Use the "Wand" tool to select the black border around the image, invert the selection, and in the Channels palette select "Save selection as channel". Save as a NEW file using "Save as…" and give the file a new name. Make sure "Alpha Channels" is enabled. Do not bother with image compression (select "none"), as we will re-compress with QGIS later.
+
+Do this for both `EPSG:3413` and `EPSG:4326` images. Quit Photoshop.
+
+Back in the terminal, we will re-apply the geodata to the TIFF files.
+
+```terminal
+$ geotifcp -g soper_3413.geo soper_3413_2.tif soper_3413_alpha.tif
+$ geotifcp -g soper_4326.geo soper_4326_2.tif soper_4326_alpha.tif
+```
+
+Open the `soper_3413_alpha.tif` in QGIS, and it should display in the correct location. Open the layer properties, and in the transparency tab select "Band 4" as the transparency band. Now the black border around the image will be removed for rendering in QGIS. (GeoServer will automatically read band 4 as the alpha layer.)
+
+In the Processing Toolbox, select "Translate (Convert Format)" to convert the image for upload. Use the following options:
+
+```
+Profile:            High compression
+Add Creation Option "TILED=YES"
+```
+
+Save the file in the `for_upload` directory, and do the same for the `soper_4326_alpha.tif` file.
+
 ### GSHHG Coastline
 
 Import `GSHHS_shp/f/GSHHS_f_L1.shp` into QGIS.
@@ -463,6 +515,26 @@ Restrict the features on layer by CQL filter:
 ```
 
 The CQL filter will only show places in certain provinces/territories, will hide rivers/lakes/similar features, and not display French placenames. French is not shown as duplicate points exist for the same feature in multiple languages, and GeoServer sometimes renders different languages at different zoom levels and I have not had any luck getting sorting or priority to work in the stylesheet.
+
+### Dewey Soper's Hand Drawn Map
+
+```
+Name:       sopers_map_4326
+Enabled:    true
+Advertised: true
+Title:      Dewey Soper's Hand Drawn Map (EPSG:4326)
+Abstract:
+Dewey Soper's Hand Drawn Map digitized for the Arctic Institute of North America.
+```
+
+```
+Name:       sopers_map_3413
+Enabled:    true
+Advertised: true
+Title:      Dewey Soper's Hand Drawn Map (EPSG:3413)
+Abstract:
+Dewey Soper's Hand Drawn Map digitized for the Arctic Institute of North America.
+```
 
 ### GSHHG Coastline
 
