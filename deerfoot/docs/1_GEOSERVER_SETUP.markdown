@@ -266,6 +266,9 @@ Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
 Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
+DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 1559691, and 1542736.
+
+Workspace:                      arcticconnect
 Coordinate Reference System:    EPSG:3413
 Mode:                           Single
 ```
@@ -274,17 +277,17 @@ Leave "Queryable" enabled, as it allows WMS "GetFeatureInfo" requests.
 
 One-by-one, add the following layers in the following order:
 
-1. `arcticconnect:map_background`
-2. `arcticconnect:ne_10m_bathymetry`
+1. `arcticconnect:background`
+2. `arcticconnect:bathymetry`
 3. `arcticconnect:coastline`
 4. `arcticconnect:arcticdem_500m_3413_hillshade`
 5. `arcticconnect:arcticdem_500m_3413_slope`
 6. `arcticconnect:arcticdem_500m_3413`
-7. `arcticconnect:hydrography_rivers`
-8. `arcticconnect:hydrography_lakes`
+7. `arcticconnect:rivers`
+8. `arcticconnect:lakes`
 9. `arcticconnect:glaciers`
 10. `arcticconnect:graticules`
-11. `arcticconnect:cgn_canada_eng`
+11. `arcticconnect:placenames`
 
 Note that we use the `EPSG:3413` rasters!
 
@@ -303,6 +306,9 @@ Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
 Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
+DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 1559691, and 1542736.
+
+Workspace:                      arcticconnect
 Coordinate Reference System:    EPSG:3574
 Mode:                           Single
 ```
@@ -329,6 +335,9 @@ Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
 Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
+DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 1559691, and 1542736.
+
+Workspace:                      arcticconnect
 Coordinate Reference System:    EPSG:4326
 Mode:                           Single
 ```
@@ -337,17 +346,17 @@ Leave "Queryable" enabled, as it allows WMS "GetFeatureInfo" requests.
 
 One-by-one, add the following layers in the following order:
 
-1. `arcticconnect:map_background`
-2. `arcticconnect:ne_10m_bathymetry`
+1. `arcticconnect:background`
+2. `arcticconnect:bathymetry`
 3. `arcticconnect:coastline`
 4. `arcticconnect:arcticdem_500m_4326_hillshade`
 5. `arcticconnect:arcticdem_500m_4326_slope`
 6. `arcticconnect:arcticdem_500m_4326`
-7. `arcticconnect:hydrography_rivers`
-8. `arcticconnect:hydrography_lakes`
+7. `arcticconnect:rivers`
+8. `arcticconnect:lakes`
 9. `arcticconnect:glaciers`
 10. `arcticconnect:graticules`
-11. `arcticconnect:cgn_canada_eng`
+11. `arcticconnect:placenames`
 
 Note that we use the `EPSG:4326` rasters!
 
@@ -366,6 +375,9 @@ Abstract:
 Base map for Soper's World project (Arctic Institute of North America).
 Uses ArcticDEM at 500m resolution, GSHHG coastline data, Natural Earth Data bathymetry/graticules, Government of Canada North American Atlas Rivers/Lakes/Glaciers, and Canada Geographic Names dataset.
 
+DEMs provided by the Polar Geospatial Center under NSF-OPP awards 1043681, 1559691, and 1542736.
+
+Workspace:                      arcticconnect
 Coordinate Reference System:    EPSG:3857
 Mode:                           Single
 ```
