@@ -1,21 +1,5 @@
 # Data Preparation
 
-TODO: Guide on setting up data
-
-* download the data sources
-* manage the correct file encodings
-* clip vectors to area of interest
-* apply densification to vectors so they survive re-projection
-* export vectors to GeoPackages
-* convert coastline to raster, use raster to clip arcticDEM
-* export arcticDEM to GeoTIFF (not Float32!) with compression
-* Create hillshade
-* Create slope raster
-* Importing Soper's hand-drawn map and GCP points
-* Projecting Soper's hand-drawn map to EPSG:3413 and EPSG:4326
-* Exporting the map to GeoTIFF with proper masking
-* create vector for map background
-
 Data processing will be done with QGIS 3.6 and with GDAL 2.4.1.
 
 ## About GeoPackages
@@ -67,6 +51,10 @@ Original format is a 35 MB TIFF (non-geo) at 600 ppi. Please contact someone fro
 GPLv3
 
 A set of shapefiles for the world coastline. Also available are datasets for "World Data Bank" and "Atlas of the Cryosphere", but we only want the "World Vector Shorelines".
+
+### Map Background
+
+A single polygon created to mask any holes between the bathymetry data and the ArcticDEM and coastline data.
 
 ### Natural Earth Data Bathymetry (16 MB)
 
@@ -370,6 +358,25 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 
 Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
 
+### Map Background
+
+In QGIS, open "Create Layer from Extent" from the Processing Toolbox. For the extent, use `-180,180,40,90 [EPSG:4326]` and save as a temporary layer.
+
+Open "Densify by Interval" from the Processing Toolbox and set the interval to `0.5`.
+
+Save the "Densified" layer as a new file with the following settings:
+
+```
+Format:     GeoPackage
+File name:  background.gpkg
+Layer name: Map Background
+CRS:        EPSG:4326
+Description:
+Map background for gap mask.
+```
+
+Leave other options as default. Save the file in your `for_upload` directory. Discard all layers in GeoServer.
+
 ### Natural Earth Data Bathymetry
 
 We will need to join all the layers into a single layer, fix geometries, clip to the bounds of our project, densify, and export to a GeoPackage file. Note that "deeper" layer polygons must sit above lower-depth polygons for rendering to work correctly; the sort order can be modified in GeoServer later.
@@ -549,6 +556,17 @@ GSHHG World Vector Shorelines v2.3.7 modified under GPLv3.
 ```
 
 Advertising is enabled to comply with GPLv3 modification/redistribution terms.
+
+### Map Background
+
+```
+Name:       background
+Enabled:    true
+Advertised: false
+Title:      Map Background
+Abstract:
+Map background to mask any gaps between coastline and bathymetry layers.
+```
 
 ### Natural Earth Data Bathymetry
 
