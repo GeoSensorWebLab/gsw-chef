@@ -87,6 +87,13 @@ bash "extract Tomcat" do
   not_if { ::File.exists?(tomcat_home) }
 end
 
+# Install modified web.xml with CORS filter enabled
+cookbook_file "#{tomcat_home}/conf/web.xml" do
+  source "web.xml"
+  owner node["tomcat"]["user"]
+  group node["tomcat"]["user"]
+end
+
 # Source: https://gist.github.com/ovichiro/d24c53ce4902ef41cc208efeadd596b6
 systemd_unit "tomcat.service" do
   content <<-EOU.gsub(/^\s+/, '')
