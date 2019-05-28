@@ -233,6 +233,8 @@ Soper's Map will be advertised separately, as we want it to be turned on/off sep
 
 Import the raster images as new "Stores", and publish the layers using metadata listed in [`4_LAYER_METADATA.markdown`](4_LAYER_METADATA.markdown). It may be necessary to set the "Declared SRS" to `EPSG:3413` or `EPSG:4326` (depending on the input raster).
 
+Set the layers to NOT be advertised. Instead, create individual layer groups for each projection, adding either the `EPSG:3413` or `EPSG:4326` base raster depending on polar or mercator projection. Using layer groups allows for GeoServer to re-project the image into its own layer, and that layer can have its own gridset tile cache. Otherwise there is no way of accessing a layer's secondary gridset.
+
 ### Layer Groups
 
 A "Layer Group" is a set of layers merged together and advertised as a single layer in WMS/WMTS/etc. We will be using this to advertise the base layers in a few different projections:
