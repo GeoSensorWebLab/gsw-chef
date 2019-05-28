@@ -242,7 +242,6 @@ A "Layer Group" is a set of layers merged together and advertised as a single la
 * `EPSG:3413` a.k.a. [NSIDC Sea Ice Polar Stereographic North](http://epsg.io/3413)
     * `EPSG:3573` a.k.a. [North Pole LAEA Canada](http://epsg.io/3573)
     * `EPSG:3574` a.k.a. [North Pole LAEA Atlantic](http://epsg.io/3574)
-    * `EPSG:102002` a.k.a. [Canada Lambert Conformal Conic](http://epsg.io/102002)
 * `EPSG:4326` a.k.a. [WGS84](https://epsg.io/4326)
     * `EPSG:3857` a.k.a. [Pseudo-Mercator](https://epsg.io/3857)
 
@@ -313,15 +312,6 @@ Mode:                           Named Tree
 Instead of adding each layer one-by-one, add the entire `EPSG:3413` layer group. Generate Bounds and save the layer.
 
 We use `Named Tree` otherwise the parent layer group *disappears* from the WMS layer list. Not sure why.
-
-**Note:** For `EPSG:102002`, manually enter the following bounds as they are not properly generated.
-
-```
-Min X:      -5,615,818.3524223
-Min Y:      5.141556829724574
-Max X:      5,849,324.486082172
-Max Y:      11,222,809.102523187
-```
 
 #### Primary Layer Group `EPSG:4326`
 
@@ -406,14 +396,6 @@ Gridset Bounds: (Computer from maximum extent of CRS)
 
 EPSG:3574
 Gridset Bounds: (Computer from maximum extent of CRS)
-
-EPSG:102002
-Gridset Bounds:
-    Min X:      -5615818.3524223
-    Min Y:      5.141556829724574
-    Max X:      5849324.486082172
-    Max Y:      11222809.102523187
-
 ```
 
 ### BlobStores
