@@ -381,6 +381,8 @@ Leave other options as default. Save the file in your `for_upload` directory. Di
 
 **Important:** This shapefile uses `ISO-8859-1` encoding. After opening the file in QGIS, open the layer properties and change the encoding to `ISO-8859-1`. Then when you open the attribute table, you should see correctly parsed accents in French words such as "Lake Erie/Lac Érié".
 
+Next, use the Processing Toolbox to reproject the layer to `EPSG:4326`. This fixes some issues when the default projection is re-projected to a polar projection in GeoServer.
+
 Save the layer as a new file, with the following settings:
 
 ```
