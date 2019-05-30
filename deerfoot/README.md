@@ -11,6 +11,10 @@ Cookbook for setting up a node with WMS/WMTS services:
 
 Configuration of layers in GeoServer must be done manually after the chef-client run.
 
+### OPTIONAL Manual Configuration
+
+I recommend setting up a cloud volume with ZFS for the map data and tiles under `/srv/data` and `/srv/data/tiles`. Otherwise you may run out of inodes (too many files). On Ubuntu 18.04, the package for ZFS is `zfsutils-linux`.
+
 ## Supported Platforms
 
 * Ubuntu Server 18.04 LTS
