@@ -21,19 +21,17 @@
               </sld:GrayChannel>
             </sld:ChannelSelection>
             <sld:ColorMap type="ramp">
-              <sld:ColorMapEntry color="#8e9891" label="-394.7" quantity="-394.740478515625"/>
-              <sld:ColorMapEntry color="#bccfc2" label="320" quantity="320.028591579861"/>
-              <sld:ColorMapEntry color="#d3d7c5" label="1035" quantity="1034.79766167535"/>
-              <sld:ColorMapEntry color="#e0cfbd" label="1750" quantity="1749.56673177083"/>
-              <sld:ColorMapEntry color="#dcc2b4" label="2464" quantity="2464.33580186632"/>
-              <sld:ColorMapEntry color="#d9cdc4" label="3179" quantity="3179.10487196181"/>
-              <sld:ColorMapEntry color="#dad0ca" label="3894" quantity="3893.87394205729"/>
-              <sld:ColorMapEntry color="#d8d1cd" label="4609" quantity="4608.64301215278"/>
-              <sld:ColorMapEntry color="#dbdbdb" label="5323" quantity="5323.41208224826"/>
-              <sld:ColorMapEntry color="#e6e6e6" label="6038" quantity="6038.18115234375"/>
+              <sld:ColorMapEntry quantity="-249" color="#8e9891" label="-249"/>
+              <sld:ColorMapEntry quantity="527.166666666667" color="#c6d2c3" label="527.2"/>
+              <sld:ColorMapEntry quantity="1303.33333333333" color="#e0cfbd" label="1303"/>
+              <sld:ColorMapEntry quantity="2079.5" color="#dbc6bb" label="2080"/>
+              <sld:ColorMapEntry quantity="2855.66666666667" color="#dad0ca" label="2856"/>
+              <sld:ColorMapEntry quantity="3631.83333333333" color="#d9d5d3" label="3632"/>
+              <sld:ColorMapEntry quantity="4408" color="#e6e6e6" label="4408"/>
             </sld:ColorMap>
           </sld:RasterSymbolizer>
         </sld:Rule>
+        <VendorOption name="composite">multiply</VendorOption>
       </sld:FeatureTypeStyle>
     </sld:UserStyle>
   </UserLayer>
