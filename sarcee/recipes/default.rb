@@ -15,3 +15,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+# Apply custom Apt proxies, if necessary
+template "/etc/apt/apt.conf.d/01proxy" do
+  source "01proxy.erb"
+  variables(
+    http:         node["apt"]["http_proxies"],
+    http_direct:  node["apt"]["http_direct"],
+    https:        node["apt"]["https_proxies"],
+    https_direct: node["apt"]["https_direct"],
+    ftp:          node["apt"]["ftp_proxies"],
+    ftp_direct:   node["apt"]["ftp_direct"]
+  )
+end

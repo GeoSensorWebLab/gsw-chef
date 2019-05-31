@@ -1,0 +1,30 @@
+# Managed by Chef
+
+Acquire {
+	http {
+		<% for proxy in @http do %>
+		Proxy "<%= proxy %>";
+		<% end %>
+		<% for proxy in @http_direct do %>
+		Proxy::<%= proxy %> "DIRECT";
+		<% end %>
+	}
+
+	https {
+		<% for proxy in @https do %>
+		Proxy "<%= proxy %>";
+		<% end %>
+		<% for proxy in @https_direct do %>
+		Proxy::<%= proxy %> "DIRECT";
+		<% end %>
+	}
+
+	ftp {
+		<% for proxy in @ftp do %>
+		Proxy "<%= proxy %>";
+		<% end %>
+		<% for proxy in @ftp_direct do %>
+		Proxy::<%= proxy %> "DIRECT";
+		<% end %>
+	}
+}

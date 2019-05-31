@@ -7,6 +7,7 @@ Sets up a node with:
 * Nginx
 * Custom EOL static pages for GSW Lab
 * Automatic Docker cleanup scripts
+* Munin for local resource logging
 
 ## Supported Platforms
 
