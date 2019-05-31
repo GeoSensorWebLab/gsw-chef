@@ -3,6 +3,10 @@ driver:
   name: vagrant
   customize:
     cableconnected1: 'on'
+    memory: 9182
+    cpus: 6
+  network:
+    - ["private_network", { ip: "192.168.33.90" }]
 
 provisioner:
   name: chef_zero
