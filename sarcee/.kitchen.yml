@@ -28,3 +28,6 @@ suites:
       inspec_tests:
         - test/smoke/default
     attributes:
+      apt:
+        http_proxies:
+          - "http://192.168.1.50:3142"

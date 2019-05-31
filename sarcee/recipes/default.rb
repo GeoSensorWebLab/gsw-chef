@@ -29,3 +29,27 @@ template "/etc/apt/apt.conf.d/01proxy" do
     ftp_direct:   node["apt"]["ftp_direct"]
   )
 end
+
+###################
+# 1. Install Docker
+###################
+
+apt_update
+
+package %w(apt-transport-https ca-certificates curl gnupg-agent software-properties-common)
+
+
+apt_repository "docker" do
+  arch "amd64"
+  components ["stable"]
+  key "https://download.docker.com/linux/ubuntu/gpg"
+  uri "https://download.docker.com/linux/ubuntu"
+end
+
+apt_update
+
+package %w(docker-ce docker-ce-cli containerd.io)
+
+##################
+# 2. Install Dokku
+##################
