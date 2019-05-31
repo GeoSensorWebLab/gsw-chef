@@ -1,0 +1,3 @@
+[submodule "maps_server"]
+	path = maps_server
+	url = https://github.com/openfirmware/maps_server
