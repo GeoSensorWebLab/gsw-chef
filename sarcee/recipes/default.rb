@@ -62,7 +62,19 @@ end
 
 apt_update
 
+execute "enable vhosts for dokku" do
+  command 'echo "dokku dokku/vhost_enable boolean true" | debconf-set-selections'
+end
+execute "disable web config for dokku" do
+  command 'echo "dokku dokku/web_config boolean false" | debconf-set-selections'
+end
+
 package %w(dokku)
+
+# Disable the public HTTP site immediately
+service "dokku-installer" do
+  action [:stop, :disable]
+end
 
 execute "install dokku core plugins" do
   command "dokku plugin:install-dependencies --core"
