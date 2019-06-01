@@ -53,3 +53,59 @@ package %w(docker-ce docker-ce-cli containerd.io)
 ##################
 # 2. Install Dokku
 ##################
+
+apt_repository "dokku" do
+  components ["main"]
+  key "https://packagecloud.io/dokku/dokku/gpgkey"
+  uri "https://packagecloud.io/dokku/dokku/ubuntu/"
+end
+
+apt_update
+
+package %w(dokku)
+
+execute "install dokku core plugins" do
+  command "dokku plugin:install-dependencies --core"
+end
+
+#####################
+# 3. EOL Static Sites
+#####################
+
+directory "/var/www/eol-sites" do
+  recursive true
+  action :create
+end
+
+eol_sites_tempdir = "#{Chef::Config[:file_cache_path]}/eol-sites"
+
+git eol_sites_tempdir do
+  repository node["sarcee"]["eol_sites_repository"]
+end
+
+# Add public keys of people we trust to sign commits
+node["gpg"]["import_keys"].each do |key_url|
+  execute "import gpg key" do
+    command "curl #{key_url} | gpg --import"
+  end
+end
+
+# Only sync if latest commit is signed with GPG.
+# This is done as we are loading nginx configuration from a public
+# repository automatically.
+execute "check for signed commit" do
+  command "git verify-commit HEAD"
+  cwd eol_sites_tempdir
+end
+
+execute "rsync EOL sites updates" do
+  command "rsync -ah --delete #{eol_sites_tempdir}/conf #{eol_sites_tempdir}/sites /var/www/eol-sites/."
+end
+
+cookbook_file "/etc/nginx/conf.d/eol-sites.conf" do
+  source "eol-sites.conf"
+end
+
+service "nginx" do
+  action :reload
+end
