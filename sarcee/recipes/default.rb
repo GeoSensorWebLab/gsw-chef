@@ -109,3 +109,14 @@ end
 service "nginx" do
   action :reload
 end
+
+######################
+# 4. Create Dokku Apps
+######################
+
+node["dokku"]["apps"].each do |app|
+  execute "create app for #{app[:name]}" do
+    command "dokku apps:create #{app[:name]}"
+    not_if "dokku apps:exists #{app[:name]}"
+  end
+end
