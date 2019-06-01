@@ -119,4 +119,8 @@ node["dokku"]["apps"].each do |app|
     command "dokku apps:create #{app[:name]}"
     not_if "dokku apps:exists #{app[:name]}"
   end
+
+  execute "set domains for #{app[:name]}" do
+    command "dokku domains:set #{app[:name]} #{app[:domains].join(" ")}"
+  end
 end
