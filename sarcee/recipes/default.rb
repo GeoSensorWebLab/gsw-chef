@@ -136,3 +136,22 @@ node["dokku"]["apps"].each do |app|
     command "dokku domains:set #{app[:name]} #{app[:domains].join(" ")}"
   end
 end
+
+###############################
+# 5. Setup docker cleaup script
+###############################
+
+cookbook_file "/usr/local/sbin/docker-cleanup" do
+  source "docker-cleanup.sh"
+  mode 755
+  owner "root"
+  group "root"
+end
+
+# Run cleanup once per day at 01:00
+file "/etc/cron.d/docker-cleanup" do
+  content "0 1 * * * root /usr/local/sbin/docker-cleanup"
+  mode 644
+  owner "root"
+  group "root"
+end
