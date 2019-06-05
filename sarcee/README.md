@@ -42,13 +42,27 @@ Sample app:
 ```json
 {
   "id": "abm-portal",
+  "enabled": true,
   "domains": [
     "sightings.arcticconnect.org",
     "sightings.arcticconnect.ca",
     "arctic-bio-map.gswlab.ca"
-  ]
+  ],
+  "env": {
+    "DATABASE_URL": "postgres://host/db",
+    "RACK_ENV": "production",
+    "RAILS_SERVE_STATIC_FILES": "true"
+  }
 }
 ```
+
+**id**: name (without spaces) to use for the Dokku app. Not user-facing.
+
+**enabled**: If false, then Chef will not do anything with this data bag.
+
+**domains**: Array of domains to set for Dokku. Necessary for virtual hosts to work correctly.
+
+**env**: Hash of key-values for the app environment. These will be added to the environment using the Dokku CLI, merging with existing ENV settings.
 
 Sample commands:
 

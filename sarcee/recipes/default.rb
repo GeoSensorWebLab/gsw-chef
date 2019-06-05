@@ -190,13 +190,29 @@ dokku_apps = search("apps", "*:*").collect do |app|
 end
 
 dokku_apps.each do |app|
-  execute "create app for #{app["id"]}" do
-    command "dokku apps:create #{app["id"]}"
-    not_if "dokku apps:exists #{app["id"]}"
-  end
+  # Only execute resources for apps marked as "enabled"
+  if app["enabled"]
+    app_id = app["id"]
+    # Avoid running creation command for apps that exist as it is slow
+    execute "create app for #{app_id}" do
+      command "dokku apps:create #{app_id}"
+      not_if "dokku apps:exists #{app_id}"
+    end
 
-  execute "set domains for #{app["id"]}" do
-    command "dokku domains:set #{app["id"]} #{app["domains"].join(" ")}"
+    execute "set domains for #{app_id}" do
+      command "dokku domains:set #{app_id} #{app["domains"].join(" ")}"
+    end
+
+    # Convert environment hash to string for CLI
+    env = app["env"].reduce("") do |memo, (key, val)|
+      memo += " '#{key}'='#{val}'"
+      memo
+    end
+
+    execute "set environment for #{app_id}" do
+      command "dokku config:set #{app_id} #{env}"
+      sensitive true
+    end
   end
 end
 

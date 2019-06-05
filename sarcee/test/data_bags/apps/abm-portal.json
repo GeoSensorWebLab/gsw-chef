@@ -1,9 +1,23 @@
 {
   "id": "abm-portal",
   "domains": {
-    "encrypted_data": "+oWHlxedTr/ECrcBZOy9FRt2xHFUAc5VHy3oFUYWrMFbfhqZqPhP6wIg2U6k\nFX0gZUKU/f/kcKBJvgM7uQwk4bsHCDPKwhZL3O8sjsRvZMvMBSUxLDhKON0w\nDFCv1ZnTIl+Gs5WLu4w=\n",
-    "iv": "YTcwddncxtsxiDny\n",
-    "auth_tag": "382Psgrq4QO4Tn9ABveo7w==\n",
+    "encrypted_data": "jAHqk7KXDAf7K8F4p6D9d2BPzpJ+pX4dvZwZwxq7Cy6XKZbDQPeUfMpUr68O\nhO3cI9Zh/7OLbKbYKquTr63N8Ih9oKR5edK+XhoHtIuQtgabBuRpdWXbayYT\nc9L9ykN6LGODWDp0cKg=\n",
+    "iv": "K9ra3lpB62eYweIX\n",
+    "auth_tag": "uVpwWpWZrck3EhY5dZx37Q==\n",
+    "version": 3,
+    "cipher": "aes-256-gcm"
+  },
+  "enabled": {
+    "encrypted_data": "rNBNlf7ZcHMlNd5KwWAMqGA1qOIM\n",
+    "iv": "S/H9LoT8+43E1DKl\n",
+    "auth_tag": "hJkrjLThPucwI49XckRSvA==\n",
+    "version": 3,
+    "cipher": "aes-256-gcm"
+  },
+  "env": {
+    "encrypted_data": "BsZ3OEfTnzXqCeAXNBSHRjyo/DmPuN/cWB3pCx/CKNI9VTe371VhLCXjklMm\nAzfGQbdsWTyfQhj8buGUk24RB6KoA4A6G1nhthTwbYhn0gvTMU8myUhZFjuT\nWgH/dDcYzfMUkWHNgdiePMS7meN4gA==\n",
+    "iv": "Kc7QLwH42i7Tmqum\n",
+    "auth_tag": "zfzgTGebnfsi3KClJXuEEA==\n",
     "version": 3,
     "cipher": "aes-256-gcm"
   }
