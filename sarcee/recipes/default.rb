@@ -185,14 +185,18 @@ end
 # 4. Create Dokku Apps
 ######################
 
-node["dokku"]["apps"].each do |app|
-  execute "create app for #{app[:name]}" do
-    command "dokku apps:create #{app[:name]}"
-    not_if "dokku apps:exists #{app[:name]}"
+dokku_apps = search("apps", "*:*").collect do |app|
+  Chef::EncryptedDataBagItem.load("apps", app["id"])
+end
+
+dokku_apps.each do |app|
+  execute "create app for #{app["id"]}" do
+    command "dokku apps:create #{app["id"]}"
+    not_if "dokku apps:exists #{app["id"]}"
   end
 
-  execute "set domains for #{app[:name]}" do
-    command "dokku domains:set #{app[:name]} #{app[:domains].join(" ")}"
+  execute "set domains for #{app["id"]}" do
+    command "dokku domains:set #{app["id"]} #{app["domains"].join(" ")}"
   end
 end
 
