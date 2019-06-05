@@ -7,8 +7,14 @@ default["apt"]["ftp_proxies"]   = []
 default["apt"]["ftp_direct"]    = []
 
 # Chef Node Settings
+# ID (or partial ID) of volume mounted for docker storage.
+# A zpool will be auto-created for this volume. 
+default["sarcee"]["docker_volume_id"] = "8d5aad47-32db-4775-8"
+# Source for EOL sites repository
 default["sarcee"]["eol_sites_repository"] = "https://github.com/GeoSensorWebLab/eol-sites"
-
+# Original login user
+default["sarcee"]["user"] = "ubuntu"
+# List of keys to allow for EOL site commits
 default["gpg"]["import_keys"] = ["https://keybase.io/jamesbadger/pgp_keys.asc"]
 
 # Make sure these apps exist in Dokku.
@@ -47,3 +53,5 @@ default["dokku"]["apps"] = [
     domains: %w(webcam.gswlab.ca webcam.geocens.ca)
   },
 ]
+# Location for the public key for dokku
+default["dokku"]["keyfile"] = "/home/ubuntu/.ssh/id_rsa.pub"

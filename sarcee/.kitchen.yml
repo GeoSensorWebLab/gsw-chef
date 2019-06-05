@@ -33,3 +33,10 @@ suites:
           - "http://192.168.1.50:3142"
         https_proxies:
           - "DIRECT"
+      sarcee:
+        # set this to the part of the disk by-id that shows up in
+        # virtualbox for you
+        docker_volume_id: "VB526829ce-69998b9b"
+        user: vagrant
+      dokku:
+        keyfile: "/home/vagrant/.ssh/id_rsa.pub"

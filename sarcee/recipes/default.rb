@@ -30,6 +30,34 @@ template "/etc/apt/apt.conf.d/01proxy" do
   )
 end
 
+apt_update
+
+# Install ZFS for Linux
+package "zfsutils-linux"
+
+# Find mounted volume from OpenStack
+volume_id = node["sarcee"]["docker_volume_id"]
+if volume_id.nil? || volume_id.empty?
+  raise "Missing docker storage volume ID"
+end
+
+volume_path = ""
+
+# Find the path for the volume on this node.
+prefix = "/dev/disk/by-id"
+ruby_block "find mounted volume path" do
+  block do
+    Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)
+    cmd = shell_out("ls #{prefix} | grep #{volume_id}")
+    volume_path = "#{prefix}/#{cmd.stdout.chomp}"
+  end
+end
+
+execute "create zpool" do
+  command lazy { "zpool create -f docker_pool #{volume_path}" }
+  not_if "zpool list docker_pool"
+end
+
 ###################
 # 1. Install Docker
 ###################
@@ -37,7 +65,6 @@ end
 apt_update
 
 package %w(apt-transport-https ca-certificates curl gnupg-agent software-properties-common)
-
 
 apt_repository "docker" do
   arch "amd64"
@@ -50,9 +77,38 @@ apt_update
 
 package %w(docker-ce docker-ce-cli containerd.io)
 
+service "docker" do
+  action :nothing
+end
+
+directory "/etc/docker" do
+  action :create
+end
+
+file "/etc/docker/daemon.json" do
+  content '{ "storage-driver": "zfs" }'
+end
+
+bash "create zfs dataset for docker" do
+  code <<-EOH
+  mv /var/lib/docker /var/lib/docker.bak
+  mkdir /var/lib/docker
+  zfs create -o mountpoint=/var/lib/docker docker_pool/docker
+  EOH
+  notifies :stop, "service[docker]", :before
+  notifies :start, "service[docker]", :immediate
+  not_if "zfs list docker_pool/docker"
+end
+
 ##################
 # 2. Install Dokku
 ##################
+
+execute "create ssh key" do
+  user node["sarcee"]["user"]
+  creates "/home/#{node["sarcee"]["user"]}/.ssh/id_rsa.pub"
+  command "ssh-keygen -t rsa -q -f /home/#{node["sarcee"]["user"]}/.ssh/id_rsa -P \"\""
+end
 
 apt_repository "dokku" do
   components ["main"]
@@ -67,6 +123,9 @@ execute "enable vhosts for dokku" do
 end
 execute "disable web config for dokku" do
   command 'echo "dokku dokku/web_config boolean false" | debconf-set-selections'
+end
+execute "disable web config for dokku" do
+  command "echo \"dokku dokku/key_file string #{node["dokku"]["keyfile"]}\" | debconf-set-selections"
 end
 
 package %w(dokku)
