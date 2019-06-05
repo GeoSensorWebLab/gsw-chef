@@ -1,0 +1,10 @@
+{
+  "id": "abm-portal",
+  "domains": {
+    "encrypted_data": "+oWHlxedTr/ECrcBZOy9FRt2xHFUAc5VHy3oFUYWrMFbfhqZqPhP6wIg2U6k\nFX0gZUKU/f/kcKBJvgM7uQwk4bsHCDPKwhZL3O8sjsRvZMvMBSUxLDhKON0w\nDFCv1ZnTIl+Gs5WLu4w=\n",
+    "iv": "YTcwddncxtsxiDny\n",
+    "auth_tag": "382Psgrq4QO4Tn9ABveo7w==\n",
+    "version": 3,
+    "cipher": "aes-256-gcm"
+  }
+}

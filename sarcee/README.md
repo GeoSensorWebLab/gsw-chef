@@ -29,20 +29,40 @@ Include `sarcee` in your node's `run_list`:
 
 ## Attributes
 
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['sarcee']['property']</tt></td>
-    <td>String</td>
-    <td>Description</td>
-    <td><tt>default value</tt></td>
-  </tr>
-</table>
+Please see the comments in `attributes/default.rb` for more details.
+
+## Data Bags
+
+Data bags will be used to load app names, domains, and secret environment variables. They should be encrypted with a secret file/passphrase and `knife` will handle that for you if you use the `--encrypt` arg.
+
+### Folder: `apps`
+
+Sample app:
+
+```json
+{
+  "id": "abm-portal",
+  "domains": [
+    "sightings.arcticconnect.org",
+    "sightings.arcticconnect.ca",
+    "arctic-bio-map.gswlab.ca"
+  ]
+}
+```
+
+Sample commands:
+
+```
+$ knife data bag create apps abm-portal --encrypt
+$ knife data bag edit apps abm-portal --encrypt
+```
+
+Sample commands for running in test-kitchen locally:
+
+```
+$ knife data bag create apps abm-portal -c .chef/config.rb --encrypt
+$ knife data bag edit apps abm-portal -c .chef/config.rb --encrypt
+```
 
 ## License and Authors
 
