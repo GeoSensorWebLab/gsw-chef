@@ -139,6 +139,21 @@ execute "install dokku core plugins" do
   command "dokku plugin:install-dependencies --core"
 end
 
+users = search("users", "*:*")
+
+users.each do |user|
+  if user["groups"].include?("dokku")
+    id = user["id"]
+
+    user["ssh_keys"].each_with_index do |key, i|
+      execute "add ssh key #{i+1} for #{id}" do
+        command "echo \"#{key}\" | dokku ssh-keys:add #{id}-#{i}"
+        sensitive true
+      end
+    end
+  end
+end
+
 #####################
 # 3. EOL Static Sites
 #####################

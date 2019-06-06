@@ -78,6 +78,24 @@ $ knife data bag create apps abm-portal -c .chef/config.rb --encrypt
 $ knife data bag edit apps abm-portal -c .chef/config.rb --encrypt
 ```
 
+### Data Bag: `users`
+
+Users for loading SSH keys with push access to Dokku.
+
+Sample user:
+
+```json
+{
+  "id": "jpbadger",
+  "groups": ["dokku"],
+  "ssh_keys": [
+    "ssh-rsa ..."
+  ]
+}
+```
+
+Users in the `dokku` group will have their SSH keys added to the keys for Dokku.
+
 ### 2019 Apps
 
 * abm-portal
