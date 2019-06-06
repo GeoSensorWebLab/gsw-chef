@@ -149,7 +149,10 @@ users.each do |user|
       execute "add ssh key #{i+1} for #{id}" do
         command "echo \"#{key}\" | dokku ssh-keys:add #{id}-#{i}"
         sensitive true
+        not_if "dokku ssh-keys:list | grep -q #{id}-#{i}"
       end
+
+
     end
   end
 end
