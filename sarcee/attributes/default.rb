@@ -15,7 +15,7 @@ default["apt"]["ftp_direct"]    = []
 
 # ID (or partial ID) of volume mounted for docker storage.
 # A zpool will be auto-created for this volume. 
-default["sarcee"]["docker_volume_id"] = "8d5aad47-32db-4775-8"
+default["sarcee"]["docker_volume_id"] = "d6899d6b-c3b3-43c5-9"
 # Source for EOL sites repository
 default["sarcee"]["eol_sites_repository"] = "https://github.com/GeoSensorWebLab/eol-sites"
 # Original login user
