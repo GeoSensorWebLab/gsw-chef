@@ -31,11 +31,11 @@ Include `sarcee` in your node's `run_list`:
 
 Please see the comments in `attributes/default.rb` for more details.
 
-## Data Bags
+## Data Bags and Items
 
 Data bags will be used to load app names, domains, and secret environment variables. They should be encrypted with a secret file/passphrase and `knife` will handle that for you if you use the `--encrypt` arg.
 
-### Folder: `apps`
+### Data Bag: `apps`
 
 Sample app:
 
@@ -77,6 +77,17 @@ Sample commands for running in test-kitchen locally:
 $ knife data bag create apps abm-portal -c .chef/config.rb --encrypt
 $ knife data bag edit apps abm-portal -c .chef/config.rb --encrypt
 ```
+
+### 2019 Apps
+
+* abm-portal
+* arctic-portal
+* arctic-scholar-portal
+* arctic-web-map-pages
+* asw-workbench
+* bera-dashboard
+* sta-time-vis
+* sta-webcam
 
 ## License and Authors
 
