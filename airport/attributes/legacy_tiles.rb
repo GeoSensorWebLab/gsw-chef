@@ -24,7 +24,7 @@ default["renderd"]["stylesheets"]["osm_3571"] = {
   tiledir:    "/srv/tiles",
   tilesize:    256,
   uri:        "/osm_3571/",
-  xml:        ""
+  xml:        "/srv/stylesheets/osm_3571.xml"
 }
 default["renderd"]["stylesheets"]["osm_3572"] = {
   description: "ArcticWebMap 3572",
@@ -33,7 +33,7 @@ default["renderd"]["stylesheets"]["osm_3572"] = {
   tiledir:    "/srv/tiles",
   tilesize:    256,
   uri:        "/osm_3572/",
-  xml:        ""
+  xml:        "/srv/stylesheets/osm_3572.xml"
 }
 default["renderd"]["stylesheets"]["osm_3573"] = {
   description: "ArcticWebMap 3573",
@@ -42,7 +42,7 @@ default["renderd"]["stylesheets"]["osm_3573"] = {
   tiledir:    "/srv/tiles",
   tilesize:    256,
   uri:        "/osm_3573/",
-  xml:        ""
+  xml:        "/srv/stylesheets/osm_3573.xml"
 }
 default["renderd"]["stylesheets"]["osm_3574"] = {
   description: "ArcticWebMap 3574",
@@ -51,7 +51,7 @@ default["renderd"]["stylesheets"]["osm_3574"] = {
   tiledir:    "/srv/tiles",
   tilesize:    256,
   uri:        "/osm_3574/",
-  xml:        ""
+  xml:        "/srv/stylesheets/osm_3574.xml"
 }
 default["renderd"]["stylesheets"]["osm_3575"] = {
   description: "ArcticWebMap 3575",
@@ -60,7 +60,7 @@ default["renderd"]["stylesheets"]["osm_3575"] = {
   tiledir:    "/srv/tiles",
   tilesize:    256,
   uri:        "/osm_3575/",
-  xml:        ""
+  xml:        "/srv/stylesheets/osm_3575.xml"
 }
 default["renderd"]["stylesheets"]["osm_3576"] = {
   description: "ArcticWebMap 3576",
@@ -69,5 +69,5 @@ default["renderd"]["stylesheets"]["osm_3576"] = {
   tiledir:    "/srv/tiles",
   tilesize:    256,
   uri:        "/osm_3576/",
-  xml:        ""
+  xml:        "/srv/stylesheets/osm_3576.xml"
 }

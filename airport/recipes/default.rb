@@ -21,3 +21,21 @@ include_recipe 'maps_server::default'
 include_recipe 'maps_server::openstreetmap_carto'
 include_recipe 'maps_server::arcticwebmap'
 include_recipe 'maps_server::monitoring'
+
+# Install old stylesheets, as renderd will cryptically fail without
+# them.
+%w(osm_3571 osm_3572 osm_3573 osm_3574 osm_3575 osm_3576).each do |id|
+  cookbook_file "/srv/stylesheets/#{id}.xml.gz" do
+    source "#{id}.xml.gz"
+    mode "0755"
+  end
+
+  execute "gunzip #{id}" do
+    command "gunzip #{id}.xml.gz"
+    cwd "/srv/stylesheets"
+  end
+end
+
+service "renderd" do
+  action :restart
+end
