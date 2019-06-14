@@ -20,34 +20,107 @@ apt_update
 
 # Check for database directory.
 # If a ZFS dataset is used, then it must be set up MANUALLY.
-directory node['postgresql']['data_directory'] do
+directory node["postgresql"]["data_directory"] do
   recursive true
-  mode '0700'
+  mode "0700"
   action :create
 end
 
 # Install PostgreSQL
-postgresql_server_install "postgresql-#{node['postgresql']['version']}" do
-  version node['postgresql']['version']
-  initdb_locale 'en_US.UTF-8'
+postgresql_server_install "postgresql-#{node["postgresql"]["version"]}" do
+  version node["postgresql"]["version"]
+  initdb_locale "en_US.UTF-8"
 end
 
 # Update permissions on database directory for postgres
-directory node['postgresql']['data_directory'] do
+directory node["postgresql"]["data_directory"] do
   recursive true
-  owner 'postgres'
-  group 'postgres'
-  mode '0700'
+  owner "postgres"
+  group "postgres"
+  mode "0700"
   action :create
 end
 
 # Create the database cluster as the Chef resources cannot handle 
 # changing to a different data directory without exploding
-execute 'create postgres cluster' do
-  command "pg_dropcluster --stop #{node['postgresql']['version']} main &&\
-   pg_createcluster -d \"#{node['postgresql']['data_directory']}\" \
-  --locale en_US.UTF-8 --start #{node['postgresql']['version']} main"
-  only_if { ::Dir.empty?(node['postgresql']['data_directory']) }
+execute "create postgres cluster" do
+  command "pg_dropcluster --stop #{node["postgresql"]["version"]} main &&\
+   pg_createcluster -d \"#{node["postgresql"]["data_directory"]}\" \
+  --locale en_US.UTF-8 --start #{node["postgresql"]["version"]} main"
+  only_if { ::Dir.empty?(node["postgresql"]["data_directory"]) }
 end
 
-package %W(postgresql-#{node['postgresql']['version']}-postgis-2.5 postgis)
+package %W(postgresql-#{node["postgresql"]["version"]}-postgis-2.5 postgis)
+
+
+##############
+# Install GOST
+##############
+
+remote_file "#{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip" do
+  source "https://github.com/gost/server/releases/download/0.5/gost_ubuntu_x64.zip"
+end
+
+package "unzip"
+
+# Use postgres owner so that statefile can be created later
+directory "/opt/gost" do
+  recursive true
+  owner "postgres"
+  action :create
+end
+
+execute "unzip GOST" do
+  command "unzip #{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip -d /opt/gost"
+  not_if { ::Dir.exist?("/opt/gost/linux64") }
+end
+
+git "/opt/gost/gost-db" do
+  repository "https://github.com/gost/gost-db.git"
+end
+
+postgresql_user "gost" do
+  sensitive true
+end
+
+postgresql_database "gost" do
+  owner "gost"
+end
+
+execute "initialize GOST database" do
+  command "psql gost -f /opt/gost/gost-db/gost_init_db.sql && \
+  psql gost -c 'alter schema \"v1\" owner to \"gost\"' \
+    -c 'grant all on database gost to gost;' \
+    -c 'grant all privileges on all tables in schema v1 to gost' \
+    -c 'grant all privileges on all sequences in schema v1 to gost' && \
+  touch /opt/gost/database-import"
+  user "postgres"
+  not_if { ::File.exist?("/opt/gost/database-import") }
+end
+
+user "gost" do
+  home "/opt/gost"
+end
+
+postgresql_access "Allow gost system user" do
+  access_type   "local"
+  access_db     "gost"
+  access_user   "gost"
+  access_addr   nil
+  access_method "ident"
+end
+
+template "/opt/gost/linux64/config.yaml" do
+  source "gost-config.yaml.erb"
+  owner "gost"
+end
+
+directory "/opt/gost" do
+  recursive true
+  owner "gost"
+  action :create
+end
+
+execute "make gost executable" do
+  command "chmod +x /opt/gost/linux64/gost"
+end
