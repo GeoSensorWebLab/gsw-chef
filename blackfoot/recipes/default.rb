@@ -124,3 +124,20 @@ end
 execute "make gost executable" do
   command "chmod +x #{node["gost"]["prefix"]}/linux64/gost"
 end
+
+template "/etc/systemd/system/gost.service" do
+  source "gost.service.erb"
+  variables({
+    prefix: node["gost"]["prefix"],
+    user: node["gost"]["user"]
+  })
+end
+
+execute "reload systemd daemon" do
+  command "systemctl daemon-reload"
+end
+
+service "gost" do
+  supports [:start, :stop, :restart]
+  action [:enable, :start]
+end
