@@ -141,3 +141,23 @@ service "gost" do
   supports [:start, :stop, :restart]
   action [:enable, :start]
 end
+
+###############
+# Install nginx
+###############
+
+package %w(nginx-full)
+
+service "nginx" do
+  supports [:start, :stop, :restart, :reload]
+  action :nothing
+end
+
+template "/etc/nginx/sites-available/gost" do
+  source "nginx-gost.conf.erb"
+  notifies :reload, "service[nginx]"
+end
+
+link "/etc/nginx/sites-enabled/gost" do
+  to "/etc/nginx/sites-available/gost"
+end

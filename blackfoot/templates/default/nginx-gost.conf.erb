@@ -1,0 +1,18 @@
+server {
+        listen 6443 default_server;
+        listen [::]:6443 default_server;
+        server_name _;
+
+        location = / {
+                return 204;
+        }
+
+        location / {
+                limit_except GET HEAD OPTIONS {
+                        allow 127.0.0.1;
+                        deny all;
+                }
+                proxy_pass              http://localhost:8080/;
+                proxy_set_header        Host $host;
+        }
+}
