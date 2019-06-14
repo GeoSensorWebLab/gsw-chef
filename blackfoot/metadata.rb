@@ -10,7 +10,7 @@ version          '0.1.0'
 privacy          true
 
 # Public Cookbooks
-# depends 'user'
+depends 'postgresql'
 
 # Private Cookbooks
 # depends 'gsw-apt-mirror'
