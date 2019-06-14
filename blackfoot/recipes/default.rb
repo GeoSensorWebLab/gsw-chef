@@ -58,69 +58,69 @@ package %W(postgresql-#{node["postgresql"]["version"]}-postgis-2.5 postgis)
 ##############
 
 remote_file "#{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip" do
-  source "https://github.com/gost/server/releases/download/0.5/gost_ubuntu_x64.zip"
+  source node["gost"]["release"]
 end
 
 package "unzip"
 
 # Use postgres owner so that statefile can be created later
-directory "/opt/gost" do
+directory node["gost"]["prefix"] do
   recursive true
   owner "postgres"
   action :create
 end
 
 execute "unzip GOST" do
-  command "unzip #{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip -d /opt/gost"
-  not_if { ::Dir.exist?("/opt/gost/linux64") }
+  command "unzip #{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip -d #{node["gost"]["prefix"]}"
+  not_if { ::Dir.exist?("#{node["gost"]["prefix"]}/linux64") }
 end
 
-git "/opt/gost/gost-db" do
-  repository "https://github.com/gost/gost-db.git"
+git "#{node["gost"]["prefix"]}/gost-db" do
+  repository node["gost"]["database_repository"]
 end
 
-postgresql_user "gost" do
+postgresql_user node["gost"]["user"] do
   sensitive true
 end
 
-postgresql_database "gost" do
-  owner "gost"
+postgresql_database node["gost"]["database"] do
+  owner node["gost"]["user"]
 end
 
 execute "initialize GOST database" do
-  command "psql gost -f /opt/gost/gost-db/gost_init_db.sql && \
-  psql gost -c 'alter schema \"v1\" owner to \"gost\"' \
-    -c 'grant all on database gost to gost;' \
-    -c 'grant all privileges on all tables in schema v1 to gost' \
-    -c 'grant all privileges on all sequences in schema v1 to gost' && \
-  touch /opt/gost/database-import"
+  command "psql #{node["gost"]["database"]} -f #{node["gost"]["prefix"]}/gost-db/gost_init_db.sql && \
+  psql #{node["gost"]["database"]} -c 'alter schema \"v1\" owner to \"#{node["gost"]["user"]}\"' \
+    -c 'grant all on database #{node["gost"]["database"]} to #{node["gost"]["user"]};' \
+    -c 'grant all privileges on all tables in schema v1 to #{node["gost"]["user"]}' \
+    -c 'grant all privileges on all sequences in schema v1 to #{node["gost"]["user"]}' && \
+  touch #{node["gost"]["prefix"]}/database-import"
   user "postgres"
-  not_if { ::File.exist?("/opt/gost/database-import") }
+  not_if { ::File.exist?("#{node["gost"]["prefix"]}/database-import") }
 end
 
-user "gost" do
-  home "/opt/gost"
+user node["gost"]["user"] do
+  home node["gost"]["prefix"]
 end
 
 postgresql_access "Allow gost system user" do
   access_type   "local"
-  access_db     "gost"
-  access_user   "gost"
+  access_db     node["gost"]["database"]
+  access_user   node["gost"]["user"]
   access_addr   nil
   access_method "ident"
 end
 
-template "/opt/gost/linux64/config.yaml" do
+template "#{node["gost"]["prefix"]}/linux64/config.yaml" do
   source "gost-config.yaml.erb"
-  owner "gost"
+  owner node["gost"]["user"]
 end
 
-directory "/opt/gost" do
+directory node["gost"]["prefix"] do
   recursive true
-  owner "gost"
+  owner node["gost"]["user"]
   action :create
 end
 
 execute "make gost executable" do
-  command "chmod +x /opt/gost/linux64/gost"
+  command "chmod +x #{node["gost"]["prefix"]}/linux64/gost"
 end
