@@ -250,6 +250,7 @@ template "#{tl_home}/auto-metadata" do
   mode "0755"
   variables({
     logdir: "/srv/logs",
+    prefix: "/opt/data-transloader",
     sta_endpoint: "http://localhost:8080/v1.0/",
     workdir: "/srv/data"
   })
@@ -261,6 +262,7 @@ template "#{tl_home}/auto-transload" do
   mode "0755"
   variables({
     logdir: "/srv/logs",
+    prefix: "/opt/data-transloader",
     sta_endpoint: "http://localhost:8080/v1.0/",
     workdir: "/srv/data"
   })

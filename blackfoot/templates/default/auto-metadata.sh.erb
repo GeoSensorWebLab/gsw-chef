@@ -9,9 +9,9 @@ touch "$ULOG"
 cd "<%= @workdir %>"
 
 for station in $STATIONS; do
-  ruby transload get metadata --source environment_canada \
+  ruby <%= @prefix %>/transload get metadata --source environment_canada \
     --station $station --cache . | tee -a $DLOG
-  ruby transload put metadata --source environment_canada \
+  ruby <%= @prefix %>/transload put metadata --source environment_canada \
     --station $station --cache . \
     --destination "<%= @sta_endpoint %>" | tee -a $ULOG
 done
