@@ -167,14 +167,15 @@ end
 ##########################
 
 tl_home = "/home/transloader"
+tl_user = "transloader"
 
-user "transloader" do
+user tl_user do
   home tl_home
   shell "/bin/bash"
 end
 
 directory tl_home do
-  owner "transloader"
+  owner tl_user
   action :create
 end
 
@@ -184,23 +185,24 @@ file "#{tl_home}/.bashrc" do
   export GEM_PATH="#{tl_home}/.ruby/gems"
   export PATH="#{tl_home}/.ruby/bin:$PATH"
   EOH
+  owner tl_user
 end
 
 directory "#{tl_home}/.ruby" do
-  owner "transloader"
+  owner tl_user
   recursive true
   action :create
 end
 
 directory "/opt/data-transloader" do
-  owner "transloader"
+  owner tl_user
   recursive true
   action :create
 end
 
 git "/opt/data-transloader" do
   repository "https://github.com/GeoSensorWebLab/data-transloader"
-  user "transloader"
+  user tl_user
 end
 
 package %w(ruby ruby-dev build-essential patch zlib1g-dev liblzma-dev)
@@ -221,5 +223,45 @@ bash "install transloader deps" do
     GEM_PATH: "#{tl_home}/.ruby/gems",
     PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
   })
-  user "transloader"
+  user tl_user
+end
+
+# Set up data storage
+directory "/srv/data" do
+  owner tl_user
+  action :create
+end
+
+# Set up log directory
+directory "/srv/logs" do
+  owner tl_user
+  action :create
+end
+
+# Install automatic transloading scripts.
+# This will read a list of stations from the command line and run an ETL
+# on them.
+# This version differs from the original version; in this version it does
+# not read a TXT file and instead the list of stations is piped directly
+# into the tool.
+template "#{tl_home}/auto-metadata" do
+  source "auto-metadata.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    logdir: "/srv/logs",
+    sta_endpoint: "http://localhost:8080/v1.0/",
+    workdir: "/srv/data"
+  })
+end
+
+template "#{tl_home}/auto-transload" do
+  source "auto-transload.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    logdir: "/srv/logs",
+    sta_endpoint: "http://localhost:8080/v1.0/",
+    workdir: "/srv/data"
+  })
 end
