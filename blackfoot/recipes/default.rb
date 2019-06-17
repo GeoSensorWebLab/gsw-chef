@@ -161,3 +161,65 @@ end
 link "/etc/nginx/sites-enabled/gost" do
   to "/etc/nginx/sites-available/gost"
 end
+
+##########################
+# Install data transloader
+##########################
+
+tl_home = "/home/transloader"
+
+user "transloader" do
+  home tl_home
+  shell "/bin/bash"
+end
+
+directory tl_home do
+  owner "transloader"
+  action :create
+end
+
+file "#{tl_home}/.bashrc" do
+  content <<-EOH
+  export GEM_HOME="#{tl_home}/.ruby"
+  export GEM_PATH="#{tl_home}/.ruby/gems"
+  export PATH="#{tl_home}/.ruby/bin:$PATH"
+  EOH
+end
+
+directory "#{tl_home}/.ruby" do
+  owner "transloader"
+  recursive true
+  action :create
+end
+
+directory "/opt/data-transloader" do
+  owner "transloader"
+  recursive true
+  action :create
+end
+
+git "/opt/data-transloader" do
+  repository "https://github.com/GeoSensorWebLab/data-transloader"
+  user "transloader"
+end
+
+package %w(ruby ruby-dev build-essential patch zlib1g-dev liblzma-dev)
+
+# The default RubyGems version has issues running bundler (2019-06)
+execute "Update RubyGems" do
+  command "gem update --system"
+end
+
+bash "install transloader deps" do
+  cwd "/opt/data-transloader"
+  code <<-EOH
+  gem install bundler
+  bundle install
+  EOH
+  environment({
+    GEM_HOME: "#{tl_home}/.ruby",
+    GEM_PATH: "#{tl_home}/.ruby/gems",
+    PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
+  })
+  user "transloader"
+end
