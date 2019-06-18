@@ -275,3 +275,26 @@ template "#{tl_home}/auto-transload" do
     workdir: "/opt/data-transloader"
   })
 end
+
+######################
+# Schedule transloader
+######################
+
+file "#{tl_home}/ec-stations" do
+  content "XCM"
+  owner tl_user
+end
+
+cron_d "ec_transloader" do
+  action :create
+  minute "5"
+  user tl_user
+  shell "/bin/bash"
+  environment({
+    GEM_HOME: "#{tl_home}/.ruby",
+    GEM_PATH: "#{tl_home}/.ruby/gems"
+  })
+  command %W{
+    cat $HOME/ec-stations | ./$HOME/auto-transload
+  }.join(" ")
+end
