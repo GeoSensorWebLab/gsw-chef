@@ -298,3 +298,12 @@ cron_d "ec_transloader" do
     cat $HOME/ec-stations | ./$HOME/auto-transload
   }.join(" ")
 end
+
+# Set up log rotation
+template "/etc/logrotate.d/auto-transload" do
+  source "transloader-logrotate.erb"
+  variables({
+    logdir: "/srv/logs",
+    user: tl_user
+  })
+end
