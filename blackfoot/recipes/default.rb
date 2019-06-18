@@ -249,10 +249,10 @@ template "#{tl_home}/auto-metadata" do
   owner tl_user
   mode "0755"
   variables({
+    cachedir: "/srv/data",
     logdir: "/srv/logs",
-    prefix: "/opt/data-transloader",
     sta_endpoint: "http://localhost:8080/v1.0/",
-    workdir: "/srv/data"
+    workdir: "/opt/data-transloader"
   })
 end
 
@@ -261,9 +261,9 @@ template "#{tl_home}/auto-transload" do
   owner tl_user
   mode "0755"
   variables({
+    cachedir: "/srv/data",
     logdir: "/srv/logs",
-    prefix: "/opt/data-transloader",
     sta_endpoint: "http://localhost:8080/v1.0/",
-    workdir: "/srv/data"
+    workdir: "/opt/data-transloader"
   })
 end
