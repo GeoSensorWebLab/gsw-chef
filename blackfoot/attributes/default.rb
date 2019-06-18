@@ -13,4 +13,4 @@ default["gost"]["database"] = "gost"
 # access.
 default["gost"]["user"] = "gost"
 # The default advertised URL for entities in SensorThings API
-default["gost"]["host_address"] = "sensors.arcticconnect.ca"
+default["gost"]["external_uri"] = "https://sensors.arcticconnect.ca:6443/"

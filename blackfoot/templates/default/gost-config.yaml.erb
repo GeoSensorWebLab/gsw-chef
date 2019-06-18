@@ -2,7 +2,7 @@ server:
     name: GOST Server
     host: localhost
     port: 8080
-    externalUri: https://<%= @host_address %>:6443/
+    externalUri: <%= @external_uri %>
     maxEntityResponse: 20
     indentedJson: true
     https: false

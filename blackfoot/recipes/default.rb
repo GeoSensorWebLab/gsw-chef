@@ -119,7 +119,7 @@ template "#{node["gost"]["prefix"]}/linux64/config.yaml" do
   source "gost-config.yaml.erb"
   owner node["gost"]["user"]
   variables({
-    host_address: node["gost"]["host_address"]
+    external_uri: node["gost"]["external_uri"]
   })
   notifies :restart, "service[gost]", :delayed
 end

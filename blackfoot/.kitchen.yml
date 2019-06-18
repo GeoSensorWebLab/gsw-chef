@@ -29,4 +29,4 @@ suites:
         - test/smoke/default
     attributes:
       gost:
-        host_address: 192.168.33.65
+        external_uri: "http://192.168.33.65:6443/"
