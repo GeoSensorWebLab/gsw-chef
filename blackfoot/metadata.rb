@@ -10,6 +10,7 @@ version          '0.1.0'
 privacy          true
 
 # Public Cookbooks
+depends 'nodejs', '~> 6.0.0'
 depends 'postgresql'
 
 # Private Cookbooks

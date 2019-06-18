@@ -307,3 +307,19 @@ template "/etc/logrotate.d/auto-transload" do
     user: tl_user
   })
 end
+
+########################
+# Install Sensors Web UI
+########################
+
+include_recipe "nodejs::default"
+
+directory "/opt/community-sensorweb" do
+  owner tl_user
+  action :create
+end
+
+git "/opt/community-sensorweb" do
+  repository "https://github.com/GeoSensorWebLab/community-sensorweb"
+  user tl_user
+end

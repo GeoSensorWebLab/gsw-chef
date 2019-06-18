@@ -14,3 +14,7 @@ default["gost"]["database"] = "gost"
 default["gost"]["user"] = "gost"
 # The default advertised URL for entities in SensorThings API
 default["gost"]["external_uri"] = "https://sensors.arcticconnect.ca:6443/"
+
+default["nodejs"]["install_method"] = "binary"
+default["nodejs"]["version"] = "10.16.0"
+default["nodejs"]["binary"]["checksum"] = "2e2cddf805112bd0b5769290bf2d1bc4bdd55ee44327e826fa94c459835a9d9a"
