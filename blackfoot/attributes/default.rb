@@ -12,3 +12,5 @@ default["gost"]["database"] = "gost"
 # GOST system user must be the same as the GOST database user for ident
 # access.
 default["gost"]["user"] = "gost"
+# The default advertised URL for entities in SensorThings API
+default["gost"]["host_address"] = "sensors.arcticconnect.ca"

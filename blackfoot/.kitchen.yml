@@ -28,3 +28,5 @@ suites:
       inspec_tests:
         - test/smoke/default
     attributes:
+      gost:
+        host_address: 192.168.33.65

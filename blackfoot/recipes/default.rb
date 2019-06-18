@@ -57,6 +57,11 @@ package %W(postgresql-#{node["postgresql"]["version"]}-postgis-2.5 postgis)
 # Install GOST
 ##############
 
+service "gost" do
+  supports [:restart]
+  action :nothing
+end
+
 remote_file "#{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip" do
   source node["gost"]["release"]
 end
@@ -113,6 +118,10 @@ end
 template "#{node["gost"]["prefix"]}/linux64/config.yaml" do
   source "gost-config.yaml.erb"
   owner node["gost"]["user"]
+  variables({
+    host_address: node["gost"]["host_address"]
+  })
+  notifies :restart, "service[gost]", :delayed
 end
 
 directory node["gost"]["prefix"] do
@@ -138,7 +147,6 @@ execute "reload systemd daemon" do
 end
 
 service "gost" do
-  supports [:start, :stop, :restart]
   action [:enable, :start]
 end
 
