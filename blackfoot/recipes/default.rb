@@ -336,6 +336,15 @@ execute "Install npm dependencies" do
   command "npm install"
 end
 
+# Customize URL for STA connection
+template "#{webui_dir}/config/environment.js" do
+  source "sensorweb-env.js.erb"
+  variables({
+    sta_url: node["gost"]["external_uri"]
+  })
+  owner tl_user
+end
+
 execute "Build site to static files" do
   cwd webui_dir
   user tl_user
