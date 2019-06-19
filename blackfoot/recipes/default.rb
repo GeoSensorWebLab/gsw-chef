@@ -281,7 +281,7 @@ end
 ######################
 
 file "#{tl_home}/ec-stations" do
-  content "XCM"
+  content "CXCM"
   owner tl_user
 end
 
@@ -295,7 +295,7 @@ cron_d "ec_transloader" do
     GEM_PATH: "#{tl_home}/.ruby/gems"
   })
   command %W{
-    cat $HOME/ec-stations | ./$HOME/auto-transload
+    cat $HOME/ec-stations | $HOME/auto-transload
   }.join(" ")
 end
 
