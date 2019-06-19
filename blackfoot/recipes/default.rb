@@ -235,7 +235,8 @@ bash "install transloader deps" do
 end
 
 # Set up data storage
-directory "/srv/data" do
+cache_dir = "/srv/data"
+directory cache_dir do
   owner tl_user
   action :create
 end
@@ -257,7 +258,7 @@ template "#{tl_home}/auto-metadata" do
   owner tl_user
   mode "0755"
   variables({
-    cachedir: "/srv/data",
+    cachedir: cache_dir,
     logdir: "/srv/logs",
     sta_endpoint: "http://localhost:8080/v1.0/",
     workdir: "/opt/data-transloader"
@@ -269,11 +270,36 @@ template "#{tl_home}/auto-transload" do
   owner tl_user
   mode "0755"
   variables({
-    cachedir: "/srv/data",
+    cachedir: cache_dir,
     logdir: "/srv/logs",
     sta_endpoint: "http://localhost:8080/v1.0/",
     workdir: "/opt/data-transloader"
   })
+end
+
+############################
+# Run initial metadata fetch
+############################
+
+# We use the "creates" property to prevent re-running this resource
+node["transloader"]["environment_canada_stations"].each do |stn|
+  bash "import Environment Canada station #{stn} metadata" do
+    code <<-EOH
+      ruby transload get metadata --source environment_canada \
+    --station #{stn} --cache "#{cache_dir}"
+    ruby transload put metadata --source environment_canada \
+    --station #{stn} --cache "#{cache_dir}" \
+    --destination "http://localhost:8080/v1.0/"
+    EOH
+    creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
+    cwd "/opt/data-transloader"
+    environment({
+      GEM_HOME: "#{tl_home}/.ruby",
+      GEM_PATH: "#{tl_home}/.ruby/gems",
+      PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
+    })
+    user tl_user
+  end
 end
 
 ######################
