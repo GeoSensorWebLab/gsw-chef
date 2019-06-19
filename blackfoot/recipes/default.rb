@@ -372,7 +372,7 @@ end
 
 cron_d "dg_transloader" do
   action :create
-  minute "1"
+  minute "*/15"
   user tl_user
   shell "/bin/bash"
   environment({
