@@ -277,21 +277,66 @@ template "#{tl_home}/auto-transload" do
   })
 end
 
+template "#{tl_home}/transload-dg" do
+  source "transload-dg.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    cachedir: cache_dir,
+    logdir: "/srv/logs",
+    sta_endpoint: "http://localhost:8080/v1.0/",
+    stations: node["transloader"]["data_garrison_stations"],
+    workdir: "/opt/data-transloader"
+  })
+end
+
 ############################
 # Run initial metadata fetch
 ############################
 
+# ENVIRONMENT CANADA
 # We use the "creates" property to prevent re-running this resource
 node["transloader"]["environment_canada_stations"].each do |stn|
   bash "import Environment Canada station #{stn} metadata" do
     code <<-EOH
       ruby transload get metadata --source environment_canada \
-    --station #{stn} --cache "#{cache_dir}"
-    ruby transload put metadata --source environment_canada \
-    --station #{stn} --cache "#{cache_dir}" \
-    --destination "http://localhost:8080/v1.0/"
+        --station #{stn} --cache "#{cache_dir}"
+      ruby transload put metadata --source environment_canada \
+        --station #{stn} --cache "#{cache_dir}" \
+        --destination "http://localhost:8080/v1.0/"
     EOH
     creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
+    cwd "/opt/data-transloader"
+    environment({
+      GEM_HOME: "#{tl_home}/.ruby",
+      GEM_PATH: "#{tl_home}/.ruby/gems",
+      PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
+    })
+    user tl_user
+  end
+end
+
+# DATA GARRISON
+# Install jq so we can modify the station parameters before uploading
+# the station metadata.
+package %w(jq)
+
+node["transloader"]["data_garrison_stations"].each do |stn|
+  metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}/#{stn["station_id"]}.json"
+  
+  # Note that jq must write to a temp file because it does not support
+  # in-place editing.
+  bash "import Data Garrison station #{stn["station_id"]} metadata" do
+    code <<-EOH
+      ruby transload get metadata --source data_garrison \
+        --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}"
+      jq '.latitude = "#{stn["latitude"]}" | .longitude = "#{stn["longitude"]}" | .timezone_offset = "#{stn["timezone_offset"]}"' "#{metadata_file}" > "#{metadata_file}.temp"
+      mv "#{metadata_file}.temp" "#{metadata_file}"
+      ruby transload put metadata --source data_garrison \
+        --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}" \
+        --destination "http://localhost:8080/v1.0/"
+    EOH
+    creates metadata_file
     cwd "/opt/data-transloader"
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
@@ -322,6 +367,20 @@ cron_d "ec_transloader" do
   })
   command %W{
     cat $HOME/ec-stations | $HOME/auto-transload
+  }.join(" ")
+end
+
+cron_d "dg_transloader" do
+  action :create
+  minute "1"
+  user tl_user
+  shell "/bin/bash"
+  environment({
+    GEM_HOME: "#{tl_home}/.ruby",
+    GEM_PATH: "#{tl_home}/.ruby/gems"
+  })
+  command %W{
+    $HOME/transload-dg
   }.join(" ")
 end
 

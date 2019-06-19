@@ -5,6 +5,25 @@
 # http://dd.weather.gc.ca/observations/doc/swob-xml_station_list.csv
 default["transloader"]["environment_canada_stations"] = ["CXCM"]
 
+default["transloader"]["data_garrison_stations"] = [
+  {
+    "name"       => "30 Mile Weather Station",
+    "user_id"    => 300234063581640,
+    "station_id" => 300234065673960,
+    "latitude"   => 69.1580,
+    "longitude"  => -107.0403,
+    "timezone_offset" => "-06:00"
+  },
+  {
+    "name"       => "Melbourne Island Weather Station",
+    "user_id"    => 300234063581640,
+    "station_id" => 300234063588720,
+    "latitude"   => 68.5948,
+    "longitude"  => -104.9363,
+    "timezone_offset" => "-06:00"
+  }
+]
+
 ##########################
 # PostgreSQL Configuration
 ##########################
