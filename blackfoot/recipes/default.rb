@@ -281,7 +281,7 @@ end
 ######################
 
 file "#{tl_home}/ec-stations" do
-  content "CXCM"
+  content node["transloader"]["environment_canada_stations"].join(" ")
   owner tl_user
 end
 
