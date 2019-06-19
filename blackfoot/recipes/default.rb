@@ -345,3 +345,21 @@ execute "Build site to static files" do
   })
   command "node_modules/.bin/ember build --environment production"
 end
+
+# Set up nginx virtual host
+template "/etc/nginx/sites-available/sensorweb" do
+  source "nginx-sensorweb.conf.erb"
+  variables({
+    root: "#{webui_dir}/dist"
+  })
+  notifies :reload, "service[nginx]"
+end
+
+link "/etc/nginx/sites-enabled/sensorweb" do
+  to "/etc/nginx/sites-available/sensorweb"
+end
+
+# Delete default nginx site to not conflict with sensorweb site.
+file "/etc/nginx/sites-enabled/default" do
+  action :delete
+end
