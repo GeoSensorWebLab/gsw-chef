@@ -314,12 +314,34 @@ end
 
 include_recipe "nodejs::default"
 
-directory "/opt/community-sensorweb" do
+webui_dir = "/opt/community-sensorweb"
+
+directory webui_dir do
   owner tl_user
   action :create
 end
 
-git "/opt/community-sensorweb" do
+git webui_dir do
   repository "https://github.com/GeoSensorWebLab/community-sensorweb"
   user tl_user
+end
+
+execute "Install npm dependencies" do
+  cwd webui_dir
+  user tl_user
+  environment({ 
+    HOME: tl_home, 
+    USER: tl_user 
+  })
+  command "npm install"
+end
+
+execute "Build site to static files" do
+  cwd webui_dir
+  user tl_user
+  environment({ 
+    HOME: tl_home, 
+    USER: tl_user 
+  })
+  command "node_modules/.bin/ember build --environment production"
 end
