@@ -225,7 +225,7 @@ cron_d "ec_transloader" do
     GEM_PATH: "#{tl_home}/.ruby/gems"
   })
   command %W{
-    cat $HOME/ec-stations | $HOME/auto-transload
+    cat $HOME/ec-stations | $HOME/auto-transload | tee -a /srv/logs/upload.log
   }.join(" ")
 end
 
@@ -239,7 +239,7 @@ cron_d "dg_transloader" do
     GEM_PATH: "#{tl_home}/.ruby/gems"
   })
   command %W{
-    $HOME/transload-dg
+    $HOME/transload-dg | tee -a /srv/logs/upload.log
   }.join(" ")
 end
 
