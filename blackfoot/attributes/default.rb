@@ -26,6 +26,10 @@ default["transloader"]["data_garrison_stations"] = [
 
 default["sensorthings"]["external_uri"] = "https://sensors.arcticconnect.ca:6443/"
 
+# Arctic Sensors Dashboard
+default["dashboard"]["prefix"] = "/opt/community-sensorweb"
+default["dashboard"]["repository"] = "https://github.com/GeoSensorWebLab/community-sensorweb"
+
 #######################
 # Node.js Configuration
 #######################

@@ -258,20 +258,18 @@ end
 
 include_recipe "nodejs::default"
 
-webui_dir = "/opt/community-sensorweb"
-
-directory webui_dir do
+directory node["dashboard"]["prefix"] do
   owner tl_user
   action :create
 end
 
-git webui_dir do
-  repository "https://github.com/GeoSensorWebLab/community-sensorweb"
+git node["dashboard"]["prefix"] do
+  repository node["dashboard"]["repository"]
   user tl_user
 end
 
 execute "Install npm dependencies" do
-  cwd webui_dir
+  cwd node["dashboard"]["prefix"]
   user tl_user
   environment({ 
     HOME: tl_home,
@@ -281,7 +279,7 @@ execute "Install npm dependencies" do
 end
 
 # Customize URL for STA connection
-template "#{webui_dir}/config/environment.js" do
+template "#{node["dashboard"]["prefix"]}/config/environment.js" do
   source "sensorweb-env.js.erb"
   variables({
     sta_url: node["sensorthings"]["external_uri"]
@@ -290,7 +288,7 @@ template "#{webui_dir}/config/environment.js" do
 end
 
 execute "Build site to static files" do
-  cwd webui_dir
+  cwd node["dashboard"]["prefix"]
   user tl_user
   environment({ 
     HOME: tl_home,
@@ -303,7 +301,7 @@ end
 template "/etc/nginx/sites-available/sensorweb" do
   source "nginx-sensorweb.conf.erb"
   variables({
-    root: "#{webui_dir}/dist"
+    root: "#{node["dashboard"]["prefix"]}/dist"
   })
   notifies :reload, "service[nginx]"
 end
