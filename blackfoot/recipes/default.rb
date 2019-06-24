@@ -18,138 +18,6 @@
 
 apt_update
 
-# Check for database directory.
-# If a ZFS dataset is used, then it must be set up MANUALLY.
-directory node["postgresql"]["data_directory"] do
-  recursive true
-  mode "0700"
-  action :create
-end
-
-# Install PostgreSQL
-postgresql_server_install "postgresql-#{node["postgresql"]["version"]}" do
-  version node["postgresql"]["version"]
-  initdb_locale "en_US.UTF-8"
-end
-
-# Update permissions on database directory for postgres
-directory node["postgresql"]["data_directory"] do
-  recursive true
-  owner "postgres"
-  group "postgres"
-  mode "0700"
-  action :create
-end
-
-# Create the database cluster as the Chef resources cannot handle 
-# changing to a different data directory without exploding
-execute "create postgres cluster" do
-  command "pg_dropcluster --stop #{node["postgresql"]["version"]} main &&\
-   pg_createcluster -d \"#{node["postgresql"]["data_directory"]}\" \
-  --locale en_US.UTF-8 --start #{node["postgresql"]["version"]} main"
-  only_if { ::Dir.empty?(node["postgresql"]["data_directory"]) }
-end
-
-package %W(postgresql-#{node["postgresql"]["version"]}-postgis-2.5 postgis)
-
-
-##############
-# Install GOST
-##############
-
-service "gost" do
-  supports [:restart]
-  action :nothing
-end
-
-remote_file "#{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip" do
-  source node["gost"]["release"]
-end
-
-package "unzip"
-
-# Use postgres owner so that statefile can be created later
-directory node["gost"]["prefix"] do
-  recursive true
-  owner "postgres"
-  action :create
-end
-
-execute "unzip GOST" do
-  command "unzip #{Chef::Config["file_cache_path"]}/gost_ubuntu_x64.zip -d #{node["gost"]["prefix"]}"
-  not_if { ::Dir.exist?("#{node["gost"]["prefix"]}/linux64") }
-end
-
-git "#{node["gost"]["prefix"]}/gost-db" do
-  repository node["gost"]["database_repository"]
-end
-
-postgresql_user node["gost"]["user"] do
-  sensitive true
-end
-
-postgresql_database node["gost"]["database"] do
-  owner node["gost"]["user"]
-end
-
-execute "initialize GOST database" do
-  command "psql #{node["gost"]["database"]} -f #{node["gost"]["prefix"]}/gost-db/gost_init_db.sql && \
-  psql #{node["gost"]["database"]} -c 'alter schema \"v1\" owner to \"#{node["gost"]["user"]}\"' \
-    -c 'grant all on database #{node["gost"]["database"]} to #{node["gost"]["user"]};' \
-    -c 'grant all privileges on all tables in schema v1 to #{node["gost"]["user"]}' \
-    -c 'grant all privileges on all sequences in schema v1 to #{node["gost"]["user"]}' && \
-  touch #{node["gost"]["prefix"]}/database-import"
-  user "postgres"
-  not_if { ::File.exist?("#{node["gost"]["prefix"]}/database-import") }
-end
-
-user node["gost"]["user"] do
-  home node["gost"]["prefix"]
-end
-
-postgresql_access "Allow gost system user" do
-  access_type   "local"
-  access_db     node["gost"]["database"]
-  access_user   node["gost"]["user"]
-  access_addr   nil
-  access_method "ident"
-end
-
-template "#{node["gost"]["prefix"]}/linux64/config.yaml" do
-  source "gost-config.yaml.erb"
-  owner node["gost"]["user"]
-  variables({
-    external_uri: node["gost"]["external_uri"]
-  })
-  notifies :restart, "service[gost]", :delayed
-end
-
-directory node["gost"]["prefix"] do
-  recursive true
-  owner node["gost"]["user"]
-  action :create
-end
-
-execute "make gost executable" do
-  command "chmod +x #{node["gost"]["prefix"]}/linux64/gost"
-end
-
-template "/etc/systemd/system/gost.service" do
-  source "gost.service.erb"
-  variables({
-    prefix: node["gost"]["prefix"],
-    user: node["gost"]["user"]
-  })
-end
-
-execute "reload systemd daemon" do
-  command "systemctl daemon-reload"
-end
-
-service "gost" do
-  action [:enable, :start]
-end
-
 ###############
 # Install nginx
 ###############
@@ -159,15 +27,6 @@ package %w(nginx-full)
 service "nginx" do
   supports [:start, :stop, :restart, :reload]
   action :nothing
-end
-
-template "/etc/nginx/sites-available/gost" do
-  source "nginx-gost.conf.erb"
-  notifies :reload, "service[nginx]"
-end
-
-link "/etc/nginx/sites-enabled/gost" do
-  to "/etc/nginx/sites-available/gost"
 end
 
 ##########################
@@ -260,7 +119,7 @@ template "#{tl_home}/auto-metadata" do
   variables({
     cachedir: cache_dir,
     logdir: "/srv/logs",
-    sta_endpoint: "http://localhost:8080/v1.0/",
+    sta_endpoint: node["sensorthings"]["external_uri"],
     workdir: "/opt/data-transloader"
   })
 end
@@ -272,7 +131,7 @@ template "#{tl_home}/auto-transload" do
   variables({
     cachedir: cache_dir,
     logdir: "/srv/logs",
-    sta_endpoint: "http://localhost:8080/v1.0/",
+    sta_endpoint: node["sensorthings"]["external_uri"],
     workdir: "/opt/data-transloader"
   })
 end
@@ -284,7 +143,7 @@ template "#{tl_home}/transload-dg" do
   variables({
     cachedir: cache_dir,
     logdir: "/srv/logs",
-    sta_endpoint: "http://localhost:8080/v1.0/",
+    sta_endpoint: node["sensorthings"]["external_uri"],
     stations: node["transloader"]["data_garrison_stations"],
     workdir: "/opt/data-transloader"
   })
@@ -303,7 +162,7 @@ node["transloader"]["environment_canada_stations"].each do |stn|
         --station #{stn} --cache "#{cache_dir}"
       ruby transload put metadata --source environment_canada \
         --station #{stn} --cache "#{cache_dir}" \
-        --destination "http://localhost:8080/v1.0/"
+        --destination "#{node["sensorthings"]["external_uri"]}"
     EOH
     creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
     cwd "/opt/data-transloader"
@@ -334,7 +193,7 @@ node["transloader"]["data_garrison_stations"].each do |stn|
       mv "#{metadata_file}.temp" "#{metadata_file}"
       ruby transload put metadata --source data_garrison \
         --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}" \
-        --destination "http://localhost:8080/v1.0/"
+        --destination "#{node["sensorthings"]["external_uri"]}"
     EOH
     creates metadata_file
     cwd "/opt/data-transloader"
@@ -415,8 +274,8 @@ execute "Install npm dependencies" do
   cwd webui_dir
   user tl_user
   environment({ 
-    HOME: tl_home, 
-    USER: tl_user 
+    HOME: tl_home,
+    USER: tl_user
   })
   command "npm install"
 end
@@ -425,7 +284,7 @@ end
 template "#{webui_dir}/config/environment.js" do
   source "sensorweb-env.js.erb"
   variables({
-    sta_url: node["gost"]["external_uri"]
+    sta_url: node["sensorthings"]["external_uri"]
   })
   owner tl_user
 end
@@ -434,8 +293,8 @@ execute "Build site to static files" do
   cwd webui_dir
   user tl_user
   environment({ 
-    HOME: tl_home, 
-    USER: tl_user 
+    HOME: tl_home,
+    USER: tl_user
   })
   command "node_modules/.bin/ember build --environment production"
 end

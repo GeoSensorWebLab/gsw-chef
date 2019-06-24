@@ -28,5 +28,5 @@ suites:
       inspec_tests:
         - test/smoke/default
     attributes:
-      gost:
-        external_uri: "http://192.168.33.65:6443/"
+      sensorthings:
+        external_uri: "http://scratchpad.sensorup.com/OGCSensorThings/v1.0/"

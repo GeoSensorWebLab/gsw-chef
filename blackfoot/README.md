@@ -2,9 +2,7 @@
 
 Cookbook for setting up a node with Arctic Sensor Web Expanded services:
 
-* PostgreSQL
-* GOST
-* nginx
+* Nginx
 * GSW Data Transloader
 
 ## Supported Platforms
