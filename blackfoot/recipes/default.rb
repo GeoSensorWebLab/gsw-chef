@@ -206,6 +206,30 @@ node["transloader"]["data_garrison_stations"].each do |stn|
   end
 end
 
+########################
+# Install Apache Airflow
+########################
+
+airflow_home = "/opt/airflow"
+
+package %w(python3-pip)
+
+execute "Install airflow" do
+  command "pip3 install apache-airflow"
+end
+
+directory airflow_home do
+  recursive true
+  action :create
+end
+
+execute "Initialize airflow DB" do
+  command "airflow initdb"
+  env({
+    "AIRFLOW_HOME" => airflow_home
+  })
+end
+
 ######################
 # Schedule transloader
 ######################
