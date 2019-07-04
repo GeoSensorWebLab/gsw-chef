@@ -211,6 +211,7 @@ end
 ########################
 
 airflow_home = "/opt/airflow"
+airflow_port = "5555"
 
 package %w(python3-pip)
 
@@ -230,6 +231,43 @@ execute "Initialize airflow DB" do
   })
 end
 
+systemd_unit "airflow-webserver.service" do
+  content <<-EOU.gsub(/^\s+/, '')
+    [Unit]
+    Description=Airflow webserver daemon
+    After=network.target
+
+    [Service]
+    Environment=AIRFLOW_HOME="#{airflow_home}"
+    User=root
+    Group=root
+    Type=simple
+    ExecStart=/usr/local/bin/airflow webserver --hostname 127.0.0.1 --port #{airflow_port}
+    Restart=on-failure
+    RestartSec=5s
+    PrivateTmp=true
+
+    [Install]
+    WantedBy=multi-user.target
+  EOU
+
+  action [:create, :enable, :start]
+end
+
+# Set up nginx virtual host for airflow
+template "/etc/nginx/sites-available/airflow" do
+  source "nginx-airflow.conf.erb"
+  variables({
+    port: airflow_port
+  })
+  notifies :reload, "service[nginx]"
+end
+
+link "/etc/nginx/sites-enabled/airflow" do
+  to "/etc/nginx/sites-available/airflow"
+  notifies :reload, "service[nginx]"
+end
+
 ######################
 # Schedule transloader
 ######################
@@ -239,33 +277,33 @@ file "#{tl_home}/ec-stations" do
   owner tl_user
 end
 
-cron_d "ec_transloader" do
-  action :create
-  minute "5"
-  user tl_user
-  shell "/bin/bash"
-  environment({
-    GEM_HOME: "#{tl_home}/.ruby",
-    GEM_PATH: "#{tl_home}/.ruby/gems"
-  })
-  command %W{
-    cat $HOME/ec-stations | $HOME/auto-transload | tee -a /srv/logs/upload.log
-  }.join(" ")
-end
+# cron_d "ec_transloader" do
+#   action :create
+#   minute "5"
+#   user tl_user
+#   shell "/bin/bash"
+#   environment({
+#     GEM_HOME: "#{tl_home}/.ruby",
+#     GEM_PATH: "#{tl_home}/.ruby/gems"
+#   })
+#   command %W{
+#     cat $HOME/ec-stations | $HOME/auto-transload | tee -a /srv/logs/upload.log
+#   }.join(" ")
+# end
 
-cron_d "dg_transloader" do
-  action :create
-  minute "*/15"
-  user tl_user
-  shell "/bin/bash"
-  environment({
-    GEM_HOME: "#{tl_home}/.ruby",
-    GEM_PATH: "#{tl_home}/.ruby/gems"
-  })
-  command %W{
-    $HOME/transload-dg | tee -a /srv/logs/upload.log
-  }.join(" ")
-end
+# cron_d "dg_transloader" do
+#   action :create
+#   minute "*/15"
+#   user tl_user
+#   shell "/bin/bash"
+#   environment({
+#     GEM_HOME: "#{tl_home}/.ruby",
+#     GEM_PATH: "#{tl_home}/.ruby/gems"
+#   })
+#   command %W{
+#     $HOME/transload-dg | tee -a /srv/logs/upload.log
+#   }.join(" ")
+# end
 
 # Set up log rotation
 template "/etc/logrotate.d/auto-transload" do
