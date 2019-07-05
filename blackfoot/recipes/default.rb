@@ -256,7 +256,7 @@ end
 
 # Set up nginx virtual host for airflow
 template "/etc/nginx/sites-available/airflow" do
-  source "nginx-airflow.conf.erb"
+  source "nginx/airflow.conf.erb"
   variables({
     port: airflow_port
   })
@@ -361,7 +361,7 @@ end
 
 # Set up nginx virtual host
 template "/etc/nginx/sites-available/sensorweb" do
-  source "nginx-sensorweb.conf.erb"
+  source "nginx/sensorweb.conf.erb"
   variables({
     root: "#{node["dashboard"]["prefix"]}/dist"
   })
