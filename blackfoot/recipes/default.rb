@@ -211,7 +211,7 @@ end
 ########################
 
 airflow_home = "/opt/airflow"
-airflow_port = "5555"
+airflow_port = "5080"
 
 package %w(python3-pip)
 
@@ -220,6 +220,12 @@ execute "Install airflow" do
 end
 
 directory airflow_home do
+  recursive true
+  action :create
+end
+
+# Directory for DAGs
+directory "#{airflow_home}/dags" do
   recursive true
   action :create
 end
@@ -254,6 +260,28 @@ systemd_unit "airflow-webserver.service" do
   action [:create, :enable, :start]
 end
 
+systemd_unit "airflow-scheduler.service" do
+  content <<-EOU.gsub(/^\s+/, '')
+    [Unit]
+    Description=Airflow scheduler daemon
+    After=network.target
+
+    [Service]
+    Environment=AIRFLOW_HOME="#{airflow_home}"
+    User=root
+    Group=root
+    Type=simple
+    ExecStart=/usr/local/bin/airflow scheduler
+    Restart=always
+    RestartSec=5s
+
+    [Install]
+    WantedBy=multi-user.target
+  EOU
+
+  action [:create, :enable, :start]
+end
+
 # Set up nginx virtual host for airflow
 template "/etc/nginx/sites-available/airflow" do
   source "nginx/airflow.conf.erb"
@@ -266,6 +294,25 @@ end
 link "/etc/nginx/sites-enabled/airflow" do
   to "/etc/nginx/sites-available/airflow"
   notifies :reload, "service[nginx]"
+end
+
+# Install testing ETL DAG
+cookbook_file "#{airflow_home}/dags/simple-etl-v3.py" do
+  source "simple-etl.py"
+  action :create
+  notifies :restart, "systemd_unit[airflow-webserver.service]"
+end
+
+directory "/opt/etl" do
+  action :create
+end
+
+%w(etl-download etl-convert etl-upload).each do |file|
+  cookbook_file "/opt/etl/#{file}" do
+    source "#{file}.rb"
+    mode "755"
+    action :create
+  end
 end
 
 ######################
