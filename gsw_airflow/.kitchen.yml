@@ -1,0 +1,30 @@
+---
+driver:
+  name: vagrant
+  network:
+    - ["private_network", { ip: "192.168.33.80" }]
+  customize:
+    cpus: 2
+    memory: 2048
+    cableconnected1: 'on'
+
+provisioner:
+  name: chef_zero
+  always_update_cookbooks: true
+  client_rb:
+    chef_license: accept
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-18.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[airflow::default]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
