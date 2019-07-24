@@ -20,6 +20,8 @@ server {
 	location / {
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
+		# If server is offline, return an error quickly
+		proxy_connect_timeout 2s;
 		proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
 	}
 }
