@@ -29,14 +29,26 @@ service "nginx" do
   action :nothing
 end
 
+# Empty the conf.d directory of old vhost entries.
+# When a virtualhost is removed from the attributes, then it will have
+# its conf removed as well.
+execute "empty previous nginx configurations" do
+  command "rm /etc/nginx/conf.d/*"
+  ignore_failure true
+end
+
 # Create nginx sites for each reverse-proxy
-template "/etc/nginx/conf.d/arctic-scholar.conf" do
-  source "reverse-proxy-vhost.conf.erb"
-  variables({
-    domains: ["scholar.arcticconnect.ca"],
-    ssl_enabled: false,
-    proxy_host: "macleod.gswlab.ca",
-    proxy_port: 80
-  })
-  notifies :reload, "service[nginx]"
+vhosts = node["stoney"]["vhosts"]
+
+vhosts.each do |vhost|
+  template "/etc/nginx/conf.d/#{vhost["id"]}.conf" do
+    source "reverse-proxy-vhost.conf.erb"
+    variables({
+      domains: vhost["domains"],
+      ssl_enabled: vhost["ssl_enabled"],
+      proxy_host: vhost["proxy_host"],
+      proxy_port: vhost["proxy_port"]
+    })
+    notifies :reload, "service[nginx]"
+  end
 end
