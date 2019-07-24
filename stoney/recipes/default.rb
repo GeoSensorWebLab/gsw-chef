@@ -18,8 +18,22 @@
 
 apt_update
 
+#################
+# 1. Update hosts
+#################
+
+hosts = node["stoney"]["hosts"]
+
+node["stoney"]["hostsfile"].each do |host|
+  hostsfile_entry host["ip"] do
+    hostname  host["hostname"]
+    unique    true
+    action    :create
+  end
+end
+
 ##################
-# 1. Install nginx
+# 2. Install nginx
 ##################
 
 package %w(nginx-full)
