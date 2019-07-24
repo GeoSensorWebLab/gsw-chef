@@ -60,7 +60,7 @@ default["stoney"]["vhosts"] = [{
   "id"          => "arctic-sensor-web-expansion",
   "domains"     => ["arctic-sensors.gswlab.ca", "sensors.arcticconnect.ca"],
   "ssl_enabled" => false,
-  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_host"  => "blackfoot.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "bera-dashboard",
