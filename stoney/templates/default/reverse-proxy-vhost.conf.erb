@@ -1,0 +1,23 @@
+# Managed by Chef, do not edit
+
+# VIRTUAL HOST
+server {
+	listen 80;
+	listen [::]:80;
+
+	<% if @ssl_enabled %>
+	# SSL Configuration
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	<% end %>
+
+	# root is used for well-known challenges for certbot
+	root /var/www/html;
+
+	# domain(s) for this virtual host
+	server_name <%= @domains.join(" ") %>;
+
+	location / {
+		proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
+	}
+}

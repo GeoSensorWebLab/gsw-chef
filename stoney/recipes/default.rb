@@ -15,3 +15,28 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+apt_update
+
+##################
+# 1. Install nginx
+##################
+
+package %w(nginx-full)
+
+service "nginx" do
+  supports [:restart, :reload]
+  action :nothing
+end
+
+# Create nginx sites for each reverse-proxy
+template "/etc/nginx/conf.d/arctic-scholar.conf" do
+  source "reverse-proxy-vhost.conf.erb"
+  variables({
+    domains: ["scholar.arcticconnect.ca"],
+    ssl_enabled: false,
+    proxy_host: "macleod.gswlab.ca",
+    proxy_port: 80
+  })
+  notifies :reload, "service[nginx]"
+end
