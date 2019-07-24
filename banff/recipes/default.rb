@@ -16,6 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#################
+# 1. Update hosts
+#################
+
+hosts = node["banff"]["hosts"]
+
+node["banff"]["hostsfile"].each do |host|
+  hostsfile_entry host["ip"] do
+    hostname  host["hostname"]
+    unique    true
+    action    :create
+  end
+end
+
 # Configure the apt repository for nginx
 apt_repository 'nginx' do
   uri          'http://nginx.org/packages/mainline/ubuntu/'
