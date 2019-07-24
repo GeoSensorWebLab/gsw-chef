@@ -1,21 +1,19 @@
 # Managed by Chef, do not edit
 
-# VIRTUAL HOST
+# VIRTUAL HOST for HTTP
 server {
 	listen 80;
 	listen [::]:80;
-
-	<% if @ssl_enabled %>
-	# SSL Configuration
-	listen 443 ssl;
-	listen [::]:443 ssl;
-	<% end %>
 
 	# root is used for well-known challenges for certbot
 	root /var/www/html;
 
 	# domain(s) for this virtual host
-	server_name <%= @domains.join(" ") %>;
+	server_name  <%= @domains.join(" ") %>;
+
+	location /.well-known/acme-challenge/ {
+        alias /var/www/html/.well-known/acme-challenge/;
+    }
 
 	location / {
 		proxy_set_header Host $host;
@@ -25,3 +23,32 @@ server {
 		proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
 	}
 }
+
+<% if @ssl_enabled %>
+# VIRTUAL HOSTS for HTTPS
+<% for domain in @domains %>
+# HTTPS for <%= domain %>
+server {
+    listen       443 ssl;
+    server_name  <%= domain %>;
+
+    ssl_certificate /etc/letsencrypt/live/<%= domain %>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<%= domain %>/privkey.pem;
+    ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4';
+    ssl_prefer_server_ciphers on;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+		# If server is offline, return an error quickly
+		proxy_connect_timeout 2s;
+		proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+<% end %>
+<% end %>

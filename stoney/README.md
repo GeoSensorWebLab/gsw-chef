@@ -12,7 +12,7 @@ This cookbook sets up the `stoney` node as a reverse proxy server on the Cybera 
 
 ## Usage
 
-## gsw-cookbook-template
+## `stoney::default` recipe
 
 Include `stoney` in your node's `run_list`:
 
@@ -23,6 +23,12 @@ Include `stoney` in your node's `run_list`:
   ]
 }
 ```
+
+### `acme_server` recipe
+
+This recipe is for testing locally only with Test Kitchen. The recipe will install Docker and set up a container running [`pebble`][1]. Do not use this in production!
+
+[1]: https://github.com/letsencrypt/pebble
 
 ## Attributes
 

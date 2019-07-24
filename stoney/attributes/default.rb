@@ -34,9 +34,15 @@ default["stoney"]["vhosts"] = [{
   "proxy_port"  => 80
 }, {
   "id"          => "arctic-web-map",
-  "domains"     => ["arctic-maps.gswlab.ca", "arctic-web-map.gswlab.ca", "maps.arcticconnect.ca", "webmap.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "domains"     => ["arctic-web-map.gswlab.ca", "webmap.arcticconnect.ca"],
+  "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "arctic-maps",
+  "domains"     => ["arctic-maps.gswlab.ca", "maps.arcticconnect.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "deerfoot.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "arctic-bio-map",
@@ -64,7 +70,7 @@ default["stoney"]["vhosts"] = [{
   "proxy_port"  => 80
 }, {
   "id"          => "bera-dashboard",
-  "domains"     => ["dashboard.geocens.ca", "*.dashboard.geocens.ca", "dashboard.gswlab.ca", "*.dashboard.gswlab.ca", "dashboard.bera-project.org"],
+  "domains"     => ["dashboard.geocens.ca", "dashboard.gswlab.ca", "dashboard.bera-project.org"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
@@ -82,7 +88,7 @@ default["stoney"]["vhosts"] = [{
   "proxy_port"  => 80
 }, {
   "id"          => "rvcww-portal",
-  "domains"     => ["rockyview.gswlab.ca", "*.rockyview.gswlab.ca"],
+  "domains"     => ["rockyview.gswlab.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
@@ -111,3 +117,15 @@ default["stoney"]["vhosts"] = [{
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }]
+
+# ACME Configuration for HTTPS
+default["acme"]["dir"] = "https://acme-v02.api.letsencrypt.org/directory"
+default["acme"]["email"] = "jpbadger@ucalgary.ca"
+
+# You may have to use a different key server from the pool:
+# https://sks-keyservers.net/overview-of-pools.php
+default["certbot"]["keyserver"] = "na.pool.sks-keyservers.net"
+default["certbot"]["prefix"] = "/opt/src/certbot"
+
+default["pebble"]["repository"] = "https://github.com/letsencrypt/pebble"
+default["pebble"]["version"] = "v2.0.2"
