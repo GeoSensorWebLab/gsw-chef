@@ -22,8 +22,92 @@ default["stoney"]["hostsfile"] = [
 # Let's Encrypt for each domain in `domains`.
 default["stoney"]["vhosts"] = [{
   "id"          => "arctic-scholar",
-  "domains"     => ["scholar.arcticconnect.ca"],
+  "domains"     => ["arctic-scholar-index.gswlab.ca", "scholar.arcticconnect.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "macleod.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "arctic-scholar-records",
+  "domains"     => ["arctic-scholar.gswlab.ca", "records.arcticconnect.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "arctic-web-map",
+  "domains"     => ["arctic-maps.gswlab.ca", "arctic-web-map.gswlab.ca", "maps.arcticconnect.ca", "webmap.arcticconnect.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "arctic-bio-map",
+  "domains"     => ["abm-demo.gwlab.ca", "arctic-biomap-sightings.gswlab.ca", "abm-demo.arcticconnect.ca", "sightings.arcticconnect.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "arctic-portal",
+  "domains"     => ["arctic-portal.gswlab.ca", "portal.arcticconnect.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "arctic-sensor-web",
+  "domains"     => ["arctic-sensor-web.gswlab.ca", "sensorweb.arcticconnect.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "arctic-sensor-web-expansion",
+  "domains"     => ["arctic-sensors.gswlab.ca", "sensors.arcticconnect.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "bera-dashboard",
+  "domains"     => ["dashboard.geocens.ca", "*.dashboard.geocens.ca", "dashboard.gswlab.ca", "*.dashboard.gswlab.ca", "dashboard.bera-project.org"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "geocens-portal",
+  "domains"     => ["dev.geocens.ca", "geocens.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "eaglewatch-portal",
+  "domains"     => ["eaglewatch.geocens.ca", "eaglewatch.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "rvcww-portal",
+  "domains"     => ["rockyview.gswlab.ca", "*.rockyview.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "aafc-portal",
+  "domains"     => ["aafc.geocens.ca", "aafc.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "sta-time-vis",
+  "domains"     => ["visualize.geocens.ca", "visualize.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "sta-webcam",
+  "domains"     => ["webcam.geocens.ca", "webcam.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
+  "proxy_port"  => 80
+}, {
+  "id"          => "dataservice-web",
+  "domains"     => ["dataservice-web.geocens.ca", "dataservice-web.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }]
