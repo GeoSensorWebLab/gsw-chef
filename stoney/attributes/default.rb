@@ -40,7 +40,7 @@ default["stoney"]["vhosts"] = [{
   "proxy_port"  => 80
 }, {
   "id"          => "arctic-bio-map",
-  "domains"     => ["abm-demo.gwlab.ca", "arctic-biomap-sightings.gswlab.ca", "abm-demo.arcticconnect.ca", "sightings.arcticconnect.ca"],
+  "domains"     => ["abm-demo.gswlab.ca", "arctic-biomap-sightings.gswlab.ca", "abm-demo.arcticconnect.ca", "sightings.arcticconnect.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
