@@ -34,10 +34,46 @@ Include `stoney` in your node's `run_list`:
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['stoney']['property']</tt></td>
+    <td><tt>['stoney']['vhosts']</tt></td>
+    <td>Array</td>
+    <td>Array of virtualhost hash objects.</td>
+    <td>Defaults to standard virtual hosts.</td>
+  </tr>
+  <tr>
+    <td><tt>['stoney']['vhosts'][]</tt></td>
+    <td>Hash</td>
+    <td>Definitions for an nginx virtual host.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>['stoney']['vhosts'][]['id']</tt></td>
     <td>String</td>
-    <td>Description</td>
-    <td><tt>default value</tt></td>
+    <td>Name of the site, used for configuration filename.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>['stoney']['vhosts'][]['domains']</tt></td>
+    <td>Array of Strings</td>
+    <td>Domains for <tt>server_name</tt>.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>['stoney']['vhosts'][]['ssl_enabled']</tt></td>
+    <td>Boolean</td>
+    <td>If enabled, then certbot will be used to get certificates for each domain from Let's Encrypt.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>['stoney']['vhosts'][]['proxy_host']</tt></td>
+    <td>String</td>
+    <td>The hostname or IP address of the real service host.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>['stoney']['vhosts'][]['proxy_port']</tt></td>
+    <td>String</td>
+    <td>The port of the service on its real host.</td>
+    <td></td>
   </tr>
 </table>
 
