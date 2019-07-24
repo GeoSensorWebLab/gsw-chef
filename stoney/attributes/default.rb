@@ -43,7 +43,7 @@ default["stoney"]["vhosts"] = [{
   "domains"     => ["arctic-maps.gswlab.ca", "maps.arcticconnect.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "deerfoot.gswlab.ca",
-  "proxy_port"  => 80
+  "proxy_port"  => 8080
 }, {
   "id"          => "arctic-bio-map",
   "domains"     => ["abm-demo.gswlab.ca", "arctic-biomap-sightings.gswlab.ca", "abm-demo.arcticconnect.ca", "sightings.arcticconnect.ca"],
