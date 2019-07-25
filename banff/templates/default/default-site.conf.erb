@@ -7,7 +7,7 @@ server {
     proxy_buffer_size 4k;
     proxy_buffers 256 4k;
 
-    resolver 1.1.1.1 1.0.0.1;
+    resolver 127.0.0.1;
 
     location /.well-known/acme-challenge/ {
         alias /var/www/html/.well-known/acme-challenge/;
@@ -46,7 +46,7 @@ server {
     proxy_buffer_size 4k;
     proxy_buffers 256 4k;
 
-    resolver 1.1.1.1 1.0.0.1;
+    resolver 127.0.0.1;
 
     location / {
         proxy_pass http://airport.gswlab.ca$request_uri;

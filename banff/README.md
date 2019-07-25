@@ -3,6 +3,7 @@
 Cookbook for setting up a node with web map generation services:
 
 * Nginx reverse caching proxy
+* Local dnsmasq (for nginx to read hostsfile)
 * Let's Encrypt certificates
 
 ## Supported Platforms

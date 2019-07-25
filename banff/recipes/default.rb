@@ -95,6 +95,8 @@ node['banff']['https_domains'].each do |domain|
   end
 end
 
+package 'dnsmasq'
+
 # Install nginx
 package 'nginx'
 
