@@ -23,13 +23,13 @@ default["stoney"]["hostsfile"] = [
 default["stoney"]["vhosts"] = [{
   "id"          => "arctic-scholar",
   "domains"     => ["arctic-scholar-index.gswlab.ca", "scholar.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "macleod.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "arctic-scholar-records",
   "domains"     => ["arctic-scholar.gswlab.ca", "records.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
@@ -41,7 +41,7 @@ default["stoney"]["vhosts"] = [{
 }, {
   "id"          => "arctic-maps",
   "domains"     => ["arctic-maps.gswlab.ca", "maps.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "deerfoot.gswlab.ca",
   "proxy_port"  => 8080
 }, {
@@ -53,7 +53,7 @@ default["stoney"]["vhosts"] = [{
 }, {
   "id"          => "arctic-portal",
   "domains"     => ["arctic-portal.gswlab.ca", "portal.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
@@ -65,13 +65,13 @@ default["stoney"]["vhosts"] = [{
 }, {
   "id"          => "arctic-sensor-web-expansion",
   "domains"     => ["arctic-sensors.gswlab.ca", "sensors.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "blackfoot.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "bera-dashboard",
   "domains"     => ["dashboard.geocens.ca", "dashboard.gswlab.ca", "dashboard.bera-project.org"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
