@@ -34,6 +34,7 @@ include_recipe 'maps_server::mapproxy'
   execute "gunzip #{id}" do
     command "gunzip #{id}.xml.gz"
     cwd "/srv/stylesheets"
+    creates "/srv/stylesheets/#{id}.xml.gz"
   end
 end
 
