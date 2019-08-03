@@ -13,4 +13,4 @@ privacy          true
 # depends 'user'
 
 # Private Cookbooks
-depends 'maps_server'
+depends 'maps_server', '~> 0.3.0'
