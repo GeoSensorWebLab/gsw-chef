@@ -22,15 +22,7 @@ apt_update
 # 1. Update hosts
 #################
 
-hosts = node["stoney"]["hosts"]
-
-node["stoney"]["hostsfile"].each do |host|
-  hostsfile_entry host["ip"] do
-    hostname  host["hostname"]
-    unique    true
-    action    :create
-  end
-end
+include_recipe "gsw-hostsfile::default"
 
 ####################
 # 2. Install certbot

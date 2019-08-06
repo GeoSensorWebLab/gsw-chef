@@ -11,7 +11,6 @@ privacy          true
 
 # Public Cookbooks
 depends 'docker'
-depends 'hostsfile'
 
 # Private Cookbooks
-# depends 'gsw-apt-mirror'
+depends 'gsw-hostsfile'
