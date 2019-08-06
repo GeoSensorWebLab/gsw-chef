@@ -41,7 +41,7 @@ default["stoney"]["vhosts"] = [{
 }, {
   "id"          => "arctic-web-map-tiles",
   "domains"     => ["arctic-web-map-tiles.gswlab.ca", "tiles.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "airport.gswlab.ca",
   "proxy_port"  => 80
 }, {
