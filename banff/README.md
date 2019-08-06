@@ -6,6 +6,10 @@ Cookbook for setting up a node with web map generation services:
 * Local dnsmasq (for nginx to read hostsfile)
 * Let's Encrypt certificates
 
+## Node Status
+
+**2019-08-06**: This node has been shut down in favour of directing tile requests directly from `tiles.arcticconnect.ca` to *stoney*, which then proxies requests to *airport* (the tile server). A tile cache server is no longer necessary and increases maintenance complexity. A snapshot of the instance is kept on the Cybera Rapid Access Cloud in case it is needed again.
+
 ## Supported Platforms
 
 * Ubuntu Server 18.04 LTS
