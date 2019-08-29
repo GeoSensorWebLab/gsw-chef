@@ -15,6 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+require 'securerandom'
 
 ###################
 # 1. Install Docker
@@ -53,7 +54,37 @@ end
 # 3. Clone FROST repository
 ###########################
 
+directory "opt/frost" do
+  owner "root"
+  group "root"
+  recursive true
+  action :create
+end
 
-############################################
-# 4. Start FROST server, and set up auto-run
-############################################
+git "/opt/frost" do
+  repository node["frost"]["repository"]
+  depth 1
+end
+
+template "/opt/frost/docker-compose.yaml" do
+  source "frost-compose.yaml"
+  variables({
+    service_root_url: "http://localhost:8080/FROST-Server",
+    http_cors_enable: true,
+    http_cors_allowed_origins: "*",
+    # A random password can be used here, as only docker-compose needs
+    # to know it
+    persistence_db_password: SecureRandom.hex
+  })
+  sensitive true
+end
+
+#######################
+# 4. Start FROST server
+#######################
+
+execute "start FROST" do
+  command "docker-compose up -d"
+  cwd "opt/frost"
+  user "root"
+end

@@ -38,4 +38,4 @@ suites:
         - test/smoke/frost
     attributes:
       sensorthings:
-        external_uri: "http://192.168.33.77:8080/FROST-Server/v1.0/"
+        external_uri: "http://192.168.33.65:8080/FROST-Server/v1.0/"
