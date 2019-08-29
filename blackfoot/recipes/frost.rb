@@ -19,12 +19,35 @@
 ###################
 # 1. Install Docker
 ###################
+apt_update
 
+package %w(apt-transport-https ca-certificates curl gnupg-agent software-properties-common)
+
+apt_repository "docker" do
+  arch "amd64"
+  components ["stable"]
+  key "https://download.docker.com/linux/ubuntu/gpg"
+  uri "https://download.docker.com/linux/ubuntu"
+end
+
+apt_update
+
+package %w(docker-ce docker-ce-cli containerd.io)
+
+service "docker" do
+  action :nothing
+end
 
 ###########################
 # 2. Install docker-compose
 ###########################
 
+remote_file "/usr/local/bin/docker-compose" do
+  source "https://github.com/docker/compose/releases/download/#{node["docker_compose"]["version"]}/docker-compose-#{node["kernel"]["name"]}-#{node["kernel"]["processor"]}"
+  owner "root"
+  mode "0755"
+  action :create
+end
 
 ###########################
 # 3. Clone FROST repository
