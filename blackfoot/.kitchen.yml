@@ -30,3 +30,12 @@ suites:
     attributes:
       sensorthings:
         external_uri: "http://scratchpad.sensorup.com/OGCSensorThings/v1.0/"
+  - name: frost
+    run_list:
+      - recipe[blackfoot::frost]
+    verifier:
+      inspec_tests:
+        - test/smoke/frost
+    attributes:
+      sensorthings:
+        external_uri: "http://192.168.33.77:8080/FROST-Server/v1.0/"

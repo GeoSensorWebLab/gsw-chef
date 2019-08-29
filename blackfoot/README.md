@@ -4,6 +4,8 @@ Cookbook for setting up a node with Arctic Sensor Web Expanded services:
 
 * Nginx
 * GSW Data Transloader
+* Apache Airflow for monitoring/scheduling Data Transloader
+* FROST SensorThings API server (Optional)
 
 ## Supported Platforms
 
@@ -22,6 +24,10 @@ Include `blackfoot` in your node's `run_list`:
   ]
 }
 ```
+
+## `frost` recipe
+
+Install FROST SensorThings API server using Docker. This instance can then be used locally with the GSW Data Transloader instead of pushing to a public STA instance.
 
 ## Attributes
 
