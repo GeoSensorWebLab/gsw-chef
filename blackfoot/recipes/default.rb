@@ -15,6 +15,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+require 'base64'
+require 'securerandom'
 
 apt_update
 
@@ -107,43 +109,39 @@ directory "/srv/logs" do
   action :create
 end
 
-# Install automatic transloading scripts.
-# This will read a list of stations from the command line and run an ETL
-# on them.
-template "#{tl_home}/auto-metadata" do
-  source "auto-metadata.sh.erb"
+# Install automatic transloading scripts, to be ran by AirFlow DAGs.
+template "#{tl_home}/transload-ec" do
+  source "transload-ec.sh.erb"
   owner tl_user
   mode "0755"
   variables({
-    cachedir: cache_dir,
-    logdir: "/srv/logs",
+    cache_dir:    cache_dir,
+    log_dir:      "/srv/logs",
     sta_endpoint: node["sensorthings"]["external_uri"],
-    workdir: "/opt/data-transloader"
+    stations:     node["transloader"]["environment_canada_stations"],
+    work_dir:     "/opt/data-transloader"
   })
 end
 
-template "#{tl_home}/auto-transload" do
-  source "auto-transload.sh.erb"
-  owner tl_user
-  mode "0755"
-  variables({
-    cachedir: cache_dir,
-    logdir: "/srv/logs",
-    sta_endpoint: node["sensorthings"]["external_uri"],
-    workdir: "/opt/data-transloader"
-  })
-end
+# template "#{tl_home}/transload-dg" do
+#   source "transload-dg.sh.erb"
+#   owner tl_user
+#   mode "0755"
+#   variables({
+#     cachedir: cache_dir,
+#     logdir: "/srv/logs",
+#     sta_endpoint: node["sensorthings"]["external_uri"],
+#     stations: node["transloader"]["data_garrison_stations"],
+#     workdir: "/opt/data-transloader"
+#   })
+# end
 
-template "#{tl_home}/transload-dg" do
-  source "transload-dg.sh.erb"
-  owner tl_user
-  mode "0755"
+# Set up log rotation
+template "/etc/logrotate.d/auto-transload" do
+  source "transloader-logrotate.erb"
   variables({
-    cachedir: cache_dir,
     logdir: "/srv/logs",
-    sta_endpoint: node["sensorthings"]["external_uri"],
-    stations: node["transloader"]["data_garrison_stations"],
-    workdir: "/opt/data-transloader"
+    user: tl_user
   })
 end
 
@@ -240,6 +238,16 @@ directory "#{airflow_home}/dags" do
   action :create
 end
 
+template "#{airflow_home}/airflow.cfg" do
+  source "airflow.cfg.erb"
+  variables({
+    airflow_home: airflow_home,
+    fernet_key:   Base64.strict_encode64(SecureRandom.hex(16)),
+    secret_key:   SecureRandom.hex
+  })
+  sensitive true
+end
+
 execute "Initialize airflow DB" do
   command "airflow initdb"
   env({
@@ -258,7 +266,7 @@ systemd_unit "airflow-webserver.service" do
     User=root
     Group=root
     Type=simple
-    ExecStart=/usr/local/bin/airflow webserver --hostname 0.0.0.0 --port #{airflow_port}
+    ExecStart=/usr/local/bin/airflow webserver --port #{airflow_port}
     Restart=on-failure
     RestartSec=5s
     PrivateTmp=true
@@ -324,52 +332,6 @@ end
 #     action :create
 #   end
 # end
-
-######################
-# Schedule transloader
-######################
-
-file "#{tl_home}/ec-stations" do
-  content node["transloader"]["environment_canada_stations"].join(" ")
-  owner tl_user
-end
-
-# cron_d "ec_transloader" do
-#   action :create
-#   minute "5"
-#   user tl_user
-#   shell "/bin/bash"
-#   environment({
-#     GEM_HOME: "#{tl_home}/.ruby",
-#     GEM_PATH: "#{tl_home}/.ruby/gems"
-#   })
-#   command %W{
-#     cat $HOME/ec-stations | $HOME/auto-transload | tee -a /srv/logs/upload.log
-#   }.join(" ")
-# end
-
-# cron_d "dg_transloader" do
-#   action :create
-#   minute "*/15"
-#   user tl_user
-#   shell "/bin/bash"
-#   environment({
-#     GEM_HOME: "#{tl_home}/.ruby",
-#     GEM_PATH: "#{tl_home}/.ruby/gems"
-#   })
-#   command %W{
-#     $HOME/transload-dg | tee -a /srv/logs/upload.log
-#   }.join(" ")
-# end
-
-# Set up log rotation
-template "/etc/logrotate.d/auto-transload" do
-  source "transloader-logrotate.erb"
-  variables({
-    logdir: "/srv/logs",
-    user: tl_user
-  })
-end
 
 ########################
 # Install Sensors Web UI

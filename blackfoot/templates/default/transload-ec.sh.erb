@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Interval should be an ISO8601 interval string
+INTERVAL="$1"
+DLOG="<%= @log_dir %>/download.log"
+ULOG="<%= @log_dir %>/upload.log"
+STATIONS="<%= @stations.join(" ") %>"
+
+touch "$DLOG"
+touch "$ULOG"
+cd "<%= @work_dir %>"
+
+for STATION in $STATIONS; do
+  ruby transload get observations \
+  	--provider environment_canada \
+    --station_id $STATION \
+    --cache <%= @cache_dir %> | tee -a $DLOG
+
+  ruby transload put observations \
+  	--provider environment_canada \
+    --station_id $STATION \
+    --cache <%= @cache_dir %> \
+    --date $INTERVAL \
+    --destination "<%= @sta_endpoint %>" | tee -a $ULOG
+done
