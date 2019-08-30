@@ -110,9 +110,6 @@ end
 # Install automatic transloading scripts.
 # This will read a list of stations from the command line and run an ETL
 # on them.
-# This version differs from the original version; in this version it does
-# not read a TXT file and instead the list of stations is piped directly
-# into the tool.
 template "#{tl_home}/auto-metadata" do
   source "auto-metadata.sh.erb"
   owner tl_user
@@ -154,18 +151,30 @@ end
 # Run initial metadata fetch
 ############################
 
+if node["sensorthings"]["auth_username"].nil?
+  sensorthings_auth = ""
+else
+  sensorthings_auth = "--user '#{node["sensorthings"]["auth_username"]}:#{node["sensorthings"]["auth_password"]}'"
+end
+
 # ENVIRONMENT CANADA
 # We use the "creates" property to prevent re-running this resource
 node["transloader"]["environment_canada_stations"].each do |stn|
   bash "import Environment Canada station #{stn} metadata" do
     code <<-EOH
-      ruby transload get metadata --source environment_canada \
-        --station #{stn} --cache "#{cache_dir}"
-      ruby transload put metadata --source environment_canada \
-        --station #{stn} --cache "#{cache_dir}" \
-        --destination "#{node["sensorthings"]["external_uri"]}"
+      ruby transload get metadata \
+        --provider environment_canada \
+        --station_id #{stn} \
+        --cache "#{cache_dir}"
+
+      ruby transload put metadata \
+        --provider environment_canada \
+        --station_id #{stn} \
+        --cache "#{cache_dir}" \
+        --destination "#{node["sensorthings"]["external_uri"]}" \
+        #{sensorthings_auth}
     EOH
-    creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
+    creates "#{cache_dir}/v2/environment_canada/metadata/#{stn}.json"
     cwd "/opt/data-transloader"
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
@@ -179,33 +188,33 @@ end
 # DATA GARRISON
 # Install jq so we can modify the station parameters before uploading
 # the station metadata.
-package %w(jq)
+# package %w(jq)
 
-node["transloader"]["data_garrison_stations"].each do |stn|
-  metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}/#{stn["station_id"]}.json"
+# node["transloader"]["data_garrison_stations"].each do |stn|
+#   metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}/#{stn["station_id"]}.json"
   
-  # Note that jq must write to a temp file because it does not support
-  # in-place editing.
-  bash "import Data Garrison station #{stn["station_id"]} metadata" do
-    code <<-EOH
-      ruby transload get metadata --source data_garrison \
-        --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}"
-      jq '.latitude = "#{stn["latitude"]}" | .longitude = "#{stn["longitude"]}" | .timezone_offset = "#{stn["timezone_offset"]}"' "#{metadata_file}" > "#{metadata_file}.temp"
-      mv "#{metadata_file}.temp" "#{metadata_file}"
-      ruby transload put metadata --source data_garrison \
-        --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}" \
-        --destination "#{node["sensorthings"]["external_uri"]}"
-    EOH
-    creates metadata_file
-    cwd "/opt/data-transloader"
-    environment({
-      GEM_HOME: "#{tl_home}/.ruby",
-      GEM_PATH: "#{tl_home}/.ruby/gems",
-      PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
-    })
-    user tl_user
-  end
-end
+#   # Note that jq must write to a temp file because it does not support
+#   # in-place editing.
+#   bash "import Data Garrison station #{stn["station_id"]} metadata" do
+#     code <<-EOH
+#       ruby transload get metadata --source data_garrison \
+#         --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}"
+#       jq '.latitude = "#{stn["latitude"]}" | .longitude = "#{stn["longitude"]}" | .timezone_offset = "#{stn["timezone_offset"]}"' "#{metadata_file}" > "#{metadata_file}.temp"
+#       mv "#{metadata_file}.temp" "#{metadata_file}"
+#       ruby transload put metadata --source data_garrison \
+#         --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}" \
+#         --destination "#{node["sensorthings"]["external_uri"]}"
+#     EOH
+#     creates metadata_file
+#     cwd "/opt/data-transloader"
+#     environment({
+#       GEM_HOME: "#{tl_home}/.ruby",
+#       GEM_PATH: "#{tl_home}/.ruby/gems",
+#       PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
+#     })
+#     user tl_user
+#   end
+# end
 
 ########################
 # Install Apache Airflow
@@ -249,7 +258,7 @@ systemd_unit "airflow-webserver.service" do
     User=root
     Group=root
     Type=simple
-    ExecStart=/usr/local/bin/airflow webserver --hostname 127.0.0.1 --port #{airflow_port}
+    ExecStart=/usr/local/bin/airflow webserver --hostname 0.0.0.0 --port #{airflow_port}
     Restart=on-failure
     RestartSec=5s
     PrivateTmp=true
@@ -298,23 +307,23 @@ link "/etc/nginx/sites-enabled/airflow" do
 end
 
 # Install testing ETL DAG
-cookbook_file "#{airflow_home}/dags/simple-etl-v3.py" do
-  source "simple-etl.py"
-  action :create
-  notifies :restart, "systemd_unit[airflow-webserver.service]"
-end
+# cookbook_file "#{airflow_home}/dags/simple-etl-v3.py" do
+#   source "simple-etl.py"
+#   action :create
+#   notifies :restart, "systemd_unit[airflow-webserver.service]"
+# end
 
-directory "/opt/etl" do
-  action :create
-end
+# directory "/opt/etl" do
+#   action :create
+# end
 
-%w(etl-download etl-convert etl-upload).each do |file|
-  cookbook_file "/opt/etl/#{file}" do
-    source "#{file}.rb"
-    mode "755"
-    action :create
-  end
-end
+# %w(etl-download etl-convert etl-upload).each do |file|
+#   cookbook_file "/opt/etl/#{file}" do
+#     source "#{file}.rb"
+#     mode "755"
+#     action :create
+#   end
+# end
 
 ######################
 # Schedule transloader
