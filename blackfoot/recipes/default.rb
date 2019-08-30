@@ -69,6 +69,7 @@ end
 
 git "/opt/data-transloader" do
   repository "https://github.com/GeoSensorWebLab/data-transloader"
+  revision "v0.6.0"
   user tl_user
 end
 
