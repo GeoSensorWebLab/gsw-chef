@@ -69,7 +69,7 @@ end
 template "/opt/frost/docker-compose.yaml" do
   source "frost-compose.yaml"
   variables({
-    service_root_url: "http://localhost:8080/FROST-Server",
+    service_root_url: node["frost"]["service_root_url"],
     http_cors_enable: true,
     http_cors_allowed_origins: "*",
     # A random password can be used here, as only docker-compose needs

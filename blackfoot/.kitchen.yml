@@ -31,3 +31,5 @@ suites:
     attributes:
       sensorthings:
         external_uri: "http://192.168.33.65:8080/FROST-Server/v1.0/"
+      frost:
+        service_root_url: "http://192.168.33.65:8080/FROST-Server"
