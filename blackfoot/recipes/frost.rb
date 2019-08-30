@@ -87,4 +87,6 @@ execute "start FROST" do
   command "docker-compose up -d"
   cwd "opt/frost"
   user "root"
+  # Don't run startup command if both containers are already running
+  not_if "docker ps | grep -q frost_web_1 && docker ps | grep -q frost_database_1"
 end
