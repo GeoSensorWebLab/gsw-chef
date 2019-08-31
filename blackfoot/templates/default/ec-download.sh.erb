@@ -1,0 +1,18 @@
+#!/bin/bash
+# Managed by Chef.
+# Downloads observations for Environment Canada.
+
+source "$HOME/.bashrc"
+
+DLOG="<%= @log_dir %>/download.log"
+STATIONS="<%= @stations.join(" ") %>"
+
+touch "$DLOG"
+cd "<%= @work_dir %>"
+
+for STATION in $STATIONS; do
+  ruby transload get observations \
+  	--provider environment_canada \
+    --station_id $STATION \
+    --cache <%= @cache_dir %> | tee -a $DLOG
+done

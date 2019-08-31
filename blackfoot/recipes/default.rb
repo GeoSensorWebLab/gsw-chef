@@ -110,8 +110,20 @@ directory "/srv/logs" do
 end
 
 # Install automatic transloading scripts, to be ran by AirFlow DAGs.
-template "#{tl_home}/transload-ec" do
-  source "transload-ec.sh.erb"
+template "#{tl_home}/ec-download" do
+  source "ec-download.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    cache_dir: cache_dir,
+    log_dir:   "/srv/logs",
+    stations:  node["transloader"]["environment_canada_stations"],
+    work_dir:  "/opt/data-transloader"
+  })
+end
+
+template "#{tl_home}/ec-upload" do
+  source "ec-upload.sh.erb"
   owner tl_user
   mode "0755"
   variables({
@@ -314,12 +326,21 @@ link "/etc/nginx/sites-enabled/airflow" do
   notifies :reload, "service[nginx]"
 end
 
-# Install testing ETL DAG
-# cookbook_file "#{airflow_home}/dags/simple-etl-v3.py" do
-#   source "simple-etl.py"
-#   action :create
-#   notifies :restart, "systemd_unit[airflow-webserver.service]"
-# end
+# Install Environment Canada ETL DAG
+template "#{airflow_home}/dags/environment_canada_etl.py" do
+  source "dags/basic_etl.py.erb"
+  variables({
+    dag_id: "environment_canada_etl",
+    download_script: "sudo -u transloader -i #{tl_home}/ec-download",
+    upload_script: "sudo -u transloader -i #{tl_home}/ec-upload",
+    year: 2019,
+    month: 8,
+    day: 30,
+    catchup: false
+  })
+  action :create
+  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+end
 
 # directory "/opt/etl" do
 #   action :create
