@@ -331,11 +331,15 @@ template "#{airflow_home}/dags/environment_canada_etl.py" do
   source "dags/basic_etl.py.erb"
   variables({
     dag_id: "environment_canada_etl",
+    # Runs every hour at one minute past the hour
+    schedule_interval: "1 * * * *",
     download_script: "sudo -u transloader -i #{tl_home}/ec-download",
     upload_script: "sudo -u transloader -i #{tl_home}/ec-upload",
-    year: 2019,
-    month: 8,
-    day: 30,
+    start_date: {
+      year: 2019,
+      month: 8,
+      day: 30
+    },
     catchup: false
   })
   action :create
