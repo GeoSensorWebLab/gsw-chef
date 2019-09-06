@@ -247,6 +247,20 @@ template "#{cs_scripts_home}/upload" do
   })
 end
 
+template "#{cs_scripts_home}/download-historical" do
+  source "campbell_scientific/download-historical.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    blocked:    node["transloader"]["campbell_scientific_blocked"],
+    cache_dir:  cache_dir,
+    log_dir:    "/srv/logs",
+    state_file: "#{cs_scripts_home}/historical-observations-downloaded",
+    stations:   node["transloader"]["campbell_scientific_stations"],
+    work_dir:   "/opt/data-transloader"
+  })
+end
+
 # Set up log rotation
 template "/etc/logrotate.d/auto-transload" do
   source "transloader-logrotate.erb"
@@ -354,7 +368,16 @@ end
 node["transloader"]["campbell_scientific_stations"].each do |stn|
   metadata_file = "#{cache_dir}/campbell_scientific/metadata/#{stn["station_id"]}.json"
 
+  # Convert data URLs to arguments
   data_urls_arg = stn["data_files"].reduce("") do |memo, url|
+    memo += "--data_url #{url} "
+    memo
+  end
+
+  # Convert archive data URLs to arguments
+  # These are necessary to be configured in the metadata before
+  # historical data uploads can work
+  archive_data_urls_arg = stn["archive_data_files"].reduce("") do |memo, url|
     memo += "--data_url #{url} "
     memo
   end
@@ -367,6 +390,7 @@ node["transloader"]["campbell_scientific_stations"].each do |stn|
         --provider campbell_scientific \
         --station_id #{stn["station_id"]} \
         #{data_urls_arg} \
+        #{archive_data_urls_arg} \
         --cache "#{cache_dir}"
 
       ruby transload set metadata \
@@ -566,6 +590,33 @@ template "#{airflow_home}/dags/campbell_scientific_etl.py" do
       day: 30
     },
     catchup: false
+  })
+  action :create
+  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+end
+
+# Install Campbell Scientific Historical ETL DAG
+template "#{airflow_home}/dags/campbell_scientific_historical_etl.py" do
+  source "dags/historical_etl.py.erb"
+  variables({
+    dag_id: "campbell_scientific_historical_etl",
+    # Runs historical imports one day at a time at 00:00. This is
+    # automatically interpreted as a 24-hour interval, which will be
+    # passed to the data transloader.
+    schedule_interval: "0 0 * * *",
+    download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download-historical",
+    upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload",
+    start_date: {
+      year: 2016,
+      month: 1,
+      day: 1
+    },
+    end_date: {
+      year: 2019,
+      month: 9,
+      day: 5
+    },
+    catchup: true
   })
   action :create
   notifies :restart, "systemd_unit[airflow-scheduler.service]"
