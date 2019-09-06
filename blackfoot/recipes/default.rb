@@ -75,11 +75,37 @@ git "/opt/data-transloader" do
   user tl_user
 end
 
-package %w(ruby ruby-dev build-essential patch zlib1g-dev liblzma-dev)
+# Install Ruby
+git "/opt/ruby-build" do
+  repository "https://github.com/rbenv/ruby-build.git"
+end
 
-# The default RubyGems version has issues running bundler (2019-06)
-execute "Update RubyGems" do
-  command "gem update --system"
+execute "Install ruby-build" do
+  command "./install.sh"
+  cwd "/opt/ruby-build"
+  environment({
+    PREFIX: "/usr/local"
+  })
+  creates "/usr/local/bin/ruby-build"
+end
+
+# Install Ruby dependencies
+package %w(autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm5 libgdbm-dev)
+
+ruby_version = node["ruby"]["version"]
+
+execute "Install Ruby #{ruby_version}" do
+  command "ruby-build #{ruby_version} /opt/ruby/#{ruby_version}"
+  creates "/opt/ruby/#{ruby_version}"
+end
+
+bash "Link Ruby" do
+  cwd "/opt/ruby/#{ruby_version}/bin/"
+  code <<-EOH
+  for FILE in *; do
+    ln -sf /opt/ruby/#{ruby_version}/bin/$FILE /usr/local/bin/$FILE
+  done
+  EOH
 end
 
 bash "install transloader deps" do

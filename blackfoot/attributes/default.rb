@@ -4,6 +4,11 @@
 default["transloader"]["repository"] = "https://github.com/GeoSensorWebLab/data-transloader"
 default["transloader"]["revision"] = "v0.6.1"
 
+####################
+# Ruby Configuration
+####################
+default["ruby"]["version"] = "2.6.4"
+
 #############################
 # Environment Canada Stations
 #############################
