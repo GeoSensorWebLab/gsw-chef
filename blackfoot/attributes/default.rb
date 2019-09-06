@@ -91,7 +91,9 @@ default["transloader"]["campbell_scientific_stations"] = [
   }
 ]
 
-# Block these properties from being uploaded
+# Block these properties from being uploaded.
+# This is passed directly into the `--blocked` argument in the data
+# transloader command line tool.
 default["transloader"]["campbell_scientific_blocked"] = "LdnCo_Avg,Ux_Avg,Uy_Avg,Uz_Avg,CO2_op_Avg,H2O_op_Avg,Pfast_cp_Avg,xco2_cp_Avg,xh2o_cp_Avg,mfc_Avg"
 
 # Destination URL for uploading to SensorThings API. Include any path

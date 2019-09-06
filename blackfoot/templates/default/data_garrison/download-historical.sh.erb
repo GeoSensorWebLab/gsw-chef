@@ -1,0 +1,31 @@
+#!/bin/bash
+# Managed by Chef.
+# Downloads historical observations for Data Garrison.
+# 
+# A STATE FILE is used to only run this script once; after successfully
+# running, the script will exit cleanly on subsequent runs.
+set -e
+
+if [ -f <%= @state_file %> ]; then
+	echo "State file exists; skipping re-download of historical observation data."
+	exit 0
+fi
+
+source "$HOME/.bashrc"
+
+DLOG="<%= @log_dir %>/download.log"
+
+touch "$DLOG"
+cd "<%= @work_dir %>"
+
+<% for station in @stations %>
+# <%= station["name"] %>
+ruby transload get observations \
+    --provider data_garrison \
+    --station_id <%= station["station_id"] %> \
+    --user_id <%= station["user_id"] %> \
+    --cache <%= @cache_dir %> | tee -a $DLOG
+
+<% end %>
+
+touch <%= @state_file %>

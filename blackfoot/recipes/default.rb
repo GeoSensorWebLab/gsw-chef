@@ -209,6 +209,19 @@ template "#{dg_scripts_home}/upload" do
   })
 end
 
+template "#{dg_scripts_home}/download-historical" do
+  source "data_garrison/download-historical.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    cache_dir:  cache_dir,
+    log_dir:    "/srv/logs",
+    state_file: "#{dg_scripts_home}/historical-observations-downloaded",
+    stations:   node["transloader"]["data_garrison_stations"],
+    work_dir:   "/opt/data-transloader"
+  })
+end
+
 #############################
 # Campbell Scientific Scripts
 #############################
@@ -570,6 +583,33 @@ template "#{airflow_home}/dags/data_garrison_etl.py" do
       day: 30
     },
     catchup: false
+  })
+  action :create
+  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+end
+
+# Install Data Garrison Historical ETL DAG
+template "#{airflow_home}/dags/data_garrison_historical_etl.py" do
+  source "dags/historical_etl.py.erb"
+  variables({
+    dag_id: "data_garrison_historical_etl",
+    # Runs historical imports one day at a time at 00:00. This is
+    # automatically interpreted as a 24-hour interval, which will be
+    # passed to the data transloader.
+    schedule_interval: "0 0 * * *",
+    download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download-historical",
+    upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload",
+    start_date: {
+      year: 2016,
+      month: 1,
+      day: 1
+    },
+    end_date: {
+      year: 2019,
+      month: 9,
+      day: 5
+    },
+    catchup: true
   })
   action :create
   notifies :restart, "systemd_unit[airflow-scheduler.service]"
