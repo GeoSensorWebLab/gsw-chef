@@ -141,8 +141,15 @@ end
 # Environment Canada Scripts
 ############################
 
-template "#{tl_home}/ec-download" do
-  source "ec-download.sh.erb"
+ec_scripts_home = "#{tl_home}/environment_canada"
+
+directory ec_scripts_home do
+  owner tl_user
+  recursive true
+end
+
+template "#{ec_scripts_home}/download" do
+  source "environment_canada/download.sh.erb"
   owner tl_user
   mode "0755"
   variables({
@@ -153,8 +160,8 @@ template "#{tl_home}/ec-download" do
   })
 end
 
-template "#{tl_home}/ec-upload" do
-  source "ec-upload.sh.erb"
+template "#{ec_scripts_home}/upload" do
+  source "environment_canada/upload.sh.erb"
   owner tl_user
   mode "0755"
   variables({
@@ -170,8 +177,15 @@ end
 # Data Garrison Scripts
 #######################
 
-template "#{tl_home}/dg-download" do
-  source "dg-download.sh.erb"
+dg_scripts_home = "#{tl_home}/data_garrison"
+
+directory dg_scripts_home do
+  owner tl_user
+  recursive true
+end
+
+template "#{dg_scripts_home}/download" do
+  source "data_garrison/download.sh.erb"
   owner tl_user
   mode "0755"
   variables({
@@ -182,8 +196,8 @@ template "#{tl_home}/dg-download" do
   })
 end
 
-template "#{tl_home}/dg-upload" do
-  source "dg-upload.sh.erb"
+template "#{dg_scripts_home}/upload" do
+  source "data_garrison/upload.sh.erb"
   owner tl_user
   mode "0755"
   variables({
@@ -199,8 +213,15 @@ end
 # Campbell Scientific Scripts
 #############################
 
-template "#{tl_home}/cs-download" do
-  source "cs-download.sh.erb"
+cs_scripts_home = "#{tl_home}/campbell_scientific"
+
+directory cs_scripts_home do
+  owner tl_user
+  recursive true
+end
+
+template "#{cs_scripts_home}/download" do
+  source "campbell_scientific/download.sh.erb"
   owner tl_user
   mode "0755"
   variables({
@@ -212,8 +233,8 @@ template "#{tl_home}/cs-download" do
   })
 end
 
-template "#{tl_home}/cs-upload" do
-  source "cs-upload.sh.erb"
+template "#{cs_scripts_home}/upload" do
+  source "campbell_scientific/upload.sh.erb"
   owner tl_user
   mode "0755"
   variables({
@@ -494,8 +515,8 @@ template "#{airflow_home}/dags/environment_canada_etl.py" do
     dag_id: "environment_canada_etl",
     # Runs every hour at one minute past the hour
     schedule_interval: "1 * * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/ec-download",
-    upload_script: "sudo -u transloader -i #{tl_home}/ec-upload",
+    download_script: "sudo -u transloader -i #{tl_home}/environment_canada/download",
+    upload_script: "sudo -u transloader -i #{tl_home}/environment_canada/upload",
     start_date: {
       year: 2019,
       month: 8,
@@ -517,8 +538,8 @@ template "#{airflow_home}/dags/data_garrison_etl.py" do
     # upload every 120 minutes. We run every hour to be more likely to
     # catch "fresh" data.
     schedule_interval: "1 * * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/dg-download",
-    upload_script: "sudo -u transloader -i #{tl_home}/dg-upload",
+    download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download",
+    upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload",
     start_date: {
       year: 2019,
       month: 8,
@@ -537,8 +558,8 @@ template "#{airflow_home}/dags/campbell_scientific_etl.py" do
     dag_id: "campbell_scientific_etl",
     # Runs every hour at one minute past the hour.
     schedule_interval: "1 * * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/cs-download",
-    upload_script: "sudo -u transloader -i #{tl_home}/cs-upload",
+    download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download",
+    upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload",
     start_date: {
       year: 2019,
       month: 8,
