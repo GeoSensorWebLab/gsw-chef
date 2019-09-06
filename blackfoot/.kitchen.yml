@@ -11,7 +11,12 @@ driver:
 provisioner:
   name: chef_zero
   always_update_cookbooks: true
+  nodes_path: test/fixtures/nodes
+  clients_path: test/fixtures/clients
+  environments_path: test/fixtures/environments
+  data_bags_path: test/fixtures/data_bags
   client_rb:
+    environment: test
     chef_license: accept
 
 verifier:
@@ -33,3 +38,5 @@ suites:
         external_uri: "http://192.168.33.65:8080/FROST-Server/v1.0/"
       frost:
         service_root_url: "http://192.168.33.65:8080/FROST-Server"
+      chef_vault:
+        databags_fallback: true
