@@ -43,10 +43,10 @@ default["transloader"]["data_garrison_stations"] = [
 ##############################
 default["transloader"]["campbell_scientific_stations"] = [
   {
-    "name" => "Qikirtaarjuk Island Weather Station",
-    "station_id" => 606830,
-    "latitude" => 68.983639,
-    "longitude" => -105.835833,
+    "name"            => "Qikirtaarjuk Island Weather Station",
+    "station_id"      => 606830,
+    "latitude"        => 68.983639,
+    "longitude"       => -105.835833,
     "timezone_offset" => "-06:00",
     # From: http://dataservices.campbellsci.ca/sbd/606830/data/
     "data_files" => [

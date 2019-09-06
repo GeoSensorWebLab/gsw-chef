@@ -274,7 +274,6 @@ node["transloader"]["environment_canada_stations"].each do |stn|
 end
 
 # DATA GARRISON
-
 node["transloader"]["data_garrison_stations"].each do |stn|
   metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}-#{stn["station_id"]}.json"
   
@@ -318,6 +317,64 @@ node["transloader"]["data_garrison_stations"].each do |stn|
         --station_id #{stn["station_id"]} \
         --cache "#{cache_dir}" \
         --destination "#{node["sensorthings"]["external_uri"]}"
+    EOH
+    creates metadata_file
+    cwd "/opt/data-transloader"
+    environment({
+      GEM_HOME: "#{tl_home}/.ruby",
+      GEM_PATH: "#{tl_home}/.ruby/gems",
+      PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
+    })
+    user tl_user
+  end
+end
+
+# CAMPBELL SCIENTIFIC
+node["transloader"]["campbell_scientific_stations"].each do |stn|
+  metadata_file = "#{cache_dir}/campbell_scientific/metadata/#{stn["station_id"]}.json"
+
+  data_urls_arg = stn["data_files"].reduce("") do |memo, url|
+    memo += "--data_url #{url} "
+    memo
+  end
+  
+  bash "import Campbell Scientific station #{stn["station_id"]} metadata" do
+    code <<-EOH
+      set -e
+      
+      ruby transload get metadata \
+        --provider campbell_scientific \
+        --station_id #{stn["station_id"]} \
+        #{data_urls_arg} \
+        --cache "#{cache_dir}"
+
+      ruby transload set metadata \
+        --provider campbell_scientific \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --key "latitude" \
+        --value "#{stn["latitude"]}"
+
+        ruby transload set metadata \
+        --provider campbell_scientific \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --key "longitude" \
+        --value "#{stn["longitude"]}"
+
+        ruby transload set metadata \
+        --provider campbell_scientific \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --key "timezone_offset" \
+        --value "#{stn["timezone_offset"]}"
+
+      ruby transload put metadata \
+        --provider campbell_scientific \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --destination "#{node["sensorthings"]["external_uri"]}" \
+        --blocked #{node["transloader"]["campbell_scientific_blocked"]}
     EOH
     creates metadata_file
     cwd "/opt/data-transloader"
