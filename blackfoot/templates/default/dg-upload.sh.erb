@@ -1,22 +1,24 @@
 #!/bin/bash
 # Managed by Chef.
-# Uploads observations for Environment Canada.
+# Uploads observations for Data Garrison.
 
 source "$HOME/.bashrc"
 
 # Interval should be an ISO8601 interval string
 INTERVAL="$1"
 ULOG="<%= @log_dir %>/upload.log"
-STATIONS="<%= @stations.join(" ") %>"
 
 touch "$ULOG"
 cd "<%= @work_dir %>"
 
-for STATION in $STATIONS; do
-  ruby transload put observations \
-    --provider environment_canada \
-    --station_id $STATION \
+<% for station in @stations %>
+# <%= station["name"] %>
+ruby transload put observations \
+    --provider data_garrison \
+    --station_id <%= station["station_id"] %> \
+    --user_id <%= station["user_id"] %> \
     --cache <%= @cache_dir %> \
     --date $INTERVAL \
     --destination "<%= @sta_endpoint %>" | tee -a $ULOG
-done
+
+<% end %>

@@ -1,0 +1,20 @@
+#!/bin/bash
+# Managed by Chef.
+# Downloads observations for Data Garrison.
+
+source "$HOME/.bashrc"
+
+DLOG="<%= @log_dir %>/download.log"
+
+touch "$DLOG"
+cd "<%= @work_dir %>"
+
+<% for station in @stations %>
+# <%= station["name"] %>
+ruby transload get observations \
+    --provider data_garrison \
+    --station_id <%= station["station_id"] %> \
+    --user_id <%= station["user_id"] %> \
+    --cache <%= @cache_dir %> | tee -a $DLOG
+
+<% end %>

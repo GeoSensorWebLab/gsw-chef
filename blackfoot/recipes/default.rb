@@ -135,6 +135,31 @@ template "#{tl_home}/ec-upload" do
   })
 end
 
+template "#{tl_home}/dg-download" do
+  source "dg-download.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    cache_dir: cache_dir,
+    log_dir:   "/srv/logs",
+    stations:  node["transloader"]["data_garrison_stations"],
+    work_dir:  "/opt/data-transloader"
+  })
+end
+
+template "#{tl_home}/dg-upload" do
+  source "dg-upload.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    cache_dir:    cache_dir,
+    log_dir:      "/srv/logs",
+    sta_endpoint: node["sensorthings"]["external_uri"],
+    stations:     node["transloader"]["data_garrison_stations"],
+    work_dir:     "/opt/data-transloader"
+  })
+end
+
 # Set up log rotation
 template "/etc/logrotate.d/auto-transload" do
   source "transloader-logrotate.erb"
@@ -171,7 +196,7 @@ node["transloader"]["environment_canada_stations"].each do |stn|
         --destination "#{node["sensorthings"]["external_uri"]}" \
         #{sensorthings_auth}
     EOH
-    creates "#{cache_dir}/v2/environment_canada/metadata/#{stn}.json"
+    creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
     cwd "/opt/data-transloader"
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
@@ -185,7 +210,7 @@ end
 # DATA GARRISON
 
 node["transloader"]["data_garrison_stations"].each do |stn|
-  metadata_file = "#{cache_dir}/v2/data_garrison/metadata/#{stn["user_id"]}-#{stn["station_id"]}.json"
+  metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}-#{stn["station_id"]}.json"
   
   bash "import Data Garrison station #{stn["station_id"]} metadata" do
     code <<-EOH
@@ -359,17 +384,28 @@ template "#{airflow_home}/dags/environment_canada_etl.py" do
   notifies :restart, "systemd_unit[airflow-scheduler.service]"
 end
 
-# directory "/opt/etl" do
-#   action :create
-# end
-
-# %w(etl-download etl-convert etl-upload).each do |file|
-#   cookbook_file "/opt/etl/#{file}" do
-#     source "#{file}.rb"
-#     mode "755"
-#     action :create
-#   end
-# end
+# Install Data Garrison ETL DAG
+template "#{airflow_home}/dags/data_garrison_etl.py" do
+  source "dags/basic_etl.py.erb"
+  variables({
+    dag_id: "data_garrison_etl",
+    # Runs every hour at one minute past the hour.
+    # Data Garrison weather stations log every 15 minutes, but only 
+    # upload every 120 minutes. We run every hour to be more likely to
+    # catch "fresh" data.
+    schedule_interval: "1 * * * *",
+    download_script: "sudo -u transloader -i #{tl_home}/dg-download",
+    upload_script: "sudo -u transloader -i #{tl_home}/dg-upload",
+    start_date: {
+      year: 2019,
+      month: 8,
+      day: 30
+    },
+    catchup: false
+  })
+  action :create
+  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+end
 
 ########################
 # Install Sensors Web UI

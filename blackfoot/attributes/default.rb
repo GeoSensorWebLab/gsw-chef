@@ -2,7 +2,7 @@
 # Cookbook Configuration
 ########################
 default["transloader"]["repository"] = "https://github.com/GeoSensorWebLab/data-transloader"
-default["transloader"]["revision"] = "master"
+default["transloader"]["revision"] = "v0.6.1"
 # Remember to use the four-letter codes; check the following CSV file:
 # http://dd.weather.gc.ca/observations/doc/swob-xml_station_list.csv
 default["transloader"]["environment_canada_stations"] = ["CXCM"]

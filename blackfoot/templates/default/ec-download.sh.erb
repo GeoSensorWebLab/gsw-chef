@@ -12,7 +12,7 @@ cd "<%= @work_dir %>"
 
 for STATION in $STATIONS; do
   ruby transload get observations \
-  	--provider environment_canada \
+    --provider environment_canada \
     --station_id $STATION \
     --cache <%= @cache_dir %> | tee -a $DLOG
 done
