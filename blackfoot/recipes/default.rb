@@ -531,11 +531,45 @@ systemd_unit "airflow-scheduler.service" do
   action [:create, :enable, :start]
 end
 
+# Create htpassword for Airflow HTTP Basic authentication
+package %w(apache2-utils)
+
+ht_file       = nil
+airflow_vault = chef_vault_item("secrets", "airflow")
+
+# If the airflow vault item doesn't exist, skip this next section.
+if airflow_vault
+  ht_file   = "/opt/airflow/htpasswd"
+  ht_user   = airflow_vault["username"]
+  ht_passwd = airflow_vault["password"]
+
+  # Note that nginx does not support bcrypt passwords created by 
+  # Apache's htpasswd utility.
+  execute "Create airflow http basic auth file" do
+    command %Q[htpasswd -bcs #{ht_file} #{ht_user} "#{ht_passwd}"]
+    creates ht_file
+    sensitive true
+  end
+
+  # Run update even after create to make sure the latest username/password
+  # exists in the file.
+  execute "Update airflow http basic auth file" do
+    command %Q[htpasswd -bs #{ht_file} #{ht_user} "#{ht_passwd}"]
+    sensitive true
+  end
+
+  file ht_file do
+    mode "400"
+    owner "www-data"
+  end
+end
+
 # Set up nginx virtual host for airflow
 template "/etc/nginx/sites-available/airflow" do
   source "nginx/airflow.conf.erb"
   variables({
-    port: airflow_port
+    ht_file: ht_file,
+    port:    airflow_port
   })
   notifies :reload, "service[nginx]"
 end
