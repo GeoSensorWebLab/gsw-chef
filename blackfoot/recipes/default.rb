@@ -530,6 +530,26 @@ template "#{airflow_home}/dags/data_garrison_etl.py" do
   notifies :restart, "systemd_unit[airflow-scheduler.service]"
 end
 
+# Install Campbell Scientific ETL DAG
+template "#{airflow_home}/dags/campbell_scientific_etl.py" do
+  source "dags/basic_etl.py.erb"
+  variables({
+    dag_id: "campbell_scientific_etl",
+    # Runs every hour at one minute past the hour.
+    schedule_interval: "1 * * * *",
+    download_script: "sudo -u transloader -i #{tl_home}/cs-download",
+    upload_script: "sudo -u transloader -i #{tl_home}/cs-upload",
+    start_date: {
+      year: 2019,
+      month: 8,
+      day: 30
+    },
+    catchup: false
+  })
+  action :create
+  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+end
+
 ########################
 # Install Sensors Web UI
 ########################
