@@ -70,8 +70,8 @@ directory "/opt/data-transloader" do
 end
 
 git "/opt/data-transloader" do
-  repository "https://github.com/GeoSensorWebLab/data-transloader"
-  revision "v0.6.0"
+  repository node["transloader"]["repository"]
+  revision node["transloader"]["revision"]
   user tl_user
 end
 
@@ -135,19 +135,6 @@ template "#{tl_home}/ec-upload" do
   })
 end
 
-# template "#{tl_home}/transload-dg" do
-#   source "transload-dg.sh.erb"
-#   owner tl_user
-#   mode "0755"
-#   variables({
-#     cachedir: cache_dir,
-#     logdir: "/srv/logs",
-#     sta_endpoint: node["sensorthings"]["external_uri"],
-#     stations: node["transloader"]["data_garrison_stations"],
-#     workdir: "/opt/data-transloader"
-#   })
-# end
-
 # Set up log rotation
 template "/etc/logrotate.d/auto-transload" do
   source "transloader-logrotate.erb"
@@ -196,35 +183,61 @@ node["transloader"]["environment_canada_stations"].each do |stn|
 end
 
 # DATA GARRISON
-# Install jq so we can modify the station parameters before uploading
-# the station metadata.
-# package %w(jq)
 
-# node["transloader"]["data_garrison_stations"].each do |stn|
-#   metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}/#{stn["station_id"]}.json"
+node["transloader"]["data_garrison_stations"].each do |stn|
+  metadata_file = "#{cache_dir}/v2/data_garrison/metadata/#{stn["user_id"]}-#{stn["station_id"]}.json"
   
-#   # Note that jq must write to a temp file because it does not support
-#   # in-place editing.
-#   bash "import Data Garrison station #{stn["station_id"]} metadata" do
-#     code <<-EOH
-#       ruby transload get metadata --source data_garrison \
-#         --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}"
-#       jq '.latitude = "#{stn["latitude"]}" | .longitude = "#{stn["longitude"]}" | .timezone_offset = "#{stn["timezone_offset"]}"' "#{metadata_file}" > "#{metadata_file}.temp"
-#       mv "#{metadata_file}.temp" "#{metadata_file}"
-#       ruby transload put metadata --source data_garrison \
-#         --user #{stn["user_id"]} --station #{stn["station_id"]} --cache "#{cache_dir}" \
-#         --destination "#{node["sensorthings"]["external_uri"]}"
-#     EOH
-#     creates metadata_file
-#     cwd "/opt/data-transloader"
-#     environment({
-#       GEM_HOME: "#{tl_home}/.ruby",
-#       GEM_PATH: "#{tl_home}/.ruby/gems",
-#       PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
-#     })
-#     user tl_user
-#   end
-# end
+  bash "import Data Garrison station #{stn["station_id"]} metadata" do
+    code <<-EOH
+      set -e
+      
+      ruby transload get metadata \
+        --provider data_garrison \
+        --user_id #{stn["user_id"]} \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}"
+
+      ruby transload set metadata \
+        --provider data_garrison \
+        --user_id #{stn["user_id"]} \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --key "latitude" \
+        --value "#{stn["latitude"]}"
+
+        ruby transload set metadata \
+        --provider data_garrison \
+        --user_id #{stn["user_id"]} \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --key "longitude" \
+        --value "#{stn["longitude"]}"
+
+        ruby transload set metadata \
+        --provider data_garrison \
+        --user_id #{stn["user_id"]} \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --key "timezone_offset" \
+        --value "#{stn["timezone_offset"]}"
+
+      ruby transload put metadata \
+        --provider data_garrison \
+        --user_id #{stn["user_id"]} \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
+        --destination "#{node["sensorthings"]["external_uri"]}"
+    EOH
+    creates metadata_file
+    cwd "/opt/data-transloader"
+    environment({
+      GEM_HOME: "#{tl_home}/.ruby",
+      GEM_PATH: "#{tl_home}/.ruby/gems",
+      PATH: "#{tl_home}/.ruby/bin:#{ENV["PATH"]}"
+    })
+    user tl_user
+  end
+end
 
 ########################
 # Install Apache Airflow
