@@ -1,0 +1,24 @@
+#!/bin/bash
+# Managed by Chef.
+# Uploads observations for Campbell Scientific.
+
+source "$HOME/.bashrc"
+
+# Interval should be an ISO8601 interval string
+INTERVAL="$1"
+ULOG="<%= @log_dir %>/upload.log"
+
+touch "$ULOG"
+cd "<%= @work_dir %>"
+
+<% for station in @stations %>
+# <%= station["name"] %>
+ruby transload put observations \
+    --provider campbell_scientific \
+    --station_id <%= station["station_id"] %> \
+    --cache <%= @cache_dir %> \
+    --date $INTERVAL \
+    --blocked "<%= @blocked %>" \
+    --destination "<%= @sta_endpoint %>" | tee -a $ULOG
+
+<% end %>

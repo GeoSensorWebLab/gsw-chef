@@ -1,0 +1,22 @@
+#!/bin/bash
+# Managed by Chef.
+# Downloads observations for Campbell Scientific.
+
+source "$HOME/.bashrc"
+
+DLOG="<%= @log_dir %>/download.log"
+
+touch "$DLOG"
+cd "<%= @work_dir %>"
+
+<% for station in @stations %>
+# <%= station["name"] %>
+ruby transload get observations \
+    --provider campbell_scientific \
+    --station_id <%= station["station_id"] %> \
+    <% for url in station["data_files"] -%>
+    --data_url "<%= url %>" \
+    <% end -%>
+    --cache <%= @cache_dir %> | tee -a $DLOG
+
+<% end %>

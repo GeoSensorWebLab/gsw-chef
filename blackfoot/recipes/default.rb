@@ -110,6 +110,11 @@ directory "/srv/logs" do
 end
 
 # Install automatic transloading scripts, to be ran by AirFlow DAGs.
+
+############################
+# Environment Canada Scripts
+############################
+
 template "#{tl_home}/ec-download" do
   source "ec-download.sh.erb"
   owner tl_user
@@ -135,6 +140,10 @@ template "#{tl_home}/ec-upload" do
   })
 end
 
+#######################
+# Data Garrison Scripts
+#######################
+
 template "#{tl_home}/dg-download" do
   source "dg-download.sh.erb"
   owner tl_user
@@ -156,6 +165,37 @@ template "#{tl_home}/dg-upload" do
     log_dir:      "/srv/logs",
     sta_endpoint: node["sensorthings"]["external_uri"],
     stations:     node["transloader"]["data_garrison_stations"],
+    work_dir:     "/opt/data-transloader"
+  })
+end
+
+#############################
+# Campbell Scientific Scripts
+#############################
+
+template "#{tl_home}/cs-download" do
+  source "cs-download.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    blocked:   node["transloader"]["campbell_scientific_blocked"],
+    cache_dir: cache_dir,
+    log_dir:   "/srv/logs",
+    stations:  node["transloader"]["campbell_scientific_stations"],
+    work_dir:  "/opt/data-transloader"
+  })
+end
+
+template "#{tl_home}/cs-upload" do
+  source "cs-upload.sh.erb"
+  owner tl_user
+  mode "0755"
+  variables({
+    blocked:      node["transloader"]["campbell_scientific_blocked"],
+    cache_dir:    cache_dir,
+    log_dir:      "/srv/logs",
+    sta_endpoint: node["sensorthings"]["external_uri"],
+    stations:     node["transloader"]["campbell_scientific_stations"],
     work_dir:     "/opt/data-transloader"
   })
 end
