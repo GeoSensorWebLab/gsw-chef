@@ -17,6 +17,8 @@ Cookbook for setting up a node with Arctic Sensor Web Expanded services:
 
 Installs the GSW Data Transloader, scripts to automate the ETL, and Apache Airflow for managing the ETL jobs (as DAGs). Attributes are used to specify which stations to import for each data provider, as well as versions of software.
 
+DAGs for importing historical data from Data Garrison and Campbell Scientific will also be installed, and by default will import from 2016-01-01 (configurable via attributes) to the current date. The GSW Data Transloader does not yet support downloading historical SWOB-ML data from Environment Canada (they only keep the last month of data available).
+
 **Please Note:** The recipe requires a Chef vault item. In the following example, a `secrets` vault is created/updated for an `airflow` item, with a `password`. It is only decryptable by the `blackfoot` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef server.
 
 

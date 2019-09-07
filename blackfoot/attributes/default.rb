@@ -9,6 +9,14 @@ default["transloader"]["revision"] = "v0.6.1"
 ####################
 default["ruby"]["version"] = "2.6.4"
 
+###################
+# ETL Configuration
+###################
+# Start date for importing historical data using Airflow DAGs
+default["etl"]["year"]  = 2016
+default["etl"]["month"] = 1
+default["etl"]["day"]   = 1
+
 #############################
 # Environment Canada Stations
 #############################

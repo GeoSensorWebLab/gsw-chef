@@ -17,6 +17,7 @@
 # limitations under the License.
 require 'base64'
 require 'securerandom'
+require 'time'
 
 apt_update
 
@@ -583,6 +584,24 @@ link "/etc/nginx/sites-enabled/airflow" do
   notifies :reload, "service[nginx]"
 end
 
+##########################
+# Install DAGs for Airflow
+##########################
+# Historical ETL start date
+historical_start_date = {
+  year:  node["etl"]["year"],
+  month: node["etl"]["month"],
+  day:   node["etl"]["day"]
+}
+
+# Current End Date
+now = Time.now
+now_date = {
+  year:  now.year,
+  month: now.month,
+  day:   now.day
+}
+
 # Install Environment Canada ETL DAG
 template "#{airflow_home}/dags/environment_canada_etl.py" do
   source "dags/basic_etl.py.erb"
@@ -592,11 +611,7 @@ template "#{airflow_home}/dags/environment_canada_etl.py" do
     schedule_interval: "1 * * * *",
     download_script: "sudo -u transloader -i #{tl_home}/environment_canada/download",
     upload_script: "sudo -u transloader -i #{tl_home}/environment_canada/upload",
-    start_date: {
-      year: 2019,
-      month: 8,
-      day: 30
-    },
+    start_date: now_date,
     catchup: false
   })
   action :create
@@ -615,11 +630,7 @@ template "#{airflow_home}/dags/data_garrison_etl.py" do
     schedule_interval: "1 * * * *",
     download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download",
     upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload",
-    start_date: {
-      year: 2019,
-      month: 8,
-      day: 30
-    },
+    start_date: now_date,
     catchup: false
   })
   action :create
@@ -637,16 +648,8 @@ template "#{airflow_home}/dags/data_garrison_historical_etl.py" do
     schedule_interval: "0 0 * * *",
     download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download-historical",
     upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload",
-    start_date: {
-      year: 2016,
-      month: 1,
-      day: 1
-    },
-    end_date: {
-      year: 2019,
-      month: 9,
-      day: 5
-    },
+    start_date: historical_start_date,
+    end_date: now_date,
     catchup: true
   })
   action :create
@@ -662,11 +665,7 @@ template "#{airflow_home}/dags/campbell_scientific_etl.py" do
     schedule_interval: "1 * * * *",
     download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download",
     upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload",
-    start_date: {
-      year: 2019,
-      month: 8,
-      day: 30
-    },
+    start_date: now_date,
     catchup: false
   })
   action :create
@@ -684,16 +683,8 @@ template "#{airflow_home}/dags/campbell_scientific_historical_etl.py" do
     schedule_interval: "0 0 * * *",
     download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download-historical",
     upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload",
-    start_date: {
-      year: 2016,
-      month: 1,
-      day: 1
-    },
-    end_date: {
-      year: 2019,
-      month: 9,
-      day: 5
-    },
+    start_date: historical_start_date,
+    end_date: now_date,
     catchup: true
   })
   action :create
