@@ -14,7 +14,27 @@ default["ruby"]["version"] = "2.6.4"
 #############################
 # Remember to use the four-letter codes; check the following CSV file:
 # http://dd.weather.gc.ca/observations/doc/swob-xml_station_list.csv
-default["transloader"]["environment_canada_stations"] = ["CXCM"]
+default["transloader"]["environment_canada_stations"] = [
+  "CMFJ", "CMFX", "CMIN", "CMJK", "CNBB", "CNBI", "CNCD", "CNCO",
+  "CNDT", "CNEK", "CNFR", "CNGC", "CNGH", "CNPL", "CNPV", "CNSG",
+  "CNSQ", "CNVQ", "CNZS", "CPYQ", "CVBR", "CVXY", "CWAY", "CWBJ",
+  "CWFP", "CWFX", "CWFZ", "CWGZ", "CWHO", "CWHT", "CWIC", "CWID",
+  "CWIJ", "CWIL", "CWJL", "CWJN", "CWLG", "CWLI", "CWMT", "CWND",
+  "CWNV", "CWOI", "CWON", "CWPX", "CWQF", "CWQY", "CWRF", "CWRR",
+  "CWSY", "CWUM", "CWXP", "CWYF", "CWYH", "CWZR", "CWZW", "CXAR",
+  "CXAT", "CXBL", "CXCK", "CXCM", "CXDE", "CXDK", "CXFB", "CXHI",
+  "CXQH", "CXRB", "CXSE", "CXTN", "CXTV", "CXUX", "CXWB", "CXYH",
+  "CXZC", "CYAB", "CYAT", "CYBB", "CYBK", "CYCB", "CYCO", "CYCS",
+  "CYCY", "CYDA", "CYDB", "CYDP", "CYEK", "CYER", "CYEV", "CYFB",
+  "CYFR", "CYFS", "CYGH", "CYGT", "CYGW", "CYHI", "CYHK", "CYHY",
+  "CYIO", "CYJF", "CYKD", "CYLC", "CYLK", "CYLT", "CYMA", "CYMH",
+  "CYMO", "CYOC", "CYPC", "CYPH", "CYPO", "CYQH", "CYRA", "CYRB",
+  "CYRT", "CYSK", "CYSM", "CYSY", "CYTE", "CYUB", "CYUT", "CYUX",
+  "CYVL", "CYVM", "CYVP", "CYVQ", "CYWE", "CYWJ", "CYWY", "CYXN",
+  "CYXP", "CYXQ", "CYXY", "CYYH", "CYYQ", "CYZF", "CYZG", "CYZS",
+  "CYZW", "CZCY", "CZEV", "CZFA", "CZFM", "CZFN", "CZFS", "CZGH",
+  "CZHK", "CZHY", "CZLT", "CZOC", "CZPK", "CZRP", "CZSM", "CZUB",
+  "CZVM"]
 
 ########################
 # Data Garrison Stations

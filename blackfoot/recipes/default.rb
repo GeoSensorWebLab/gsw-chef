@@ -312,6 +312,10 @@ node["transloader"]["environment_canada_stations"].each do |stn|
     EOH
     creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
     cwd "/opt/data-transloader"
+    # Some stations may have missing SWOB-ML files occasionally —
+    # the reason is currently unknown. When that happens this step would
+    # normally fail for that specific station, so we ignore it.
+    ignore_failure true
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
       GEM_PATH: "#{tl_home}/.ruby/gems",
