@@ -32,6 +32,14 @@ service "nginx" do
   action :nothing
 end
 
+####################
+# Install PostgreSQL
+####################
+postgresql_server_install "PostgreSQL for Airflow" do
+  version node["postgresql"]["version"]
+  action :install
+end
+
 ##########################
 # Install data transloader
 ##########################
@@ -461,6 +469,10 @@ package %w(python3-pip)
 
 execute "Install airflow" do
   command "pip3 install apache-airflow"
+end
+
+execute "Install airflow postgresql support" do
+  command "pip3 install 'apache-airflow[postgres]'"
 end
 
 directory airflow_home do

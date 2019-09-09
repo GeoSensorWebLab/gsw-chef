@@ -4,6 +4,11 @@
 default["transloader"]["repository"] = "https://github.com/GeoSensorWebLab/data-transloader"
 default["transloader"]["revision"] = "v0.6.1"
 
+##########################
+# PostgreSQL Configuration
+##########################
+default["postgresql"]["version"] = "11"
+
 ####################
 # Ruby Configuration
 ####################
