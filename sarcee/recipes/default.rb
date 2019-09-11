@@ -227,9 +227,11 @@ dokku_apps.each do |app|
       memo
     end
 
-    execute "set environment for #{app_id}" do
-      command "dokku config:set #{app_id} #{env}"
-      sensitive true
+    unless env.empty?
+      execute "set environment for #{app_id}" do
+        command "dokku config:set #{app_id} #{env}"
+        sensitive true
+      end
     end
   end
 end
