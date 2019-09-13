@@ -179,7 +179,6 @@ template "#{ec_scripts_home}/download" do
   variables({
     cache_dir: cache_dir,
     log_dir:   "/srv/logs",
-    stations:  node["transloader"]["environment_canada_stations"],
     work_dir:  "/opt/data-transloader"
   })
 end
@@ -194,7 +193,6 @@ template "#{ec_scripts_home}/upload" do
     cache_dir:      cache_dir,
     log_dir:        "/srv/logs",
     sta_endpoint:   node["sensorthings"]["external_uri"],
-    stations:       node["transloader"]["environment_canada_stations"],
     work_dir:       "/opt/data-transloader"
   })
 end
@@ -677,20 +675,22 @@ now_date = {
   day:   now.day
 }
 
-# Install Environment Canada ETL DAG
-template "#{airflow_home}/dags/environment_canada_etl.py" do
-  source "dags/basic_etl.py.erb"
-  variables({
-    dag_id: "environment_canada_etl",
-    # Runs every hour at one minute past the hour
-    schedule_interval: "1 * * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/environment_canada/download",
-    upload_script: "sudo -u transloader -i #{tl_home}/environment_canada/upload",
-    start_date: now_date,
-    catchup: false
-  })
-  action :create
-  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+# Install Environment Canada ETL DAGs
+node["transloader"]["environment_canada_stations"].each do |station_id|
+  template "#{airflow_home}/dags/environment_canada_etl_#{station_id}.py" do
+    source "dags/basic_etl.py.erb"
+    variables({
+      dag_id: "environment_canada_etl_#{station_id}",
+      # Runs every hour at one minute past the hour
+      schedule_interval: "1 * * * *",
+      download_script: "sudo -u transloader -i #{tl_home}/environment_canada/download #{station_id}",
+      upload_script: "sudo -u transloader -i #{tl_home}/environment_canada/upload #{station_id}",
+      start_date: now_date,
+      catchup: false
+    })
+    action :create
+    notifies :restart, "systemd_unit[airflow-scheduler.service]"
+  end
 end
 
 # Install Data Garrison ETL DAG

@@ -7,19 +7,16 @@ source "$HOME/.bashrc"
 # Interval should be an ISO8601 interval string
 INTERVAL="$1"
 ULOG="<%= @log_dir %>/upload.log"
-STATIONS="<%= @stations.join(" ") %>"
 
 touch "$ULOG"
 cd "<%= @work_dir %>"
 
-for STATION in $STATIONS; do
-  ruby transload put observations \
-    --provider environment_canada \
-    --station_id $STATION \
-    --cache <%= @cache_dir %> \
-    --date $INTERVAL \
-    <% if @basic_user -%>
-    --user '<%= @basic_user %>:<%= @basic_password %>' \
-    <% end -%>
-    --destination "<%= @sta_endpoint %>" | tee -a $ULOG
-done
+ruby transload put observations \
+  --provider environment_canada \
+  --station_id $1 \
+  --cache <%= @cache_dir %> \
+  --date $INTERVAL \
+  <% if @basic_user -%>
+  --user '<%= @basic_user %>:<%= @basic_password %>' \
+  <% end -%>
+  --destination "<%= @sta_endpoint %>" | tee -a $ULOG
