@@ -49,13 +49,37 @@ The following Chef Vault items are required for the recipes in this cookbook.
   <tr>
     <td><tt>secrets/airflow['username']</tt></td>
     <td>String</td>
-    <td>HTTP Basic Username</td>
+    <td>HTTP Basic Username for accessing the Apache Airflow web interface through nginx</td>
     <td></td>
   </tr>
   <tr>
     <td><tt>secrets/airflow['password']</tt></td>
     <td>String</td>
-    <td>HTTP Basic Password</td>
+    <td>HTTP Basic Password for accessing the Apache Airflow web interface through nginx</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/arctic_sensors['id']</tt></td>
+    <td>String</td>
+    <td>Vault Item ID</td>
+    <td><tt>arctic_sensors</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/arctic_sensors['http_basic_enabled']</tt></td>
+    <td>Boolean</td>
+    <td>If enabled, HTTP Basic parameters from this vault will be used for connections to SensorThings API. This is necessary for upload access to some STA instances.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/arctic_sensors['username']</tt></td>
+    <td>String</td>
+    <td>HTTP Basic Username for uploading to SensorThings API</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/arctic_sensors['password']</tt></td>
+    <td>String</td>
+    <td>HTTP Basic Password for uploading to SensorThings API</td>
     <td></td>
   </tr>
 </table>

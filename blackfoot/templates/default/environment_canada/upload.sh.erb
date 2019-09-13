@@ -18,5 +18,8 @@ for STATION in $STATIONS; do
     --station_id $STATION \
     --cache <%= @cache_dir %> \
     --date $INTERVAL \
+    <% if @basic_user -%>
+    --user '<%= @basic_user %>:<%= @basic_password %>' \
+    <% end -%>
     --destination "<%= @sta_endpoint %>" | tee -a $ULOG
 done

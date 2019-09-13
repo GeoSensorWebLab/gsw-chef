@@ -144,6 +144,21 @@ directory "/srv/logs" do
   action :create
 end
 
+##############################
+# Retrieve HTTP Basic Settings
+##############################
+# Read from Chef Vault (or Data Bag)
+arctic_sensors_vault = chef_vault_item("secrets", "arctic_sensors")
+
+basic_user     = nil
+basic_password = nil
+
+# If the airflow vault item doesn't exist, skip this next section.
+if arctic_sensors_vault && arctic_sensors_vault["http_basic_enabled"]
+  basic_user     = arctic_sensors_vault["username"]
+  basic_password = arctic_sensors_vault["password"]
+end
+
 # Install automatic transloading scripts, to be ran by AirFlow DAGs.
 
 ############################
@@ -174,11 +189,13 @@ template "#{ec_scripts_home}/upload" do
   owner tl_user
   mode "0755"
   variables({
-    cache_dir:    cache_dir,
-    log_dir:      "/srv/logs",
-    sta_endpoint: node["sensorthings"]["external_uri"],
-    stations:     node["transloader"]["environment_canada_stations"],
-    work_dir:     "/opt/data-transloader"
+    basic_user:     basic_user,
+    basic_password: basic_password,
+    cache_dir:      cache_dir,
+    log_dir:        "/srv/logs",
+    sta_endpoint:   node["sensorthings"]["external_uri"],
+    stations:       node["transloader"]["environment_canada_stations"],
+    work_dir:       "/opt/data-transloader"
   })
 end
 
