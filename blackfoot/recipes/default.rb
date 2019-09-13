@@ -458,6 +458,34 @@ node["transloader"]["campbell_scientific_stations"].each do |stn|
   end
 end
 
+#############################
+# Set up Database for Airflow
+#############################
+
+pg_airflow_user = "airflow"
+pg_airflow_pass = SecureRandom.hex(16)
+pg_airflow_db   = "airflow"
+
+postgresql_user pg_airflow_user do
+  password pg_airflow_pass
+  createdb true
+  sensitive true
+  action [:create, :update]
+end
+
+postgresql_database pg_airflow_db do
+  owner pg_airflow_user
+end
+
+postgresql_access "local_airflow" do
+  comment "Local airflow access"
+  access_type "local"
+  access_db pg_airflow_db
+  access_user pg_airflow_user
+  access_addr nil
+  access_method "md5"
+end
+
 ########################
 # Install Apache Airflow
 ########################
@@ -486,23 +514,6 @@ directory "#{airflow_home}/dags" do
   action :create
 end
 
-template "#{airflow_home}/airflow.cfg" do
-  source "airflow.cfg.erb"
-  variables({
-    airflow_home: airflow_home,
-    fernet_key:   Base64.strict_encode64(SecureRandom.hex(16)),
-    secret_key:   SecureRandom.hex
-  })
-  sensitive true
-end
-
-execute "Initialize airflow DB" do
-  command "airflow initdb"
-  env({
-    "AIRFLOW_HOME" => airflow_home
-  })
-end
-
 systemd_unit "airflow-webserver.service" do
   content <<-EOU.gsub(/^\s+/, '')
     [Unit]
@@ -523,7 +534,7 @@ systemd_unit "airflow-webserver.service" do
     WantedBy=multi-user.target
   EOU
 
-  action [:create, :enable, :start]
+  action :create
 end
 
 systemd_unit "airflow-scheduler.service" do
@@ -545,7 +556,36 @@ systemd_unit "airflow-scheduler.service" do
     WantedBy=multi-user.target
   EOU
 
-  action [:create, :enable, :start]
+  action :create
+end
+
+template "#{airflow_home}/airflow.cfg" do
+  source "airflow.cfg.erb"
+  variables({
+    airflow_home: airflow_home,
+    fernet_key:   Base64.strict_encode64(SecureRandom.hex(16)),
+    pg_connection: "#{pg_airflow_user}:#{pg_airflow_pass}@localhost:5432/#{pg_airflow_db}",
+    secret_key:   SecureRandom.hex
+  })
+  sensitive true
+  # Restart the Airflow applications when the configuration changes
+  notifies :restart, "systemd_unit[airflow-webserver.service]"
+  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+end
+
+execute "Initialize airflow DB" do
+  command "airflow initdb"
+  env({
+    "AIRFLOW_HOME" => airflow_home
+  })
+end
+
+systemd_unit "airflow-webserver.service" do
+  action [:enable, :start]
+end
+
+systemd_unit "airflow-scheduler.service" do
+  action [:enable, :start]
 end
 
 # Create htpassword for Airflow HTTP Basic authentication
