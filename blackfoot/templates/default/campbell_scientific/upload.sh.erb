@@ -19,6 +19,9 @@ ruby transload put observations \
     --cache <%= @cache_dir %> \
     --date $INTERVAL \
     --blocked <%= @blocked %> \
+    <% if @basic_user -%>
+    --user '<%= @basic_user %>:<%= @basic_password %>' \
+    <% end -%>
     --destination "<%= @sta_endpoint %>" | tee -a $ULOG
 
 <% end %>

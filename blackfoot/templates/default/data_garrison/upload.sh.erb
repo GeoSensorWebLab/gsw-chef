@@ -19,6 +19,9 @@ ruby transload put observations \
     --user_id <%= station["user_id"] %> \
     --cache <%= @cache_dir %> \
     --date $INTERVAL \
+     <% if @basic_user -%>
+    --user '<%= @basic_user %>:<%= @basic_password %>' \
+    <% end -%>
     --destination "<%= @sta_endpoint %>" | tee -a $ULOG
 
 <% end %>

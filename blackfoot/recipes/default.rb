@@ -227,11 +227,13 @@ template "#{dg_scripts_home}/upload" do
   owner tl_user
   mode "0755"
   variables({
-    cache_dir:    cache_dir,
-    log_dir:      "/srv/logs",
-    sta_endpoint: node["sensorthings"]["external_uri"],
-    stations:     node["transloader"]["data_garrison_stations"],
-    work_dir:     "/opt/data-transloader"
+    basic_user:     basic_user,
+    basic_password: basic_password,
+    cache_dir:      cache_dir,
+    log_dir:        "/srv/logs",
+    sta_endpoint:   node["sensorthings"]["external_uri"],
+    stations:       node["transloader"]["data_garrison_stations"],
+    work_dir:       "/opt/data-transloader"
   })
 end
 
@@ -277,12 +279,14 @@ template "#{cs_scripts_home}/upload" do
   owner tl_user
   mode "0755"
   variables({
-    blocked:      node["transloader"]["campbell_scientific_blocked"],
-    cache_dir:    cache_dir,
-    log_dir:      "/srv/logs",
-    sta_endpoint: node["sensorthings"]["external_uri"],
-    stations:     node["transloader"]["campbell_scientific_stations"],
-    work_dir:     "/opt/data-transloader"
+    basic_user:     basic_user,
+    basic_password: basic_password,
+    blocked:        node["transloader"]["campbell_scientific_blocked"],
+    cache_dir:      cache_dir,
+    log_dir:        "/srv/logs",
+    sta_endpoint:   node["sensorthings"]["external_uri"],
+    stations:       node["transloader"]["campbell_scientific_stations"],
+    work_dir:       "/opt/data-transloader"
   })
 end
 
@@ -313,10 +317,10 @@ end
 # Run initial metadata fetch
 ############################
 
-if node["sensorthings"]["auth_username"].nil?
+if basic_user.nil? || basic_user.empty?
   sensorthings_auth = ""
 else
-  sensorthings_auth = "--user '#{node["sensorthings"]["auth_username"]}:#{node["sensorthings"]["auth_password"]}'"
+  sensorthings_auth = "--user '#{basic_user}:#{basic_password}'"
 end
 
 # ENVIRONMENT CANADA
@@ -394,7 +398,8 @@ node["transloader"]["data_garrison_stations"].each do |stn|
         --user_id #{stn["user_id"]} \
         --station_id #{stn["station_id"]} \
         --cache "#{cache_dir}" \
-        --destination "#{node["sensorthings"]["external_uri"]}"
+        --destination "#{node["sensorthings"]["external_uri"]}" \
+        #{sensorthings_auth}
     EOH
     creates metadata_file
     cwd "/opt/data-transloader"
@@ -462,7 +467,8 @@ node["transloader"]["campbell_scientific_stations"].each do |stn|
         --station_id #{stn["station_id"]} \
         --cache "#{cache_dir}" \
         --destination "#{node["sensorthings"]["external_uri"]}" \
-        --blocked #{node["transloader"]["campbell_scientific_blocked"]}
+        --blocked #{node["transloader"]["campbell_scientific_blocked"]} \
+        #{sensorthings_auth}
     EOH
     creates metadata_file
     cwd "/opt/data-transloader"
