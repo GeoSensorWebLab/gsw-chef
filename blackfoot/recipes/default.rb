@@ -256,47 +256,51 @@ directory cs_scripts_home do
   recursive true
 end
 
-template "#{cs_scripts_home}/download" do
-  source "campbell_scientific/download.sh.erb"
-  owner tl_user
-  mode "0755"
-  variables({
-    blocked:   node["transloader"]["campbell_scientific_blocked"],
-    cache_dir: cache_dir,
-    log_dir:   "/srv/logs",
-    stations:  node["transloader"]["campbell_scientific_stations"],
-    work_dir:  "/opt/data-transloader"
-  })
-end
+node["transloader"]["campbell_scientific_stations"].each do |station|
+  station_id = station["station_id"]
 
-template "#{cs_scripts_home}/upload" do
-  source "campbell_scientific/upload.sh.erb"
-  owner tl_user
-  mode "0755"
-  variables({
-    basic_user:     basic_user,
-    basic_password: basic_password,
-    blocked:        node["transloader"]["campbell_scientific_blocked"],
-    cache_dir:      cache_dir,
-    log_dir:        "/srv/logs",
-    sta_endpoint:   node["sensorthings"]["external_uri"],
-    stations:       node["transloader"]["campbell_scientific_stations"],
-    work_dir:       "/opt/data-transloader"
-  })
-end
+  template "#{cs_scripts_home}/download_#{station_id}" do
+    source "campbell_scientific/download.sh.erb"
+    owner tl_user
+    mode "0755"
+    variables({
+      blocked:   node["transloader"]["campbell_scientific_blocked"],
+      cache_dir: cache_dir,
+      log_dir:   "/srv/logs",
+      station:   station,
+      work_dir:  "/opt/data-transloader"
+    })
+  end
 
-template "#{cs_scripts_home}/download-historical" do
-  source "campbell_scientific/download-historical.sh.erb"
-  owner tl_user
-  mode "0755"
-  variables({
-    blocked:    node["transloader"]["campbell_scientific_blocked"],
-    cache_dir:  cache_dir,
-    log_dir:    "/srv/logs",
-    state_file: "#{cs_scripts_home}/historical-observations-downloaded",
-    stations:   node["transloader"]["campbell_scientific_stations"],
-    work_dir:   "/opt/data-transloader"
-  })
+  template "#{cs_scripts_home}/upload_#{station_id}" do
+    source "campbell_scientific/upload.sh.erb"
+    owner tl_user
+    mode "0755"
+    variables({
+      basic_user:     basic_user,
+      basic_password: basic_password,
+      blocked:        node["transloader"]["campbell_scientific_blocked"],
+      cache_dir:      cache_dir,
+      log_dir:        "/srv/logs",
+      sta_endpoint:   node["sensorthings"]["external_uri"],
+      station:        station,
+      work_dir:       "/opt/data-transloader"
+    })
+  end
+
+  template "#{cs_scripts_home}/download-historical_#{station_id}" do
+    source "campbell_scientific/download-historical.sh.erb"
+    owner tl_user
+    mode "0755"
+    variables({
+      blocked:    node["transloader"]["campbell_scientific_blocked"],
+      cache_dir:  cache_dir,
+      log_dir:    "/srv/logs",
+      state_file: "#{cs_scripts_home}/historical-observations-downloaded",
+      station:    station,
+      work_dir:   "/opt/data-transloader"
+    })
+  end
 end
 
 # Set up log rotation
@@ -735,38 +739,43 @@ node["transloader"]["data_garrison_stations"].each do |station|
 end
 
 # Install Campbell Scientific ETL DAG
-template "#{airflow_home}/dags/campbell_scientific_etl.py" do
-  source "dags/basic_etl.py.erb"
-  variables({
-    dag_id: "campbell_scientific_etl",
-    # Runs every hour at one minute past the hour.
-    schedule_interval: "1 * * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download",
-    upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload",
-    start_date: now_date,
-    catchup: false
-  })
-  action :create
-  notifies :restart, "systemd_unit[airflow-scheduler.service]"
-end
+node["transloader"]["data_garrison_stations"].each do |station|
+  station_name = station["name"].gsub(" ", "_")
+  station_id   = station["station_id"]
 
-# Install Campbell Scientific Historical ETL DAG
-template "#{airflow_home}/dags/campbell_scientific_historical_etl.py" do
-  source "dags/historical_etl.py.erb"
-  variables({
-    dag_id: "campbell_scientific_historical_etl",
-    # Runs historical imports one day at a time at 00:00. This is
-    # automatically interpreted as a 24-hour interval, which will be
-    # passed to the data transloader.
-    schedule_interval: "0 0 * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download-historical",
-    upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload",
-    start_date: historical_start_date,
-    end_date: now_date,
-    catchup: true
-  })
-  action :create
-  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+  template "#{airflow_home}/dags/campbell_scientific_etl_#{station_name}.py" do
+    source "dags/basic_etl.py.erb"
+    variables({
+      dag_id: "campbell_scientific_etl_#{station_name}",
+      # Runs every hour at one minute past the hour.
+      schedule_interval: "1 * * * *",
+      download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download_#{station_id}",
+      upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload_#{station_id}",
+      start_date: now_date,
+      catchup: false
+    })
+    action :create
+    notifies :restart, "systemd_unit[airflow-scheduler.service]"
+  end
+
+  # Install Campbell Scientific Historical ETL DAG
+  template "#{airflow_home}/dags/campbell_scientific_historical_etl_#{station_name}.py" do
+    source "dags/historical_etl.py.erb"
+    variables({
+      dag_id: "campbell_scientific_historical_etl_#{station_name}",
+      # Runs historical imports one day at a time at 00:00. This is
+      # automatically interpreted as a 24-hour interval, which will be
+      # passed to the data transloader.
+      schedule_interval: "0 0 * * *",
+      download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download-historical_#{station_id}",
+      upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload_#{station_id}",
+      start_date: historical_start_date,
+      end_date: now_date,
+      catchup: true
+    })
+    action :create
+    notifies :restart, "systemd_unit[airflow-scheduler.service]"
+  end
 end
 
 ########################

@@ -11,11 +11,10 @@ ULOG="<%= @log_dir %>/upload.log"
 touch "$ULOG"
 cd "<%= @work_dir %>"
 
-<% for station in @stations %>
-# <%= station["name"] %>
+# <%= @station["name"] %>
 ruby transload put observations \
     --provider campbell_scientific \
-    --station_id <%= station["station_id"] %> \
+    --station_id <%= @station["station_id"] %> \
     --cache <%= @cache_dir %> \
     --date $INTERVAL \
     --blocked <%= @blocked %> \
@@ -23,5 +22,3 @@ ruby transload put observations \
     --user '<%= @basic_user %>:<%= @basic_password %>' \
     <% end -%>
     --destination "<%= @sta_endpoint %>" | tee -a $ULOG
-
-<% end %>
