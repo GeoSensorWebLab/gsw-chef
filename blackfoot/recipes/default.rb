@@ -215,7 +215,6 @@ template "#{dg_scripts_home}/download" do
   variables({
     cache_dir: cache_dir,
     log_dir:   "/srv/logs",
-    stations:  node["transloader"]["data_garrison_stations"],
     work_dir:  "/opt/data-transloader"
   })
 end
@@ -230,7 +229,6 @@ template "#{dg_scripts_home}/upload" do
     cache_dir:      cache_dir,
     log_dir:        "/srv/logs",
     sta_endpoint:   node["sensorthings"]["external_uri"],
-    stations:       node["transloader"]["data_garrison_stations"],
     work_dir:       "/opt/data-transloader"
   })
 end
@@ -243,7 +241,6 @@ template "#{dg_scripts_home}/download-historical" do
     cache_dir:  cache_dir,
     log_dir:    "/srv/logs",
     state_file: "#{dg_scripts_home}/historical-observations-downloaded",
-    stations:   node["transloader"]["data_garrison_stations"],
     work_dir:   "/opt/data-transloader"
   })
 end
@@ -694,41 +691,47 @@ node["transloader"]["environment_canada_stations"].each do |station_id|
 end
 
 # Install Data Garrison ETL DAG
-template "#{airflow_home}/dags/data_garrison_etl.py" do
-  source "dags/basic_etl.py.erb"
-  variables({
-    dag_id: "data_garrison_etl",
-    # Runs every hour at one minute past the hour.
-    # Data Garrison weather stations log every 15 minutes, but only 
-    # upload every 120 minutes. We run every hour to be more likely to
-    # catch "fresh" data.
-    schedule_interval: "1 * * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download",
-    upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload",
-    start_date: now_date,
-    catchup: false
-  })
-  action :create
-  notifies :restart, "systemd_unit[airflow-scheduler.service]"
-end
+node["transloader"]["data_garrison_stations"].each do |station|
+  station_name    = station["name"].gsub(" ", "_")
+  station_id      = station["station_id"]
+  station_user_id = station["user_id"]
 
-# Install Data Garrison Historical ETL DAG
-template "#{airflow_home}/dags/data_garrison_historical_etl.py" do
-  source "dags/historical_etl.py.erb"
-  variables({
-    dag_id: "data_garrison_historical_etl",
-    # Runs historical imports one day at a time at 00:00. This is
-    # automatically interpreted as a 24-hour interval, which will be
-    # passed to the data transloader.
-    schedule_interval: "0 0 * * *",
-    download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download-historical",
-    upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload",
-    start_date: historical_start_date,
-    end_date: now_date,
-    catchup: true
-  })
-  action :create
-  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+  template "#{airflow_home}/dags/data_garrison_etl_#{station_name}.py" do
+    source "dags/basic_etl.py.erb"
+    variables({
+      dag_id: "data_garrison_etl_#{station_name}",
+      # Runs every hour at one minute past the hour.
+      # Data Garrison weather stations log every 15 minutes, but only 
+      # upload every 120 minutes. We run every hour to be more likely to
+      # catch "fresh" data.
+      schedule_interval: "1 * * * *",
+      download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download #{station_id} #{station_user_id}",
+      upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload #{station_id} #{station_user_id}",
+      start_date: now_date,
+      catchup: false
+    })
+    action :create
+    notifies :restart, "systemd_unit[airflow-scheduler.service]"
+  end
+
+  # Install Data Garrison Historical ETL DAG
+  template "#{airflow_home}/dags/data_garrison_historical_etl_#{station_name}.py" do
+    source "dags/historical_etl.py.erb"
+    variables({
+      dag_id: "data_garrison_historical_etl_#{station_name}",
+      # Runs historical imports one day at a time at 00:00. This is
+      # automatically interpreted as a 24-hour interval, which will be
+      # passed to the data transloader.
+      schedule_interval: "0 0 * * *",
+      download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download-historical #{station_id} #{station_user_id}",
+      upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload #{station_id} #{station_user_id}",
+      start_date: historical_start_date,
+      end_date: now_date,
+      catchup: true
+    })
+    action :create
+    notifies :restart, "systemd_unit[airflow-scheduler.service]"
+  end
 end
 
 # Install Campbell Scientific ETL DAG

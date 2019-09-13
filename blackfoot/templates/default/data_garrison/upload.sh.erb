@@ -5,23 +5,19 @@
 source "$HOME/.bashrc"
 
 # Interval should be an ISO8601 interval string
-INTERVAL="$1"
+INTERVAL="$3"
 ULOG="<%= @log_dir %>/upload.log"
 
 touch "$ULOG"
 cd "<%= @work_dir %>"
 
-<% for station in @stations %>
-# <%= station["name"] %>
 ruby transload put observations \
     --provider data_garrison \
-    --station_id <%= station["station_id"] %> \
-    --user_id <%= station["user_id"] %> \
+    --station_id $1 \
+    --user_id $2 \
     --cache <%= @cache_dir %> \
     --date $INTERVAL \
      <% if @basic_user -%>
     --user '<%= @basic_user %>:<%= @basic_password %>' \
     <% end -%>
     --destination "<%= @sta_endpoint %>" | tee -a $ULOG
-
-<% end %>

@@ -6,7 +6,7 @@
 # running, the script will exit cleanly on subsequent runs.
 set -e
 
-if [ -f <%= @state_file %> ]; then
+if [ -f <%= @state_file %>.$1.$2 ]; then
 	echo "State file exists; skipping re-download of historical observation data."
 	exit 0
 fi
@@ -18,14 +18,10 @@ DLOG="<%= @log_dir %>/download.log"
 touch "$DLOG"
 cd "<%= @work_dir %>"
 
-<% for station in @stations %>
-# <%= station["name"] %>
 ruby transload get observations \
     --provider data_garrison \
-    --station_id <%= station["station_id"] %> \
-    --user_id <%= station["user_id"] %> \
+    --station_id $1 \
+    --user_id $2 \
     --cache <%= @cache_dir %> | tee -a $DLOG
 
-<% end %>
-
-touch <%= @state_file %>
+touch <%= @state_file %>.$1.$2
