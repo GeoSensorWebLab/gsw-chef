@@ -691,6 +691,7 @@ node["transloader"]["environment_canada_stations"].each do |station_id|
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
+    only_if { ::File.exists?("#{cache_dir}/environment_canada/metadata/#{station_id}.json") }
   end
 end
 
@@ -716,6 +717,7 @@ node["transloader"]["data_garrison_stations"].each do |station|
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
+    only_if { ::File.exists?("#{cache_dir}/data_garrison/metadata/#{station_user_id}-#{station_id}.json") }
   end
 
   # Install Data Garrison Historical ETL DAG
@@ -735,6 +737,7 @@ node["transloader"]["data_garrison_stations"].each do |station|
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
+    only_if { ::File.exists?("#{cache_dir}/data_garrison/metadata/#{station_user_id}-#{station_id}.json") }
   end
 end
 
@@ -756,6 +759,7 @@ node["transloader"]["data_garrison_stations"].each do |station|
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
+    only_if { ::File.exists?("#{cache_dir}/campbell_scientific/metadata/#{station_id}.json") }
   end
 
   # Install Campbell Scientific Historical ETL DAG
@@ -775,6 +779,7 @@ node["transloader"]["data_garrison_stations"].each do |station|
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
+    only_if { ::File.exists?("#{cache_dir}/campbell_scientific/metadata/#{station_id}.json") }
   end
 end
 
