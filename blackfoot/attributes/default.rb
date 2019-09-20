@@ -2,7 +2,7 @@
 # Cookbook Configuration
 ########################
 default["transloader"]["repository"] = "https://github.com/GeoSensorWebLab/data-transloader"
-default["transloader"]["revision"] = "v0.6.2"
+default["transloader"]["revision"] = "master"
 
 ##########################
 # PostgreSQL Configuration
