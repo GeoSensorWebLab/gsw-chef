@@ -22,6 +22,9 @@ default["etl"]["year"]  = 2016
 default["etl"]["month"] = 1
 default["etl"]["day"]   = 1
 
+# If false, will automatically enable all DAGs when added to scheduler
+default["airflow"]["dags_are_paused_at_creation"] = false
+
 #############################
 # Environment Canada Stations
 #############################

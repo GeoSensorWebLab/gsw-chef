@@ -647,8 +647,9 @@ end
 template "/etc/nginx/sites-available/airflow" do
   source "nginx/airflow.conf.erb"
   variables({
-    ht_file: ht_file,
-    port:    airflow_port
+    dags_are_paused_at_creation: node["airflow"]["dags_are_paused_at_creation"],
+    ht_file:                     ht_file,
+    port:                        airflow_port
   })
   notifies :reload, "service[nginx]"
 end
