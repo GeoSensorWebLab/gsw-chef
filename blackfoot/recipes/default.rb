@@ -784,6 +784,19 @@ node["transloader"]["data_garrison_stations"].each do |station|
   end
 end
 
+bash "Unpause all DAGs" do
+  code <<-EOH
+  for file in *.py; do
+    dag=$(basename $file .py)
+    airflow unpause $dag
+  done
+  EOH
+  cwd "#{airflow_home}/dags"
+  env({
+    "AIRFLOW_HOME" => airflow_home
+  })
+end
+
 ########################
 # Install Sensors Web UI
 ########################
