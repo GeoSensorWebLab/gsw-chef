@@ -5,7 +5,7 @@
 default["gsw-hostsfile"]["hostsfile"] = [
   { "hostname" => "airport.gswlab.ca", "ip" => "10.1.14.229" },
   { "hostname" => "barlow.gswlab.ca", "ip" => "10.1.11.170" },
-  { "hostname" => "blackfoot.gswlab.ca", "ip" => "10.1.11.89" },
+  { "hostname" => "blackfoot.gswlab.ca", "ip" => "10.1.3.111" },
   { "hostname" => "bow.gswlab.ca", "ip" => "10.1.4.6" },
   { "hostname" => "cowboy.gswlab.ca", "ip" => "10.1.9.179" },
   { "hostname" => "crowchild.gswlab.ca", "ip" => "10.1.10.243" },
