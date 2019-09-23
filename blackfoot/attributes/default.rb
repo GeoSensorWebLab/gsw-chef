@@ -142,7 +142,7 @@ default["transloader"]["campbell_scientific_blocked"] = "LdnCo_Avg,Ux_Avg,Uy_Avg
 # Destination URL for uploading to SensorThings API. Include any path
 # components up to the complete root URL (e.g. "/v1.0/") with a trailing
 # slash.
-default["sensorthings"]["external_uri"] = "https://sensors.arcticconnect.ca:6443/"
+default["sensorthings"]["external_uri"] = "https://arctic-sensors.sensorup.com/v1.0/"
 
 # Arctic Sensors Dashboard
 default["dashboard"]["prefix"] = "/opt/community-sensorweb"
