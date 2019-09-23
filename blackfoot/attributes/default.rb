@@ -24,6 +24,13 @@ default["etl"]["day"]   = 1
 
 # If false, will automatically enable all DAGs when added to scheduler
 default["airflow"]["dags_are_paused_at_creation"] = false
+# Limit number of DAGs that can run at the same time
+default["airflow"]["parallelism"] = 2
+# Limit the number of runs of the *same* DAG that can happen at the same
+# time
+default["airflow"]["dag_concurrency"] = 1
+# Limits the number of runs of a DAG that can be in an active state
+default["airflow"]["max_active_runs_per_dag"] = 1
 
 #############################
 # Environment Canada Stations

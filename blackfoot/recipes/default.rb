@@ -584,10 +584,13 @@ end
 template "#{airflow_home}/airflow.cfg" do
   source "airflow.cfg.erb"
   variables({
-    airflow_home: airflow_home,
-    fernet_key:   Base64.strict_encode64(SecureRandom.hex(16)),
-    pg_connection: "#{pg_airflow_user}:#{pg_airflow_pass}@localhost:5432/#{pg_airflow_db}",
-    secret_key:   SecureRandom.hex
+    airflow_home:            airflow_home,
+    dag_concurrency:         node["airflow"]["dag_concurrency"],
+    fernet_key:              Base64.strict_encode64(SecureRandom.hex(16)),
+    max_active_runs_per_dag: node["airflow"]["max_active_runs_per_dag"],
+    parallelism:             node["airflow"]["parallelism"],
+    pg_connection:           "#{pg_airflow_user}:#{pg_airflow_pass}@localhost:5432/#{pg_airflow_db}",
+    secret_key:              SecureRandom.hex
   })
   sensitive true
   # Restart the Airflow applications when the configuration changes
