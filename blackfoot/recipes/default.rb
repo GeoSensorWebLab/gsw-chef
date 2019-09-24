@@ -513,7 +513,7 @@ end
 # Install Apache Airflow
 ########################
 
-airflow_home = "/opt/airflow"
+airflow_home = node["airflow"]["home"]
 airflow_port = "5080"
 
 package %w(python3-pip)
@@ -787,19 +787,6 @@ node["transloader"]["data_garrison_stations"].each do |station|
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
     only_if { ::File.exists?("#{cache_dir}/campbell_scientific/metadata/#{station_id}.json") }
   end
-end
-
-bash "Unpause all DAGs" do
-  code <<-EOH
-  for file in *.py; do
-    dag=$(basename $file .py)
-    airflow unpause $dag
-  done
-  EOH
-  cwd "#{airflow_home}/dags"
-  env({
-    "AIRFLOW_HOME" => airflow_home
-  })
 end
 
 ########################

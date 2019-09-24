@@ -22,6 +22,11 @@ default["etl"]["year"]  = 2016
 default["etl"]["month"] = 1
 default["etl"]["day"]   = 1
 
+################
+# Apache Airflow
+################
+# Installation directory for Airflow
+default["airflow"]["home"] = "/opt/airflow"
 # Base URL for Airflow interface
 default["airflow"]["base_url"] = "https://asw-airflow.gswlab.ca"
 # If false, will automatically enable all DAGs when added to scheduler

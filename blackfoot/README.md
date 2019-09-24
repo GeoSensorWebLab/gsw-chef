@@ -25,6 +25,10 @@ DAGs for importing historical data from Data Garrison and Campbell Scientific wi
 
 Install FROST SensorThings API server using Docker. This instance can then be used locally with the GSW Data Transloader instead of pushing to a public STA instance.
 
+## `unpause` recipe
+
+Will use the Airflow command line interface to iteratively unpause all the DAGs found in the DAGs directory. This is kind of slow, so only run it when you need it.
+
 ## Attributes
 
 See `attributes/default.rb` and `attributes/frost.rb` for documentation on available attributes in this cookbook.
