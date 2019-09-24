@@ -44,8 +44,8 @@ end
 # Install data transloader
 ##########################
 
-tl_home = "/home/transloader"
-tl_user = "transloader"
+tl_home = node["transloader"]["user_home"]
+tl_user = node["transloader"]["user"]
 
 user tl_user do
   home tl_home
@@ -72,13 +72,13 @@ directory "#{tl_home}/.ruby" do
   action :create
 end
 
-directory "/opt/data-transloader" do
+directory node["transloader"]["install_home"] do
   owner tl_user
   recursive true
   action :create
 end
 
-git "/opt/data-transloader" do
+git node["transloader"]["install_home"] do
   repository node["transloader"]["repository"]
   revision node["transloader"]["revision"]
   user tl_user
@@ -118,7 +118,7 @@ bash "Link Ruby" do
 end
 
 bash "install transloader deps" do
-  cwd "/opt/data-transloader"
+  cwd node["transloader"]["install_home"]
   code <<-EOH
   gem install bundler
   bundle install
@@ -132,14 +132,14 @@ bash "install transloader deps" do
 end
 
 # Set up data storage
-cache_dir = "/srv/data"
+cache_dir = node["etl"]["cache_dir"]
 directory cache_dir do
   owner tl_user
   action :create
 end
 
 # Set up log directory
-directory "/srv/logs" do
+directory node["etl"]["log_dir"] do
   owner tl_user
   action :create
 end
@@ -178,8 +178,8 @@ template "#{ec_scripts_home}/download" do
   mode "0755"
   variables({
     cache_dir: cache_dir,
-    log_dir:   "/srv/logs",
-    work_dir:  "/opt/data-transloader"
+    log_dir:   node["etl"]["log_dir"],
+    work_dir:  node["transloader"]["install_home"]
   })
 end
 
@@ -191,9 +191,9 @@ template "#{ec_scripts_home}/upload" do
     basic_user:     basic_user,
     basic_password: basic_password,
     cache_dir:      cache_dir,
-    log_dir:        "/srv/logs",
+    log_dir:        node["etl"]["log_dir"],
     sta_endpoint:   node["sensorthings"]["external_uri"],
-    work_dir:       "/opt/data-transloader"
+    work_dir:       node["transloader"]["install_home"]
   })
 end
 
@@ -214,8 +214,8 @@ template "#{dg_scripts_home}/download" do
   mode "0755"
   variables({
     cache_dir: cache_dir,
-    log_dir:   "/srv/logs",
-    work_dir:  "/opt/data-transloader"
+    log_dir:   node["etl"]["log_dir"],
+    work_dir:  node["transloader"]["install_home"]
   })
 end
 
@@ -227,9 +227,9 @@ template "#{dg_scripts_home}/upload" do
     basic_user:     basic_user,
     basic_password: basic_password,
     cache_dir:      cache_dir,
-    log_dir:        "/srv/logs",
+    log_dir:        node["etl"]["log_dir"],
     sta_endpoint:   node["sensorthings"]["external_uri"],
-    work_dir:       "/opt/data-transloader"
+    work_dir:       node["transloader"]["install_home"]
   })
 end
 
@@ -239,9 +239,9 @@ template "#{dg_scripts_home}/download-historical" do
   mode "0755"
   variables({
     cache_dir:  cache_dir,
-    log_dir:    "/srv/logs",
+    log_dir:    node["etl"]["log_dir"],
     state_file: "#{dg_scripts_home}/historical-observations-downloaded",
-    work_dir:   "/opt/data-transloader"
+    work_dir:   node["transloader"]["install_home"]
   })
 end
 
@@ -266,9 +266,9 @@ node["transloader"]["campbell_scientific_stations"].each do |station|
     variables({
       blocked:   node["transloader"]["campbell_scientific_blocked"],
       cache_dir: cache_dir,
-      log_dir:   "/srv/logs",
+      log_dir:   node["etl"]["log_dir"],
       station:   station,
-      work_dir:  "/opt/data-transloader"
+      work_dir:  node["transloader"]["install_home"]
     })
   end
 
@@ -281,10 +281,10 @@ node["transloader"]["campbell_scientific_stations"].each do |station|
       basic_password: basic_password,
       blocked:        node["transloader"]["campbell_scientific_blocked"],
       cache_dir:      cache_dir,
-      log_dir:        "/srv/logs",
+      log_dir:        node["etl"]["log_dir"],
       sta_endpoint:   node["sensorthings"]["external_uri"],
       station:        station,
-      work_dir:       "/opt/data-transloader"
+      work_dir:       node["transloader"]["install_home"]
     })
   end
 
@@ -295,10 +295,10 @@ node["transloader"]["campbell_scientific_stations"].each do |station|
     variables({
       blocked:    node["transloader"]["campbell_scientific_blocked"],
       cache_dir:  cache_dir,
-      log_dir:    "/srv/logs",
+      log_dir:    node["etl"]["log_dir"],
       state_file: "#{cs_scripts_home}/historical-observations-downloaded",
       station:    station,
-      work_dir:   "/opt/data-transloader"
+      work_dir:   node["transloader"]["install_home"]
     })
   end
 end
@@ -307,7 +307,7 @@ end
 template "/etc/logrotate.d/auto-transload" do
   source "transloader-logrotate.erb"
   variables({
-    logdir: "/srv/logs",
+    logdir: node["etl"]["log_dir"],
     user: tl_user
   })
 end
@@ -340,7 +340,7 @@ node["transloader"]["environment_canada_stations"].each do |stn|
         #{sensorthings_auth}
     EOH
     creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
-    cwd "/opt/data-transloader"
+    cwd node["transloader"]["install_home"]
     # Some stations may have missing SWOB-ML files occasionally —
     # the reason is currently unknown. When that happens this step would
     # normally fail for that specific station, so we ignore it.
@@ -401,7 +401,7 @@ node["transloader"]["data_garrison_stations"].each do |stn|
         #{sensorthings_auth}
     EOH
     creates metadata_file
-    cwd "/opt/data-transloader"
+    cwd node["transloader"]["install_home"]
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
       GEM_PATH: "#{tl_home}/.ruby/gems",
@@ -470,7 +470,7 @@ node["transloader"]["campbell_scientific_stations"].each do |stn|
         #{sensorthings_auth}
     EOH
     creates metadata_file
-    cwd "/opt/data-transloader"
+    cwd node["transloader"]["install_home"]
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
       GEM_PATH: "#{tl_home}/.ruby/gems",
@@ -623,7 +623,7 @@ airflow_vault = chef_vault_item("secrets", "airflow")
 
 # If the airflow vault item doesn't exist, skip this next section.
 if airflow_vault
-  ht_file   = "/opt/airflow/htpasswd"
+  ht_file   = "#{airflow_home}/htpasswd"
   ht_user   = airflow_vault["username"]
   ht_passwd = airflow_vault["password"]
 
@@ -690,10 +690,10 @@ node["transloader"]["environment_canada_stations"].each do |station_id|
       dag_id: "environment_canada_etl_#{station_id}",
       # Runs every hour at one minute past the hour
       schedule_interval: "1 * * * *",
-      download_script: "sudo -u transloader -i #{tl_home}/environment_canada/download #{station_id}",
-      upload_script: "sudo -u transloader -i #{tl_home}/environment_canada/upload #{station_id}",
-      start_date: now_date,
-      catchup: false
+      download_script:   "sudo -u transloader -i #{tl_home}/environment_canada/download #{station_id}",
+      upload_script:     "sudo -u transloader -i #{tl_home}/environment_canada/upload #{station_id}",
+      start_date:        now_date,
+      catchup:           false
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
@@ -716,10 +716,10 @@ node["transloader"]["data_garrison_stations"].each do |station|
       # upload every 120 minutes. We run every hour to be more likely to
       # catch "fresh" data.
       schedule_interval: "1 * * * *",
-      download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download #{station_id} #{station_user_id}",
-      upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload #{station_id} #{station_user_id}",
-      start_date: now_date,
-      catchup: false
+      download_script:   "sudo -u transloader -i #{tl_home}/data_garrison/download #{station_id} #{station_user_id}",
+      upload_script:     "sudo -u transloader -i #{tl_home}/data_garrison/upload #{station_id} #{station_user_id}",
+      start_date:        now_date,
+      catchup:           false
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
@@ -735,11 +735,11 @@ node["transloader"]["data_garrison_stations"].each do |station|
       # automatically interpreted as a 24-hour interval, which will be
       # passed to the data transloader.
       schedule_interval: "0 0 * * *",
-      download_script: "sudo -u transloader -i #{tl_home}/data_garrison/download-historical #{station_id} #{station_user_id}",
-      upload_script: "sudo -u transloader -i #{tl_home}/data_garrison/upload #{station_id} #{station_user_id}",
-      start_date: historical_start_date,
-      end_date: now_date,
-      catchup: true
+      download_script:   "sudo -u transloader -i #{tl_home}/data_garrison/download-historical #{station_id} #{station_user_id}",
+      upload_script:     "sudo -u transloader -i #{tl_home}/data_garrison/upload #{station_id} #{station_user_id}",
+      start_date:        historical_start_date,
+      end_date:          now_date,
+      catchup:           true
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
@@ -758,10 +758,10 @@ node["transloader"]["data_garrison_stations"].each do |station|
       dag_id: "campbell_scientific_etl_#{station_name}",
       # Runs every hour at one minute past the hour.
       schedule_interval: "1 * * * *",
-      download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download_#{station_id}",
-      upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload_#{station_id}",
-      start_date: now_date,
-      catchup: false
+      download_script:   "sudo -u transloader -i #{tl_home}/campbell_scientific/download_#{station_id}",
+      upload_script:     "sudo -u transloader -i #{tl_home}/campbell_scientific/upload_#{station_id}",
+      start_date:        now_date,
+      catchup:           false
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"
@@ -777,11 +777,11 @@ node["transloader"]["data_garrison_stations"].each do |station|
       # automatically interpreted as a 24-hour interval, which will be
       # passed to the data transloader.
       schedule_interval: "0 0 * * *",
-      download_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/download-historical_#{station_id}",
-      upload_script: "sudo -u transloader -i #{tl_home}/campbell_scientific/upload_#{station_id}",
-      start_date: historical_start_date,
-      end_date: now_date,
-      catchup: true
+      download_script:   "sudo -u transloader -i #{tl_home}/campbell_scientific/download-historical_#{station_id}",
+      upload_script:     "sudo -u transloader -i #{tl_home}/campbell_scientific/upload_#{station_id}",
+      start_date:        historical_start_date,
+      end_date:          now_date,
+      catchup:           true
     })
     action :create
     notifies :restart, "systemd_unit[airflow-scheduler.service]"

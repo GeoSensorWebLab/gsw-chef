@@ -1,8 +1,11 @@
 ########################
 # Cookbook Configuration
 ########################
-default["transloader"]["repository"] = "https://github.com/GeoSensorWebLab/data-transloader"
-default["transloader"]["revision"] = "master"
+default["transloader"]["repository"]   = "https://github.com/GeoSensorWebLab/data-transloader"
+default["transloader"]["revision"]     = "master"
+default["transloader"]["install_home"] = "/opt/data-transloader"
+default["transloader"]["user_home"]    = "/home/transloader"
+default["transloader"]["user"]         = "transloader"
 
 ##########################
 # PostgreSQL Configuration
@@ -21,6 +24,8 @@ default["ruby"]["version"] = "2.6.4"
 default["etl"]["year"]  = 2016
 default["etl"]["month"] = 1
 default["etl"]["day"]   = 1
+default["etl"]["cache_dir"] = "/srv/data"
+default["etl"]["log_dir"]   = "/srv/logs"
 
 ################
 # Apache Airflow
