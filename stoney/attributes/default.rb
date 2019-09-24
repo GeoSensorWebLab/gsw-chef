@@ -56,6 +56,12 @@ default["stoney"]["vhosts"] = [{
   "proxy_host"  => "blackfoot.gswlab.ca",
   "proxy_port"  => 80
 }, {
+  "id"          => "asw-airflow",
+  "domains"     => ["asw-airflow.gswlab.ca", "asw-airflow.arcticconnect.ca"],
+  "ssl_enabled" => true,
+  "proxy_host"  => "blackfoot.gswlab.ca",
+  "proxy_port"  => 2080
+}, {
   "id"          => "bera-dashboard",
   "domains"     => ["dashboard.geocens.ca", "dashboard.gswlab.ca", "dashboard.bera-project.org"],
   "ssl_enabled" => true,
