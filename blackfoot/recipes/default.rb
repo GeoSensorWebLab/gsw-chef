@@ -586,6 +586,7 @@ template "#{airflow_home}/airflow.cfg" do
   source "airflow.cfg.erb"
   variables({
     airflow_home:            airflow_home,
+    base_url:                node["airflow"]["base_url"],
     dag_concurrency:         node["airflow"]["dag_concurrency"],
     fernet_key:              Base64.strict_encode64(SecureRandom.hex(16)),
     max_active_runs_per_dag: node["airflow"]["max_active_runs_per_dag"],
