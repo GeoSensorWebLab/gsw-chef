@@ -496,6 +496,7 @@ postgresql_user pg_airflow_user do
 end
 
 postgresql_database pg_airflow_db do
+  template "template0"
   owner pg_airflow_user
 end
 
