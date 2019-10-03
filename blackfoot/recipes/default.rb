@@ -748,7 +748,7 @@ node["transloader"]["data_garrison_stations"].each do |station|
 end
 
 # Install Campbell Scientific ETL DAG
-node["transloader"]["data_garrison_stations"].each do |station|
+node["transloader"]["campbell_scientific_stations"].each do |station|
   station_name = station["name"].gsub(" ", "_")
   station_id   = station["station_id"]
 
