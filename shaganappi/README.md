@@ -71,7 +71,7 @@ Include `shaganappi` in your node's `run_list`:
 
 ### Chef Vault
 
-The recipe requires Chef vault items.
+The recipe requires Chef vault items, or encrypted Chef data bags. If using the latter, then `/etc/chef/encrypted_data_bag_secret` must be created on the node with the secret passphrase.
 
 #### `apps`
 
