@@ -708,13 +708,12 @@ node["transloader"]["data_garrison_stations"].each do |station|
   station_user_id = station["user_id"]
 
   template "#{airflow_home}/dags/data_garrison_etl_#{station_name}.py" do
-    source "dags/basic_etl.py.erb"
+    source "dags/long_etl.py.erb"
     variables({
       dag_id: "data_garrison_etl_#{station_name}",
       # Runs every hour at one minute past the hour.
       # Data Garrison weather stations log every 15 minutes, but only 
-      # upload every 120 minutes. We run every hour to be more likely to
-      # catch "fresh" data.
+      # upload every 120 minutes.
       schedule_interval: "1 * * * *",
       download_script:   "sudo -u transloader -i #{tl_home}/data_garrison/download #{station_id} #{station_user_id}",
       upload_script:     "sudo -u transloader -i #{tl_home}/data_garrison/upload #{station_id} #{station_user_id}",
