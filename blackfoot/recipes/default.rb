@@ -373,6 +373,14 @@ node["transloader"]["data_garrison_stations"].each do |stn|
         --user_id #{stn["user_id"]} \
         --station_id #{stn["station_id"]} \
         --cache "#{cache_dir}" \
+        --key "name" \
+        --value "#{stn["name"]}"
+
+      ruby transload set metadata \
+        --provider data_garrison \
+        --user_id #{stn["user_id"]} \
+        --station_id #{stn["station_id"]} \
+        --cache "#{cache_dir}" \
         --key "latitude" \
         --value "#{stn["latitude"]}"
 
