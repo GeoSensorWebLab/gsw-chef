@@ -799,11 +799,6 @@ directory node["dashboard"]["prefix"] do
   action :create
 end
 
-git node["dashboard"]["prefix"] do
-  repository node["dashboard"]["repository"]
-  user tl_user
-end
-
 execute "Install npm dependencies" do
   cwd node["dashboard"]["prefix"]
   user tl_user
@@ -812,6 +807,7 @@ execute "Install npm dependencies" do
     USER: tl_user
   })
   command "npm install"
+  action :nothing
 end
 
 execute "Build site to static files" do
@@ -822,6 +818,15 @@ execute "Build site to static files" do
     USER: tl_user
   })
   command "node_modules/.bin/ember build --environment production"
+  action :nothing
+end
+
+git node["dashboard"]["prefix"] do
+  repository node["dashboard"]["repository"]
+  user tl_user
+  # Only install/build when the git code changes
+  notifies :run, "execute[Install npm dependencies]"
+  notifies :run, "execute[Build site to static files]"
 end
 
 # Set up nginx virtual host
