@@ -422,7 +422,7 @@ end
 # Select all hosts that have munin-node installed
 # I tried to do a node search for nodes that have 'munin-node' installed
 # but for an unknown reason only the 'crowchild' node shows up.
-munin_nodes = ['shaganappi', 'airport']
+munin_nodes = ['shaganappi', 'airport', 'blackfoot']
 munin_hosts = search(:node, "*:*")
 
 munin_hosts = munin_hosts.select { |n|
