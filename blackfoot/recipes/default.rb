@@ -854,3 +854,33 @@ end
 file "/etc/nginx/sites-enabled/default" do
   action :delete
 end
+
+##############################
+# Install Munin for Monitoring
+##############################
+# Munin server is not installed; instead, munin-node will push results
+# to the monitoring node (crowchild).
+package "munin-node"
+
+# Enable plugins by creating links in /etc/munin/plugins/
+# Running this a second time (after the `base_monitoring` recipe) will
+# cause new plugins to be recognized.
+execute 'enable default munin node plugins' do
+  command 'munin-node-configure --suggest --shell | sh'
+end
+
+# Servers that are allowed to connect to this munin-node instance
+servers = search(:node, "name:crowchild")
+
+template '/etc/munin/munin-node.conf' do
+  source 'munin-node.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '644'
+  variables(servers: servers)
+end
+
+service 'munin-node' do
+  action :restart
+end
+
