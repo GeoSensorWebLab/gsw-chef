@@ -17,7 +17,10 @@
 # limitations under the License.
 require 'securerandom'
 
+##############################
 # Install build tools for Ruby
+##############################
+
 package 'build-essential' do
   action :nothing
 end.run_action(:install)
@@ -28,7 +31,9 @@ chef_gem 'bcrypt' do
 end.run_action(:install)
 require 'bcrypt'
 
+##################################
 # 1. Install Icinga Apt Repository
+##################################
 # https://packages.icinga.com/ubuntu/
 
 apt_repository 'icinga' do
@@ -38,7 +43,9 @@ apt_repository 'icinga' do
   key 'https://packages.icinga.com/icinga.key'
 end
 
+#####################
 # 2. Install Icinga 2
+#####################
 # https://icinga.com/docs/icinga2/latest/doc/02-getting-started/
 
 package 'icinga2'
@@ -47,7 +54,9 @@ service 'icinga2' do
   action :nothing
 end
 
+####################################
 # 3. Install PostgreSQL for Icinga 2
+####################################
 
 postgresql_server_install 'postgresql-10' do
   version '10'
@@ -137,8 +146,11 @@ template '/etc/icinga2/conf.d/api-users.conf' do
   notifies :restart, 'service[icinga2]', :delayed
 end
 
+######################################
 # 4. Install Apache, PHP, Icinga Web 2
+######################################
 # https://icinga.com/docs/icingaweb2/latest/doc/02-Installation/
+
 package %w(apache2 libapache2-mod-php icingaweb2 icingacli)
 
 service 'apache2' do
