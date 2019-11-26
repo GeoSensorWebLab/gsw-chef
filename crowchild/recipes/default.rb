@@ -125,6 +125,15 @@ execute "Enable IDO PostgreSQL module" do
   notifies :restart, 'service[icinga2]', :delayed
 end
 
+# Link setup module
+link "/etc/icingaweb2/modules/setup" do
+  to "/usr/share/icingaweb2/modules/setup"
+end
+
+link "/etc/icingaweb2/enabledModules/setup" do
+  to "/etc/icingaweb2/modules/setup"
+end
+
 # Enable Icinga 2 REST API
 execute "able Icinga 2 REST API" do
   command "icinga2 api setup"
