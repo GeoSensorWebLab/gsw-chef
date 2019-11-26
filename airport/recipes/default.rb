@@ -41,3 +41,18 @@ end
 service "renderd" do
   action :restart
 end
+
+# Servers that are allowed to connect to this munin-node instance
+servers = search(:node, "name:crowchild")
+
+template '/etc/munin/munin-node.conf' do
+  source 'munin-node.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '644'
+  variables(servers: servers)
+end
+
+service 'munin-node' do
+  action :restart
+end
