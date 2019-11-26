@@ -380,7 +380,7 @@ unless node['crowchild']['ignore_real_certs']
   execute 'get certs' do
     command "certbot certonly -n --agree-tos -m #{https_admin_email} \
     --webroot -w '/usr/share/icingaweb2/public' \
-    -d monitoring.gswlab.ca,monitoring.arcticconnect.ca"
+    -d monitoring.gswlab.ca"
   end
 
   template '/etc/apache2/sites-available/monitoring-ssl.conf' do
