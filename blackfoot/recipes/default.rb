@@ -590,6 +590,12 @@ systemd_unit "airflow-scheduler.service" do
   action :create
 end
 
+# Store Airflow logs on common logs path
+airflow_logs_directory = node["etl"]["log_dir"] + "/airflow"
+directory airflow_logs_directory do
+  action :create
+end
+
 template "#{airflow_home}/airflow.cfg" do
   source "airflow.cfg.erb"
   variables({
@@ -597,6 +603,7 @@ template "#{airflow_home}/airflow.cfg" do
     base_url:                node["airflow"]["base_url"],
     dag_concurrency:         node["airflow"]["dag_concurrency"],
     fernet_key:              Base64.strict_encode64(SecureRandom.hex(16)),
+    logs_directory:          airflow_logs_directory,
     max_active_runs_per_dag: node["airflow"]["max_active_runs_per_dag"],
     parallelism:             node["airflow"]["parallelism"],
     pg_connection:           "#{pg_airflow_user}:#{pg_airflow_pass}@localhost:5432/#{pg_airflow_db}",
