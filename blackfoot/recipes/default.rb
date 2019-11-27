@@ -803,6 +803,13 @@ node["transloader"]["campbell_scientific_stations"].each do |station|
   end
 end
 
+# Install DAG for deleting old Airflow log files
+template "#{airflow_home}/dags/airflow-log-cleanup.py" do
+  source "dags/airflow-log-cleanup.py"
+  action :create
+  notifies :restart, "systemd_unit[airflow-scheduler.service]"
+end
+
 ########################
 # Install Sensors Web UI
 ########################
