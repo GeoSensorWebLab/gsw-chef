@@ -904,7 +904,7 @@ end
 
 template "#{munin_plugins_dir}/etl_stats" do
   source "munin-plugins/etl_stats.rb"
-  mode 755
+  mode '755'
   variables({
     log_dir: "/srv/logs",
     duration: 3600
