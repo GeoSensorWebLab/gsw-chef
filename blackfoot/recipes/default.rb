@@ -894,6 +894,27 @@ template '/etc/munin/munin-node.conf' do
   variables(servers: servers)
 end
 
+# Install custom plugins
+munin_plugins_dir = "/opt/munin/plugins"
+
+directory munin_plugins_dir do
+  recursive true
+  action :create
+end
+
+template "#{munin_plugins_dir}/etl_stats" do
+  source "munin-plugins/etl_stats.rb"
+  mode 755
+  variables({
+    log_dir: "/srv/logs",
+    duration: 3600
+  })
+end
+
+link "/etc/munin/plugins/etl_stats" do
+  to "#{munin_plugins_dir}/etl_stats"
+end
+
 service 'munin-node' do
   action :restart
 end

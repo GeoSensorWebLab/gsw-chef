@@ -1,0 +1,249 @@
+#!/usr/local/bin/ruby
+# This file is managed by Chef.
+# 
+# Script to read ETL download and upload stats from GSW Data Transloader
+# log files, and output statistics for Munin. Intended to be ran once 
+# an hour instead of every five minutes because statistics change slowly
+# with the ETL.
+# 
+# License: MIT
+# Author: James Badger (<jpbadger@ucalgary.ca>)
+require 'time'
+require 'zlib'
+
+# directory with ETL logs
+log_dir = "<%= @log_dir %>"
+
+# Duration between runs in seconds
+duration = <%= @duration %>
+
+# Only collect log values after this timestamp.
+# Note that it is assumed the log timezone is the same as the script
+# timezone.
+collection_time = Time.now - duration
+
+# Fixed list of categories for stats. This is necessary for the munin
+# chart to be initialized.
+CATEGORIES = [
+  "CampbellScientific",
+  "DataGarrison",
+  "EnvironmentCanada",
+  "Other"
+].sort
+
+if ARGV[0] == "config"
+  # Download Chart Config
+  puts <<~EOH
+    multigraph etl_downloads
+    graph_args -l 1 --logarithmic
+    graph_category etl
+    graph_info Download statistics for ETL processes
+    graph_title observation download throughput
+    graph_vlabel observations
+    graph_total total
+  EOH
+
+  CATEGORIES.each do |category|
+    puts "#{category}.label #{category}"
+    puts "#{category}.draw LINE"
+    puts "#{category}.type GAUGE"
+    puts "#{category}.min 0"
+  end
+
+  puts ""
+
+  # Upload Charts Config
+  CATEGORIES.each do |category|
+    puts <<~EOH
+      multigraph etl_uploads_#{category}
+      graph_args -l 0
+      graph_category etl
+      graph_info Upload statistics for ETL processes for #{category}
+      graph_title observation upload throughput (#{category})
+      graph_vlabel observations
+      unavailable.label Unavailable
+      unavailable.draw AREASTACK
+      created.label Created
+      created.draw AREASTACK
+      updated.label Updated
+      updated.draw AREASTACK
+      reused.label Reused
+      reused.draw AREASTACK
+      total.label Total
+      total.draw LINE
+
+    EOH
+  end
+
+  exit 0
+end
+
+def match_category(string)
+  value = CATEGORIES.detect do |cat|
+    string.include?(cat)
+  end
+  value || "Other"
+end
+
+###########################
+# Parse Download Statistics
+###########################
+
+# List of log files. Previously rotated file is also checked in case
+# a log rotate happened between script runs.
+download_logs = ["#{log_dir}/download.log", "#{log_dir}/download.log.1.gz"]
+
+download_statistic_regex = /^([^ ]+) ([^ ]+) I ([^ ]+) ([^ ]+) -- Downloaded Observations: (\d{1,})$/
+
+collective_download_statistics = CATEGORIES.reduce({}) do |memo, category|
+  memo[category] = 0
+  memo
+end
+
+# Iteratively parse log files
+download_logs.each do |log_file|
+  if !File.exists?(log_file)
+    next
+  end
+
+  # determine if they are gzipped
+  gzipped = log_file.end_with?(".gz")
+
+  # Match lines that contain download statistics
+  stat_lines = []
+
+  File.open(log_file) do |file|
+    if gzipped
+      file = Zlib::GzipReader.new(file)
+    end
+
+    file.each_line do |line|
+      # This replaces any invalid characters in the log file, usually 
+      # from logged HTTP responses.
+      line.encode!("ISO-8859-1", invalid: :replace, replace: " ")
+      stat_lines.push(line) if download_statistic_regex.match?(line)
+    end
+
+    if gzipped
+      file.close
+    end
+  end
+
+  # Filter by lines that occurred in last duration
+  stat_lines.keep_if do |line|
+    # Extract date from line
+    time_string = line.split(" ").slice(0,2).join(" ")
+    # Parse date
+    line_time = Time.parse(time_string)
+    line_time > collection_time
+  end
+
+  # Extract data provider and counts from lines
+  collective_download_statistics = stat_lines.reduce(collective_download_statistics) do |memo, line|
+    # Extract provider 
+    match_info = download_statistic_regex.match(line)
+    provider = match_category(match_info[4].split("::")[1])
+    memo[provider] ||= 0
+
+    # Add download count
+    memo[provider] += match_info[5].to_i
+
+    memo
+  end
+end
+
+#########################
+# Parse Upload Statistics
+#########################
+
+# List of log files
+upload_logs = ["#{log_dir}/upload.log", "#{log_dir}/upload.log.1.gz"]
+
+upload_statistic_regex = /^([^ ]+) ([^ ]+) I ([^ ]+) ([^ ]+) -- ([^:]+): (\d{1,})$/
+
+collective_upload_statistics = CATEGORIES.reduce({}) do |memo, category|
+  memo[category] = {
+    total:       0,
+    unavailable: 0,
+    created:     0,
+    updated:     0,
+    reused:      0
+  }
+  memo
+end
+
+# Iteratively parse log files
+upload_logs.each do |log_file|
+  if !File.exists?(log_file)
+    next
+  end
+
+  # determine if they are gzipped
+  gzipped = log_file.end_with?(".gz")
+
+  # Match lines that contain download statistics
+  stat_lines = []
+
+  File.open(log_file) do |file|
+    if gzipped
+      file = Zlib::GzipReader.new(file)
+    end
+
+    file.each_line do |line|
+      # This replaces any invalid characters in the log file, usually 
+      # from logged HTTP responses.
+      line.encode!("ISO-8859-1", invalid: :replace, replace: " ")
+      stat_lines.push(line) if upload_statistic_regex.match?(line)
+    end
+
+    if gzipped
+      file.close
+    end
+  end
+
+  # Filter by lines that occurred in last duration
+  stat_lines.keep_if do |line|
+    # Extract date from line
+    time_string = line.split(" ").slice(0,2).join(" ")
+    # Parse date
+    line_time = Time.parse(time_string)
+    line_time > collection_time
+  end
+
+  # Extract data provider and counts from lines
+  collective_upload_statistics = stat_lines.reduce(collective_upload_statistics) do |memo, line|
+    # Extract provider 
+    match_info = upload_statistic_regex.match(line)
+    provider = match_category(match_info[4].split("::")[1])
+    group = case match_info[5]
+    when "Uploading Observations" then :total
+    when "Entities unavailable for upload" then :unavailable
+    when "Entities created for upload" then :created
+    when "Entities updated for upload" then :updated
+    when "Entities reused for upload" then :reused
+    end
+
+    memo[provider][group] += match_info[6].to_i
+    memo
+  end
+end
+
+#######################
+# Generate Munin Output
+#######################
+
+puts "multigraph etl_downloads"
+collective_download_statistics.each do |provider, value|
+  puts "#{provider}.value #{value}"
+end
+puts ""
+
+collective_upload_statistics.each do |provider, values|
+  puts "multigraph etl_uploads_#{provider}"
+  puts "unavailable.value #{values[:unavailable]}"
+  puts "created.value #{values[:created]}"
+  puts "updated.value #{values[:updated]}"
+  puts "reused.value #{values[:reused]}"
+  puts "total.value #{values[:total]}"
+  puts ""
+end
