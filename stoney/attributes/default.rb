@@ -63,7 +63,7 @@ default["stoney"]["vhosts"] = [{
   "proxy_port"  => 2080
 }, {
   "id"          => "bera-dashboard",
-  "domains"     => ["dashboard.geocens.ca", "dashboard.gswlab.ca", "dashboard.bera-project.org"],
+  "domains"     => ["dashboard.geocens.ca", "dashboard.gswlab.ca"],
   "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
