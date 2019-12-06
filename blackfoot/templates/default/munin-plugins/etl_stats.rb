@@ -40,7 +40,6 @@ if ARGV[0] == "config"
     graph_info Download statistics for ETL processes
     graph_title observation download throughput
     graph_vlabel observations
-    graph_total total
   EOH
 
   CATEGORIES.each do |category|
