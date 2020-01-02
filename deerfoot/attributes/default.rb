@@ -21,10 +21,10 @@ default["tomcat-native"]["download_url"] = "https://archive.apache.org/dist/tomc
 default["tomcat-native"]["checksum_url"] = "https://archive.apache.org/dist/tomcat/tomcat-connectors/native/1.2.23/source/tomcat-native-1.2.23-src.tar.gz.sha512"
 default["tomcat-native"]["checksum_type"] = "SHA512"
 
-default["ant"]["version"] = "1.10.5"
+default["ant"]["version"] = "1.10.7"
 default["ant"]["prefix"] = "/opt/java"
-default["ant"]["download_url"] = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz"
-default["ant"]["checksum_url"] = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz.sha512"
+default["ant"]["download_url"] = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.7-bin.tar.gz"
+default["ant"]["checksum_url"] = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.7-bin.tar.gz.sha512"
 default["ant"]["checksum_type"] = "SHA512"
 
 default["gdal"]["version"] = "2.4.1"
