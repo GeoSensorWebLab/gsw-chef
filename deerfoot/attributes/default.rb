@@ -27,10 +27,10 @@ default["ant"]["download_url"] = "https://archive.apache.org/dist/ant/binaries/a
 default["ant"]["checksum_url"] = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.7-bin.tar.gz.sha512"
 default["ant"]["checksum_type"] = "SHA512"
 
-default["gdal"]["version"] = "2.4.1"
+default["gdal"]["version"] = "2.4.3"
 default["gdal"]["prefix"] = "/opt/gdal"
-default["gdal"]["download_url"] = "http://download.osgeo.org/gdal/2.4.1/gdal-2.4.1.tar.gz"
-default["gdal"]["checksum_url"] = "http://download.osgeo.org/gdal/2.4.1/gdal-2.4.1.tar.gz.md5"
+default["gdal"]["download_url"] = "https://download.osgeo.org/gdal/2.4.3/gdal-2.4.3.tar.gz"
+default["gdal"]["checksum_url"] = "https://download.osgeo.org/gdal/2.4.3/gdal-2.4.3.tar.gz.md5"
 default["gdal"]["checksum_type"] = "MD5"
 
 default["geoserver"]["version"] = "2.15.1"
