@@ -22,6 +22,9 @@ def filename_from_url(url)
   File.basename(uri.path)
 end
 
+# Update apt cache before installing any packages
+apt_update
+
 # Install fontconfig so Java apps properly load pages with fonts
 package "fontconfig"
 
