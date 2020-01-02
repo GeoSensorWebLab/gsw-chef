@@ -9,7 +9,7 @@ Cookbook for setting up a node with WMS/WMTS services:
 * tomcat-native
 * Map source data from various sources
 
-Configuration of layers in GeoServer must be done manually after the chef-client run.
+Configuration of layers in GeoServer must be done **manually** after the chef-client run.
 
 ### OPTIONAL Manual Configuration
 
