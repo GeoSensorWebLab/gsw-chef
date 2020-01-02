@@ -7,3 +7,12 @@
 
 ## v0.1.0
 
+# Road Map (Future Versions)
+
+## v0.2.1
+
+* Minor version updates to software
+
+## v0.3.0
+
+* Major version updates for OpenJDK, Tomcat, GeoServer, GDAL that need to be tested in test-kitchen first!
