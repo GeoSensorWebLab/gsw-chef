@@ -182,6 +182,7 @@ bash "extract ant" do
 end
 
 # Compile GDAL, then install GDAL bindings for Java
+log "Compiling GDAL, which may take a few minutes"
 bash "compile GDAL" do
   cwd gdal_home
   environment({
@@ -292,6 +293,7 @@ end
 package %w(libapr1 libapr1-dev libssl-dev)
 
 # Compile tomcat-native
+log "Compiling tomcat-native, which may take a few minutes"
 bash "compile tomcat-native" do
   cwd "#{tomcat_native_home}/native"
   environment({
