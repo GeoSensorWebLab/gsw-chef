@@ -23,8 +23,8 @@ default["tomcat-native"]["checksum_type"] = "SHA512"
 
 default["ant"]["version"] = "1.10.5"
 default["ant"]["prefix"] = "/opt/java"
-default["ant"]["download_url"] = "http://apache.mirror.colo-serv.net//ant/binaries/apache-ant-1.10.5-bin.tar.gz"
-default["ant"]["checksum_url"] = "https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz.sha512"
+default["ant"]["download_url"] = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz"
+default["ant"]["checksum_url"] = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz.sha512"
 default["ant"]["checksum_type"] = "SHA512"
 
 default["gdal"]["version"] = "2.4.1"
