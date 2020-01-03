@@ -256,7 +256,7 @@ bash "extract GeoServer GDAL plugin" do
     chown -R #{node["tomcat"]["user"]} #{tomcat_home}/webapps/geoserver/WEB-INF/lib
   EOH
   timeout 120
-  not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-gdal-plugin") }
+  not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver/WEB-INF/lib/gs-gdal-#{node["geoserver"]["version"]}.jar") }
 end
 
 #################################
@@ -276,7 +276,7 @@ bash "extract GeoServer CSS plugin" do
     cp geoserver-css-plugin/*.jar "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
     chown -R #{node["tomcat"]["user"]} #{tomcat_home}/webapps/geoserver/WEB-INF/lib
   EOH
-  not_if { ::File.exists?("#{node["geoserver"]["prefix"]}/geoserver-css-plugin") }
+  not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver/WEB-INF/lib/gs-css-#{node["geoserver"]["version"]}.jar") }
 end
 
 ######################
