@@ -27,7 +27,10 @@ When upgrading Tomcat, the attributes file must be updated with new version numb
   * `/opt/tomcat-apache-tomcat-*/webapps/geoserver/data`
 * Restart Tomcat
 * Run chef-client on node to confirm upgrade works
+  * Check the GeoServer Server Status page to ensure the GDAL and CSS modules have been installed correctly
 * Optionally, delete old Tomcat/GeoServer installation
+
+The GeoWebCache tiles stored in `/srv/data/tiles` will need to be deleted and re-created, as the tile cache database isn't migrated.
 
 ## Supported Platforms
 
