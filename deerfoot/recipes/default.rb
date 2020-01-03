@@ -250,6 +250,7 @@ bash "extract GeoServer GDAL plugin" do
       sleep 10
       echo "Waiting for GeoServer lib directory to be created"
     done
+    rm -rf geoserver-gdal-plugin
     unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_gdal_filename}" -d geoserver-gdal-plugin
     cp geoserver-gdal-plugin/*.jar "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
     cp "#{gdal_home}/swig/java/gdal.jar" "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
@@ -272,6 +273,7 @@ end
 bash "extract GeoServer CSS plugin" do
   cwd node["geoserver"]["prefix"]
   code <<-EOH
+    rm -rf geoserver-css-plugin
     unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_css_filename}" -d geoserver-css-plugin
     cp geoserver-css-plugin/*.jar "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
     chown -R #{node["tomcat"]["user"]} #{tomcat_home}/webapps/geoserver/WEB-INF/lib
