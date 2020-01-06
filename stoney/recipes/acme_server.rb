@@ -2,7 +2,7 @@
 # Cookbook Name:: stoney
 # Recipe:: acme_server
 #
-# Copyright 2019 GeoSensorWeb Lab, University of Calgary
+# Copyright 2019–2020 GeoSensorWeb Lab, University of Calgary
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
