@@ -3,4 +3,4 @@ source 'https://supermarket.chef.io'
 metadata
 
 # List Private Cookbooks (not from Chef supermarket) here
-cookbook 'maps_server', git: '../maps_server'
+cookbook 'maps_server', path: '../maps_server'
