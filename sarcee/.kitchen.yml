@@ -3,7 +3,7 @@ driver:
   name: vagrant
   customize:
     cableconnected1: 'on'
-    memory: 9182
+    memory: 8192
     cpus: 6
   network:
     - ["private_network", { ip: "192.168.33.90" }]
