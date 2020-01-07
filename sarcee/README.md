@@ -96,7 +96,7 @@ Sample user:
 
 Users in the `dokku` group will have their SSH keys added to the keys for Dokku.
 
-### 2019 Apps
+### Apps Deployed and Running in 2020
 
 * abm-portal
 * arctic-portal
