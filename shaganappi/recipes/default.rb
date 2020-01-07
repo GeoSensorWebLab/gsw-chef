@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+apt_update
+
 chef_gem 'chef-vault' do
   compile_time true if respond_to?(:compile_time)
 end
