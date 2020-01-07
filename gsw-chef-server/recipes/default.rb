@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: gsw-cookbook-template
+# Cookbook Name:: gsw-chef-server
 # Recipe:: default
 #
 # Copyright 2018–2020 GeoSensorWeb Lab, University of Calgary

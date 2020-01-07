@@ -19,7 +19,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[gsw-cookbook-template::default]
+      - recipe[gsw-chef-server::default]
     verifier:
       inspec_tests:
         - test/smoke/default

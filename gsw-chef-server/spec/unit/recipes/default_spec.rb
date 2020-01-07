@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: gsw-cookbook-template
+# Cookbook Name:: gsw-chef-server
 # Spec:: default
 #
 # Copyright 2018–2020 GeoSensorWeb Lab, University of Calgary
@@ -18,7 +18,7 @@
 
 require 'spec_helper'
 
-describe 'gsw-cookbook-template::default' do
+describe 'gsw-chef-server::default' do
   context 'When all attributes are default, on an unspecified platform' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new
