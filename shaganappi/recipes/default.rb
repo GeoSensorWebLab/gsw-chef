@@ -52,9 +52,12 @@ end
 
 # Create the database cluster as the Chef resources cannot handle 
 # changing to a different data directory without exploding
-execute 'create postgres cluster' do
-  command "pg_createcluster -d \"#{node['postgresql']['data_directory']}\" \
-  --locale en_US.UTF-8 --start #{node['postgresql']['version']} main"
+bash 'create postgres cluster' do
+  code <<~EOH
+    pg_dropcluster --stop #{node['postgresql']['version']} main
+    pg_createcluster -d \"#{node['postgresql']['data_directory']}\" \
+      --locale en_US.UTF-8 --start #{node['postgresql']['version']} main
+  EOH
   only_if { ::Dir.empty?(node['postgresql']['data_directory']) }
 end
 
