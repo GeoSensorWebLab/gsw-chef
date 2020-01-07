@@ -1,5 +1,15 @@
 # Changelog for shaganappi
 
+## v1.0.0
+
+Stable release.
+
+* Install NTP daemon for time synchronization
+* Send Munin data to central Munin server
+* Upgrade to Ruby 2.7.0
+* Unlock gem versions
+* Minor updates to fix deployment of PostgreSQL on fresh node
+
 ## v0.3.0
 
 * Fix bug where `postgres` user was used before being created by a PostgreSQL installation
