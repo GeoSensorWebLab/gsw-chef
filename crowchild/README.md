@@ -31,7 +31,7 @@ $ bundle exec knife cookbook upload . -ad -o ../berks-cookbooks
 ...
 $ knife cookbook list
 ...
-crowchild    0.1.0
+crowchild    1.0.0
 ```
 
 Bootstrapping a node with this cookbook, using Chef Server:

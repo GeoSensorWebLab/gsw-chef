@@ -1,4 +1,11 @@
-# Changelog for crowchild
+# Changelog for `crowchild` node cookbook
+
+## v1.0.0
+
+* Install the Icinga CLI setup module when configuring Icinga
+* Allow Munin data from `airport`, `blackfoot` nodes
+* Upgrade to Ruby 2.7.0
+* Auto-accept Chef license for test-kitchen
 
 ## v0.3.1
 
