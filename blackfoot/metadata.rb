@@ -6,7 +6,7 @@ description      'Installs/Configures blackfoot'
 long_description 'Installs/Configures blackfoot'
 # issues_url 'https://github.com/<insert_org_here>/gsw-chef/issues' if respond_to?(:issues_url)
 # source_url 'https://github.com/<insert_org_here>/gsw-chef' if respond_to?(:source_url)
-version          '0.2.0'
+version          '1.0.0'
 privacy          true
 
 # Public Cookbooks
