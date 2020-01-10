@@ -56,3 +56,17 @@ end
 service 'munin-node' do
   action :restart
 end
+
+# Add config to redirect route URL to Arctic Web Map information site
+template "/etc/apache2/sites-available/awm.conf" do
+  source "apache/awm.conf.erb"
+  variables({
+  })
+  notifies :reload, "service[apache2]"
+end
+
+execute "enable awm redirect apache site" do
+  command "a2ensite awm"
+  not_if { ::File.exists?("/etc/apache2/sites-enabled/awm.conf") }
+  notifies :reload, "service[apache2]"
+end
