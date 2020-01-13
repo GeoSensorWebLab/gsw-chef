@@ -15,10 +15,10 @@ default['icinga2']['plugins_directory'] = '/usr/lib/nagios/plugins'
 # I recommend keeping this array sorted by names.
 default['icinga2']['host_objects'] = [
 {
-  name: "banff",
-  address: "199.116.235.84",
-  address6: "2605:fd00:4:1000:f816:3eff:feac:7e73",
-  groups: ["arcticconnect"],
+  name: "airport",
+  address: "10.1.14.229",
+  address6: "2605:fd00:4:1000:f816:3eff:fe37:c7b3",
+  groups: ["geocens"],
   check_command: "hostalive"
 },
 {
@@ -30,8 +30,8 @@ default['icinga2']['host_objects'] = [
 },
 {
   name: "blackfoot",
-  address: "10.1.11.89",
-  address6: "2605:fd00:4:1000:f816:3eff:fe2d:6f0e",
+  address: "10.1.3.111",
+  address6: "2605:fd00:4:1000:f816:3eff:fec5:a91d",
   groups: ["arcticconnect"],
   check_command: "hostalive"
 },
@@ -50,10 +50,10 @@ default['icinga2']['host_objects'] = [
   check_command: "hostalive"
 },
 {
-  name: "glenmore",
-  address: "10.1.0.250",
-  address6: "2605:fd00:4:1000:f816:3eff:fef4:fdd9",
-  groups: ["geocens"],
+  name: "deerfoot",
+  address: "10.1.6.106",
+  address6: "2605:fd00:4:1000:f816:3eff:fe63:b394",
+  groups: ["arcticconnect"],
   check_command: "hostalive"
 },
 {
@@ -80,7 +80,7 @@ default['icinga2']['host_objects'] = [
 {
   name: "stoney",
   address: "199.116.235.80",
-  address6: "2605:fd00:4:1000:f816:3eff:fee4:ecae",
+  address6: "2605:fd00:4:1000:f816:3eff:fe17:ad18",
   groups: ["geocens"],
   check_command: "hostalive"
 }
