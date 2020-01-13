@@ -36,20 +36,6 @@ default['icinga2']['host_objects'] = [
   check_command: "hostalive"
 },
 {
-  name: "bow",
-  address: "162.246.156.118",
-  address6: "2605:fd00:4:1000:f816:3eff:fe83:3438",
-  groups: ["arcticconnect"],
-  check_command: "hostalive"
-},
-{
-  name: "ctscience",
-  address: "10.1.0.194",
-  address6: "2605:fd00:4:1000:f816:3eff:feb4:809e",
-  groups: ["geocens"],
-  check_command: "hostalive"
-},
-{
   name: "deerfoot",
   address: "10.1.6.106",
   address6: "2605:fd00:4:1000:f816:3eff:fe63:b394",
