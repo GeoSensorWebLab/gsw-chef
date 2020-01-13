@@ -50,32 +50,6 @@ default['icinga2']['service_objects'] = [
   }
 },
 {
-  name: "dataservice.gswlab.ca",
-  host_name: "sarcee",
-  display_name: "Data Service",
-  check_command: "http",
-  check_interval: "600s",
-  retry_interval: "300s",
-  groups: [],
-  vars: {
-    "http_address" => "dataservice.gswlab.ca",
-    "http_vhost"   => "dataservice.gswlab.ca"
-  }
-},
-{
-  name: "dataservice-web.gswlab.ca",
-  host_name: "sarcee",
-  display_name: "Data Service Proxy",
-  check_command: "http",
-  check_interval: "600s",
-  retry_interval: "300s",
-  groups: [],
-  vars: {
-    "http_address" => "dataservice-web.gswlab.ca",
-    "http_vhost"   => "dataservice-web.gswlab.ca"
-  }
-},
-{
   name: "geocens.gswlab.ca",
   host_name: "sarcee",
   display_name: "GeoCENS Portal",
@@ -99,32 +73,6 @@ default['icinga2']['service_objects'] = [
   vars: {
     "http_address" => "eaglewatch.gswlab.ca",
     "http_vhost"   => "eaglewatch.gswlab.ca"
-  }
-},
-{
-  name: "errbit.gswlab.ca",
-  host_name: "sarcee",
-  display_name: "Errbit",
-  check_command: "http",
-  check_interval: "600s",
-  retry_interval: "300s",
-  groups: [],
-  vars: {
-    "http_address" => "errbit.gswlab.ca",
-    "http_vhost"   => "errbit.gswlab.ca"
-  }
-},
-{
-  name: "ows-search.gswlab.ca",
-  host_name: "sarcee",
-  display_name: "OGC Web Services search",
-  check_command: "http",
-  check_interval: "600s",
-  retry_interval: "300s",
-  groups: [],
-  vars: {
-    "http_address" => "ows-search.gswlab.ca",
-    "http_vhost"   => "ows-search.gswlab.ca"
   }
 },
 {
