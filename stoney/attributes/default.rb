@@ -34,7 +34,7 @@ default["stoney"]["vhosts"] = [{
 }, {
   "id"          => "arctic-bio-map",
   "domains"     => ["abm-demo.gswlab.ca", "arctic-biomap-sightings.gswlab.ca", "abm-demo.arcticconnect.ca", "sightings.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
@@ -46,7 +46,7 @@ default["stoney"]["vhosts"] = [{
 }, {
   "id"          => "arctic-sensor-web",
   "domains"     => ["arctic-sensor-web.gswlab.ca", "sensorweb.arcticconnect.ca"],
-  "ssl_enabled" => false,
+  "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
