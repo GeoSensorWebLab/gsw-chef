@@ -103,12 +103,6 @@ default["stoney"]["vhosts"] = [{
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
-}, {
-  "id"          => "dataservice-web",
-  "domains"     => ["dataservice-web.geocens.ca", "dataservice-web.gswlab.ca"],
-  "ssl_enabled" => false,
-  "proxy_host"  => "sarcee.gswlab.ca",
-  "proxy_port"  => 80
 }]
 
 # ACME Configuration for HTTPS
