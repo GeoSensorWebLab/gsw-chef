@@ -89,6 +89,19 @@ default['icinga2']['service_objects'] = [
   }
 },
 {
+  name: "maps.arcticconnect.ca",
+  host_name: "deerfoot",
+  display_name: "ArcticConnect GeoServer",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "maps.arcticconnect.ca",
+    "http_vhost"   => "maps.arcticconnect.ca"
+  }
+},
+{
   name: "portal.arcticconnect.ca",
   host_name: "sarcee",
   display_name: "ArcticConnect Portal",
@@ -246,6 +259,20 @@ default['icinga2']['service_objects'] = [
   vars: {
     "http_address" => "chef.gswlab.ca",
     "http_vhost"   => "chef.gswlab.ca",
+    "http_ssl"     => true
+  }
+},
+{
+  name: "https-maps.arcticconnect.ca",
+  host_name: "deerfoot",
+  display_name: "HTTPS ArcticConnect GeoServer",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: ["arcticconnect"],
+  vars: {
+    "http_address" => "maps.arcticconnect.ca",
+    "http_vhost"   => "maps.arcticconnect.ca",
     "http_ssl"     => true
   }
 },
