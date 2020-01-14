@@ -50,6 +50,19 @@ default['icinga2']['service_objects'] = [
   }
 },
 {
+  name: "asw-airflow.gswlab.ca",
+  host_name: "blackfoot",
+  display_name: "Arctic Sensors AirFlow",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "asw-airflow.gswlab.ca",
+    "http_vhost"   => "asw-airflow.gswlab.ca"
+  }
+},
+{
   name: "geocens.gswlab.ca",
   host_name: "sarcee",
   display_name: "GeoCENS Portal",
@@ -208,6 +221,20 @@ default['icinga2']['service_objects'] = [
 ##########################
 # HTTPS Services Section #
 ##########################
+{
+  name: "https-asw-airflow.gswlab.ca",
+  host_name: "blackfoot",
+  display_name: "Arctic Sensors AirFlow",
+  check_command: "http",
+  check_interval: "600s",
+  retry_interval: "300s",
+  groups: [],
+  vars: {
+    "http_address" => "asw-airflow.gswlab.ca",
+    "http_vhost"   => "asw-airflow.gswlab.ca",
+    "http_ssl"     => true
+  }
+},
 {
   name: "https-chef.gswlab.ca",
   host_name: "barlow",
