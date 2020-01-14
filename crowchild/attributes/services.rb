@@ -59,7 +59,8 @@ default['icinga2']['service_objects'] = [
   groups: [],
   vars: {
     "http_address" => "asw-airflow.gswlab.ca",
-    "http_vhost"   => "asw-airflow.gswlab.ca"
+    "http_vhost"   => "asw-airflow.gswlab.ca",
+    "http_expect"  => "401" # Should be a HTTP Basic challenge
   }
 },
 {
@@ -189,7 +190,8 @@ default['icinga2']['service_objects'] = [
   groups: ["arcticconnect"],
   vars: {
     "http_address" => "sightings.arcticconnect.ca",
-    "http_vhost"   => "sightings.arcticconnect.ca"
+    "http_vhost"   => "sightings.arcticconnect.ca",
+    "http_expect"  => "401" # Should be a HTTP Basic challenge
   }
 },
 {
@@ -245,7 +247,8 @@ default['icinga2']['service_objects'] = [
   vars: {
     "http_address" => "asw-airflow.gswlab.ca",
     "http_vhost"   => "asw-airflow.gswlab.ca",
-    "http_ssl"     => true
+    "http_ssl"     => true,
+    "http_expect"  => "401" # Should be a HTTP Basic challenge
   }
 },
 {
@@ -357,7 +360,8 @@ default['icinga2']['service_objects'] = [
   vars: {
     "http_address" => "sightings.arcticconnect.ca",
     "http_vhost"   => "sightings.arcticconnect.ca",
-    "http_ssl"     => true
+    "http_ssl"     => true,
+    "http_expect"  => "401" # Should be a HTTP Basic challenge
   }
 },
 {
