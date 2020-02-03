@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: gsw-cookbook-template
+# Cookbook Name:: edmonton
 # Recipe:: default
 #
 # Copyright 2020 GeoSensorWeb Lab, University of Calgary

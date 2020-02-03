@@ -1,6 +1,17 @@
-# GSW Cookbook Template
+# `edmonton` cookbook
 
-Template for building new Chef cookbooks.
+Cookbook for setting up a node with vector tile servers:
+
+* Munin
+* ZFS
+* PostgreSQL/PostGIS
+* OpenStreetMap Extracts
+* Java, Tomcat
+* GeoServer
+* Node.js
+* TileStrata
+* Mapnik
+* Apache, `mod_tile`
 
 ## Supported Platforms
 
@@ -8,34 +19,29 @@ Template for building new Chef cookbooks.
 
 ## Usage
 
-## gsw-cookbook-template
+## `edmonton::default` recipe
 
-Include `gsw-cookbook-template` in your node's `run_list`:
+Installs Munin for resource monitoring, and ZFS for storing databases and tile caches.
 
-```json
-{
-  "run_list": [
-    "recipe[gsw-cookbook-template]"
-  ]
-}
-```
+## `edmonton::postgresql` recipe
+
+Installs PostgreSQL with PostGIS and imports an OpenStreetMap extract into multiple databases (one for each projection: `EPSG:4326`, `EPSG:3857`, `EPSG:3573`).
+
+## `edmonton::geoserver` recipe
+
+Installs Java JRE, Apache Tomcat, GeoServer with vector tile plugins. Will automatically pre-configure GeoServer using its REST API.
+
+## `edmonton::tilestrata` recipe
+
+Installs Node.js and requirements for TileStrata.
+
+## `edmonton::mapnik` recipe
+
+Installs Apache, `mod_tile`, Mapnik, and necessary components for Mapnik Vector Tiles.
 
 ## Attributes
 
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['gsw-cookbook-template']['property']</tt></td>
-    <td>String</td>
-    <td>Description</td>
-    <td><tt>default value</tt></td>
-  </tr>
-</table>
+Attributes are documented in the `attributes` directory.
 
 ## License and Authors
 
