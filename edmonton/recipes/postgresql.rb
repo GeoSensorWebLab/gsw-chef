@@ -19,6 +19,14 @@
 # Set locale
 locale node["edmonton"]["locale"]
 
+# Add render user for querying database
+user node[:edmonton][:render_user] do
+  comment "renderd backend user"
+  home "/home/#{node[:edmonton][:render_user]}"
+  manage_home true
+  shell "/bin/false"
+end
+
 ####################
 # Install PostgreSQL
 ####################
@@ -199,3 +207,92 @@ node[:edmonton][:extracts].each do |extract|
   end
 end
 
+# Join extracts into one large extract file
+package "osmosis"
+
+osmosis_args = extract_file_list.collect { |f| "--read-pbf-fast #{f}" }.join(" ")
+osmosis_args += " " + (["--merge"] * (extract_file_list.length - 1)).join(" ")
+merged_extract = "#{extract_path}/extracts-merged.pbf"
+
+execute "combine extracts" do
+  command "osmosis #{osmosis_args} --write-pbf \"#{merged_extract}\""
+  timeout 3600
+  not_if { ::File.exist?(merged_extract) }
+end
+
+#################################
+# Optimize PostgreSQL for imports
+#################################
+
+# Only activate this configuration if osm2pgsql runs.
+import_conf = node[:postgresql][:settings][:defaults].merge(node[:postgresql][:settings][:import])
+
+template "import-configuration" do
+  path "/etc/postgresql/12/main/postgresql.conf"
+  source "postgresql.conf.erb"
+  owner "postgres"
+  group "postgres"
+  mode 0o644
+  variables(settings: import_conf)
+  notifies :reload, "service[postgresql]"
+  action :nothing
+end
+
+##########################
+# Create databases, tables
+##########################
+
+database_4326 = "osm_4326"
+
+# Create database user for rendering
+maps_server_user node[:edmonton][:render_user] do
+  cluster "12/main"
+  superuser true
+end
+
+maps_server_database database_4326 do
+  cluster "12/main"
+  owner node[:edmonton][:render_user]
+end
+
+maps_server_extension "postgis" do
+  cluster "12/main"
+  database database_4326
+end
+
+maps_server_extension "hstore" do
+  cluster "12/main"
+  database database_4326
+end
+
+%w[geography_columns planet_osm_nodes planet_osm_rels planet_osm_ways raster_columns raster_overviews spatial_ref_sys].each do |table|
+  maps_server_table table do
+    cluster "12/main"
+    database database_4326
+    owner node[:edmonton][:render_user]
+    permissions node[:edmonton][:render_user] => :all
+  end
+end
+
+##################################################
+# Import extract as EPSG:4326 (longitude-latitude)
+##################################################
+last_import_4326 = "#{node[:edmonton][:data_prefix]}/extract/last-import-4326"
+
+execute "import extract" do
+  command <<-EOH
+    sudo -u #{node[:edmonton][:render_user]} osm2pgsql \
+              --host /var/run/postgresql --create --slim --drop \
+              --username #{node[:edmonton][:render_user]} \
+              --database #{database_4326} -C #{node[:edmonton][:node_cache_size]} \
+              --number-processes #{node[:edmonton][:import_procs]} \
+              --hstore -E 4326 -G #{merged_extract} &&
+    date > #{last_import_4326}
+  EOH
+  cwd node[:edmonton][:data_prefix]
+  live_stream true
+  user "root"
+  timeout 86400
+  notifies :create, 'template[import-configuration]', :before
+  not_if { ::File.exists?(last_import_4326) }
+end

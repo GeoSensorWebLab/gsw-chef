@@ -27,3 +27,16 @@ default[:edmonton][:extracts] = [{
   extract_url:              "https://download.geofabrik.de/north-america/canada/nunavut-latest.osm.pbf",
   extract_checksum_url:     "https://download.geofabrik.de/north-america/canada/nunavut-latest.osm.pbf.md5"
 }]
+
+#################
+## Rendering User
+#################
+default[:edmonton][:render_user] = "render"
+
+# OSM2PGSQL Node Cache Size in Megabytes
+# Default is 800 MB.
+default[:edmonton][:node_cache_size] = 800
+
+# Number of processes to use for osm2pgsql import.
+# Should match number of threads/cores.
+default[:edmonton][:import_procs] = 6
