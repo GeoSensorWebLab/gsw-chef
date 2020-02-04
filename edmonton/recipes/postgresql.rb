@@ -106,13 +106,15 @@ package %w(gdal-bin gdal-data libgdal-dev libgdal20)
 # Install PostGIS
 package %w(postgresql-12-postgis-3 postgresql-12-postgis-3-scripts)
 
+osm2pgsql_dir = "/opt/osm2pgsql"
+
 # Install osm2pgsql
-directory "/opt/osm2pgsql" do
+directory osm2pgsql_dir do
   recursive true
   action :create
 end
 
-git "/opt/osm2pgsql" do
+git osm2pgsql_dir do
   depth 1
   repository "https://github.com/openstreetmap/osm2pgsql.git"
   reference "1.2.1"
@@ -122,3 +124,14 @@ package %w(make cmake g++ libboost-dev libboost-system-dev
   libboost-filesystem-dev libexpat1-dev zlib1g-dev
   libbz2-dev libpq-dev libproj-dev lua5.2 liblua5.2-dev)
 
+
+bash "custom install osm2pgsql" do
+  code <<-EOH
+  mkdir build && cd build
+  cmake ..
+  make
+  make install
+  EOH
+  cwd osm2pgsql_dir
+  not_if { File.exists?("/usr/local/bin/osm2pgsql") }
+end

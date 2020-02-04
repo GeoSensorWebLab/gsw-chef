@@ -35,6 +35,8 @@ In the above example, a volume mounted at `/dev/sdb` is used as the zpool. Then 
 
 Installs PostgreSQL 12 with PostGIS and imports an OpenStreetMap extract into multiple databases (one for each projection: `EPSG:4326`, `EPSG:3857`, `EPSG:3573`).
 
+`osm2pgsql` is installed from source (v1.2.1) instead of Ubuntu Apt (v0.9.4).
+
 ## `edmonton::geoserver` recipe
 
 Installs Java JRE, Apache Tomcat, GeoServer with vector tile plugins. Will automatically pre-configure GeoServer using its REST API.
