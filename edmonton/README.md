@@ -21,7 +21,15 @@ Cookbook for setting up a node with vector tile servers:
 
 ## `edmonton::default` recipe
 
-Installs Munin for resource monitoring, and ZFS for storing databases and tile caches.
+Installs Munin for resource monitoring, and ZFS for storing databases and tile caches. The ZFS Pool must be manually configured as there doesn't seem to be a way to "auto-detect" attached volumes in vagrant virtual machines. This can be done with the `zpool` command:
+
+```
+$ sudo zpool create tiledb /dev/sdb
+$ sudo zfs create tiledb/postgresql
+$ sudo zfs create tiledb/tiles
+```
+
+In the above example, a volume mounted at `/dev/sdb` is used as the zpool. Then two volumes are created for snapshot purposes at `/tiledb/postgresql` and `/tiledb/tiles`.
 
 ## `edmonton::postgresql` recipe
 

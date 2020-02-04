@@ -1,0 +1,23 @@
+# DO NOT EDIT - This file is being maintained by Chef
+
+SetEnv RRDCACHED_ADDRESS /var/run/rrdcached.sock
+
+Alias /munin/static /etc/munin/static
+<Directory /etc/munin/static>
+    Require all granted
+    Options +FollowSymLinks +SymLinksIfOwnerMatch
+</Directory>
+
+ScriptAlias /munin /usr/lib/munin/cgi/munin-cgi-html
+ScriptAlias /munin-cgi/ /usr/lib/munin/cgi/
+<Directory /usr/lib/munin/cgi/>
+    Options +FollowSymLinks +SymLinksIfOwnerMatch
+    Require all granted
+    <IfModule mod_fcgid.c>
+        SetHandler fcgid-script
+    </IfModule>
+    <IfModule !mod_fcgid.c>
+        SetHandler cgi-script
+    </IfModule>
+</Directory>
+
