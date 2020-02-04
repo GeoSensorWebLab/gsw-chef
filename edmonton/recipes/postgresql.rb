@@ -19,7 +19,9 @@
 # Set locale
 locale node["edmonton"]["locale"]
 
+####################
 # Install PostgreSQL
+####################
 # Use the PostgreSQL Apt repository for latest versions.
 apt_repository "postgresql" do
   components    ["main"]
@@ -108,7 +110,9 @@ package %w(postgresql-12-postgis-3 postgresql-12-postgis-3-scripts)
 
 osm2pgsql_dir = "/opt/osm2pgsql"
 
+###################
 # Install osm2pgsql
+###################
 directory osm2pgsql_dir do
   recursive true
   action :create
@@ -135,3 +139,63 @@ bash "custom install osm2pgsql" do
   cwd osm2pgsql_dir
   not_if { File.exists?("/usr/local/bin/osm2pgsql") }
 end
+
+###################
+# Download Extracts
+###################
+
+extract_path = "#{node[:edmonton][:data_prefix]}/extract"
+directory extract_path do
+  recursive true
+  action :create
+end
+
+# Collect the downloaded extracts file paths
+extract_file_list = []
+
+node[:edmonton][:extracts].each do |extract|
+  extract_url          = extract[:extract_url]
+  extract_checksum_url = extract[:extract_checksum_url]
+  extract_file         = "#{extract_path}/#{::File.basename(extract_url)}"
+  extract_file_list.push(extract_file)
+
+  # Download the extract
+  # Only runs if a) a downloaded file doesn't exist, 
+  # b) a date requirement for the extract hasn't been set,
+  # c) The remote file is newer than the extract date requirement
+  remote_file extract_file do
+    source extract_url
+    only_if {
+      edate = extract[:extract_date_requirement]
+      !::File.exists?(extract_file) ||
+      !edate.nil? && !edate.empty? && ::File.mtime(extract_file) < DateTime.strptime(edate).to_time
+    }
+    action :create
+  end
+
+  # If there is a checksum URL, download it and validate the extract
+  # against the checksum provided by the source. Assumes md5.
+  if !(extract_checksum_url.nil? || extract_checksum_url.empty?)
+    extract_checksum_file = "#{extract_path}/#{::File.basename(extract_checksum_url)}"
+    remote_file extract_checksum_file do
+      source extract_checksum_url
+      only_if {
+        edate = extract[:extract_date_requirement]
+        !::File.exists?(extract_checksum_file) ||
+        !edate.nil? && !edate.empty? && ::File.mtime(extract_checksum_file) < DateTime.strptime(edate).to_time
+      }
+      action :create
+    end
+
+    # MD5 check is temporarily disabled as the MD5 checksum file has the
+    # wrong reference file defined (it should be the "latest" file, but
+    # is the dated PBF file instead.)
+    # 
+    # execute "validate extract" do
+    #   command "md5sum --check #{extract_checksum_file}"
+    #   cwd ::File.dirname(extract_checksum_file)
+    #   user "root"
+    # end
+  end
+end
+
