@@ -4,7 +4,7 @@ Cookbook for setting up a node with vector tile servers:
 
 * Munin
 * ZFS
-* PostgreSQL/PostGIS
+* PostgreSQL 12/PostGIS
 * OpenStreetMap Extracts
 * Java, Tomcat
 * GeoServer
@@ -33,7 +33,7 @@ In the above example, a volume mounted at `/dev/sdb` is used as the zpool. Then 
 
 ## `edmonton::postgresql` recipe
 
-Installs PostgreSQL with PostGIS and imports an OpenStreetMap extract into multiple databases (one for each projection: `EPSG:4326`, `EPSG:3857`, `EPSG:3573`).
+Installs PostgreSQL 12 with PostGIS and imports an OpenStreetMap extract into multiple databases (one for each projection: `EPSG:4326`, `EPSG:3857`, `EPSG:3573`).
 
 ## `edmonton::geoserver` recipe
 

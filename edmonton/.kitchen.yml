@@ -35,6 +35,7 @@ suites:
   - name: default
     run_list:
       - recipe[edmonton::default]
+      - recipe[edmonton::postgresql]
     verifier:
       inspec_tests:
         - test/smoke/default

@@ -1,0 +1,1 @@
+default["edmonton"]["locale"] = "en_CA"
