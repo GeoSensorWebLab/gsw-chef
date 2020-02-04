@@ -4,6 +4,8 @@ driver:
   # Custom Vagrantfile for issue #389
   # https://github.com/test-kitchen/kitchen-vagrant/pull/389
   vagrantfile_erb: Vagrantfile.erb
+  network:
+    - ["private_network", { ip: 192.168.33.6 }]
   customize:
     cpus: 6
     memory: 24576
