@@ -1,9 +1,22 @@
 ---
 driver:
   name: vagrant
+  # Custom Vagrantfile for issue #389
+  # https://github.com/test-kitchen/kitchen-vagrant/pull/389
+  vagrantfile_erb: Vagrantfile.erb
   customize:
+    cpus: 6
+    memory: 24576
     cableconnected1: 'on'
-
+    createhd:
+      - filename: tmp/storage.vmdk
+        size: 16384
+    storageattach:
+      - storagectl: SATA Controller
+        port: 1
+        device: 0
+        type: hdd
+        medium: tmp/storage.vmdk
 provisioner:
   name: chef_zero
   always_update_cookbooks: true
