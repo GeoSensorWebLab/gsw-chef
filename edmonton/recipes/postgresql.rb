@@ -20,9 +20,9 @@
 locale node["edmonton"]["locale"]
 
 # Add render user for querying database
-user node[:edmonton][:render_user] do
+user node["edmonton"]["render_user"] do
   comment "renderd backend user"
-  home "/home/#{node[:edmonton][:render_user]}"
+  home "/home/#{node["edmonton"]["render_user"]}"
   manage_home true
   shell "/bin/false"
 end
@@ -55,19 +55,19 @@ template "/etc/postgresql/12/main/postgresql.conf" do
   owner "postgres"
   group "postgres"
   mode 0o644
-  variables(settings: node[:postgresql][:settings][:defaults])
+  variables(settings: node["postgresql"]["settings"]["defaults"])
   notifies :reload, "service[postgresql]"
-  not_if { node[:postgresql][:configured] }
+  not_if { node["postgresql"]["configured"] }
 end
 
 ruby_block "Store configuration flag" do
   block do
-    node.normal[:postgresql][:configured] = true
+    node.normal["postgresql"]["configured"] = true
   end
-  not_if { node[:postgresql][:configured] }
+  not_if { node["postgresql"]["configured"] }
 end
 
-directory node[:postgresql][:settings][:defaults][:data_directory] do
+directory node["postgresql"]["settings"]["defaults"]["data_directory"] do
   owner "postgres"
   group "postgres"
   mode "700"
@@ -78,8 +78,8 @@ end
 # Move the default database data directory to location defined in
 # attributes
 execute "move data directory" do
-  command "cp -rp /var/lib/postgresql/12/main/* #{node[:postgresql][:settings][:defaults][:data_directory]}/"
-  only_if { ::Dir.empty?(node[:postgresql][:settings][:defaults][:data_directory]) }
+  command "cp -rp /var/lib/postgresql/12/main/* #{node["postgresql"]["settings"]["defaults"]["data_directory"]}/"
+  only_if { ::Dir.empty?(node["postgresql"]["settings"]["defaults"]["data_directory"]) }
   notifies :restart, "service[postgresql]", :immediate
 end
 
@@ -90,9 +90,9 @@ package %w(liblwgeom-dev)
 
 ruby_block "Store libspatialite build flag" do
   block do
-    node.normal[:edmonton][:built_libspatialite] = true
+    node.normal["edmonton"]["built_libspatialite"] = true
   end
-  not_if { node[:edmonton][:built_libspatialite] }
+  not_if { node["edmonton"]["built_libspatialite"] }
   action :nothing
 end
 
@@ -107,7 +107,7 @@ bash "custom install libspatialite-dev" do
   apt-get install -f
   EOH
   cwd "/usr/local/src"
-  not_if { node[:edmonton][:built_libspatialite] }
+  not_if { node["edmonton"]["built_libspatialite"] }
   notifies :run, "ruby_block[Store libspatialite build flag]", :immediate
 end
 
@@ -152,7 +152,7 @@ end
 # Download Extracts
 ###################
 
-extract_path = "#{node[:edmonton][:data_prefix]}/extract"
+extract_path = "#{node["edmonton"]["data_prefix"]}/extract"
 directory extract_path do
   recursive true
   action :create
@@ -161,9 +161,9 @@ end
 # Collect the downloaded extracts file paths
 extract_file_list = []
 
-node[:edmonton][:extracts].each do |extract|
-  extract_url          = extract[:extract_url]
-  extract_checksum_url = extract[:extract_checksum_url]
+node["edmonton"]["extracts"].each do |extract|
+  extract_url          = extract["extract_url"]
+  extract_checksum_url = extract["extract_checksum_url"]
   extract_file         = "#{extract_path}/#{::File.basename(extract_url)}"
   extract_file_list.push(extract_file)
 
@@ -174,7 +174,7 @@ node[:edmonton][:extracts].each do |extract|
   remote_file extract_file do
     source extract_url
     only_if {
-      edate = extract[:extract_date_requirement]
+      edate = extract["extract_date_requirement"]
       !::File.exists?(extract_file) ||
       !edate.nil? && !edate.empty? && ::File.mtime(extract_file) < DateTime.strptime(edate).to_time
     }
@@ -188,7 +188,7 @@ node[:edmonton][:extracts].each do |extract|
     remote_file extract_checksum_file do
       source extract_checksum_url
       only_if {
-        edate = extract[:extract_date_requirement]
+        edate = extract["extract_date_requirement"]
         !::File.exists?(extract_checksum_file) ||
         !edate.nil? && !edate.empty? && ::File.mtime(extract_checksum_file) < DateTime.strptime(edate).to_time
       }
@@ -225,7 +225,7 @@ end
 #################################
 
 # Only activate this configuration if osm2pgsql runs.
-import_conf = node[:postgresql][:settings][:defaults].merge(node[:postgresql][:settings][:import])
+import_conf = node["postgresql"]["settings"]["defaults"].merge(node["postgresql"]["settings"]["import"])
 
 template "import-configuration" do
   path "/etc/postgresql/12/main/postgresql.conf"
@@ -243,7 +243,7 @@ end
 ##########################
 
 # Create database user for rendering
-maps_server_user node[:edmonton][:render_user] do
+maps_server_user node["edmonton"]["render_user"] do
   cluster "12/main"
   superuser true
 end
@@ -257,7 +257,7 @@ projections.each do |projection|
 
   maps_server_database database_name do
     cluster "12/main"
-    owner node[:edmonton][:render_user]
+    owner node["edmonton"]["render_user"]
   end
 
   maps_server_extension "postgis" do
@@ -274,8 +274,8 @@ projections.each do |projection|
     maps_server_table table do
       cluster "12/main"
       database database_name
-      owner node[:edmonton][:render_user]
-      permissions node[:edmonton][:render_user] => :all
+      owner node["edmonton"]["render_user"]
+      permissions node["edmonton"]["render_user"] => :all
     end
   end
 
@@ -284,19 +284,19 @@ projections.each do |projection|
   ################
   # A file is created after import to prevent re-import on subsequent
   # Chef runs.
-  last_import = "#{node[:edmonton][:data_prefix]}/extract/last-import-#{projection}"
+  last_import = "#{node["edmonton"]["data_prefix"]}/extract/last-import-#{projection}"
 
   execute "import extract" do
     command <<-EOH
-      sudo -u #{node[:edmonton][:render_user]} osm2pgsql \
+      sudo -u #{node["edmonton"]["render_user"]} osm2pgsql \
                 --host /var/run/postgresql --create --slim --drop \
-                --username #{node[:edmonton][:render_user]} \
-                --database #{database_name} -C #{node[:edmonton][:node_cache_size]} \
-                --number-processes #{node[:edmonton][:import_procs]} \
+                --username #{node["edmonton"]["render_user"]} \
+                --database #{database_name} -C #{node["edmonton"]["node_cache_size"]} \
+                --number-processes #{node["edmonton"]["import_procs"]} \
                 --hstore -E #{projection} -G #{merged_extract} &&
       date > #{last_import}
     EOH
-    cwd node[:edmonton][:data_prefix]
+    cwd node["edmonton"]["data_prefix"]
     live_stream true
     user "root"
     timeout 86400
@@ -312,7 +312,7 @@ projections.each do |projection|
   # increase the timeout.
   # A timestamp file is created after the run, and used to determine if
   # the resource should be re-run.
-  post_import_vacuum_file = "#{node[:edmonton][:data_prefix]}/extract/post-import-vacuum-#{projection}"
+  post_import_vacuum_file = "#{node["edmonton"]["data_prefix"]}/extract/post-import-vacuum-#{projection}"
 
   maps_server_execute "VACUUM FULL VERBOSE ANALYZE" do
     cluster "12/main"
@@ -329,7 +329,7 @@ projections.each do |projection|
 end
 
 # Optimize PostgreSQL for tile serving
-rendering_conf = node[:postgresql][:settings][:defaults].merge(node[:postgresql][:settings][:tiles])
+rendering_conf = node["postgresql"]["settings"]["defaults"].merge(node["postgresql"]["settings"]["tiles"])
 
 template "tiles-configuration" do
   path "/etc/postgresql/12/main/postgresql.conf"

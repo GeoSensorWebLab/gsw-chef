@@ -1,15 +1,15 @@
 #########
 ## Locale
 #########
-default[:edmonton][:locale] = "en_CA"
+default["edmonton"]["locale"] = "en_CA"
 
 ##################################
 ## Installation Directory Prefixes
 ##################################
 # For software packages
-default[:edmonton][:software_prefix] = "/opt"
+default["edmonton"]["software_prefix"] = "/opt"
 # For map source data downloads
-default[:edmonton][:data_prefix] = "/tiledb/data"
+default["edmonton"]["data_prefix"] = "/tiledb/data"
 
 ##################
 ## Extract Sources
@@ -22,7 +22,7 @@ default[:edmonton][:data_prefix] = "/tiledb/data"
 # Date should be ISO8601 with a timezone. Leave as nil or empty string
 # to ignore.
 # For extract URLs, use PBF files only.
-default[:edmonton][:extracts] = [{
+default["edmonton"]["extracts"] = [{
   extract_date_requirement: "2020-02-04T12:00:00+00:00",
   extract_url:              "https://download.geofabrik.de/north-america/canada/nunavut-latest.osm.pbf",
   extract_checksum_url:     "https://download.geofabrik.de/north-america/canada/nunavut-latest.osm.pbf.md5"
@@ -31,15 +31,15 @@ default[:edmonton][:extracts] = [{
 #################
 ## Rendering User
 #################
-default[:edmonton][:render_user] = "render"
+default["edmonton"]["render_user"] = "render"
 
 # OSM2PGSQL Node Cache Size in Megabytes
 # Default is 800 MB.
-default[:edmonton][:node_cache_size] = 800
+default["edmonton"]["node_cache_size"] = 800
 
 # Number of processes to use for osm2pgsql import.
 # Should match number of threads/cores.
-default[:edmonton][:import_procs] = 6
+default["edmonton"]["import_procs"] = 6
 
 ##########
 ## OpenJDK
