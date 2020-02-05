@@ -328,3 +328,12 @@ projections.each do |projection|
   end
 end
 
+# Optimize PostgreSQL for tile serving
+rendering_conf = node[:postgresql][:settings][:defaults].merge(node[:postgresql][:settings][:tiles])
+
+template "tiles-configuration" do
+  path "/etc/postgresql/12/main/postgresql.conf"
+  source "postgresql.conf.erb"
+  variables(settings: rendering_conf)
+  notifies :reload, "service[postgresql]", :immediate
+end
