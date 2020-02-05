@@ -23,17 +23,17 @@ apt_update
 package "zfsutils-linux"
 
 # Install Munin Server
-package 'munin'
-package 'apache2'
-package 'rrdcached'
-package 'libcgi-fast-perl'
-package 'libapache2-mod-fcgid'
+package "munin"
+package "apache2"
+package "rrdcached"
+package "libcgi-fast-perl"
+package "libapache2-mod-fcgid"
 
-template '/etc/default/rrdcached' do
-  source 'rrdcached.erb'
-  owner 'root'
-  group 'root'
-  mode '644'
+template "/etc/default/rrdcached" do
+  source "rrdcached.erb"
+  owner "root"
+  group "root"
+  mode "644"
 end
 
 directory "/var/lib/munin/rrdcached" do
@@ -57,8 +57,8 @@ template "/etc/munin/munin.conf" do
   variables :expiry_time => expiry_time
 end
 
-template '/etc/apache2/sites-available/munin.conf' do
-  source 'apache/munin.conf.erb'
+template "/etc/apache2/sites-available/munin.conf" do
+  source "apache/munin.conf.erb"
 end
 
 %w(fcgid rewrite headers).each do |apache_module|
@@ -76,9 +76,9 @@ service "apache2" do
 end
 
 # Install Munin Client
-package 'munin-node'
-package 'ruby'
-package 'libdbd-pg-perl'
+package "munin-node"
+package "ruby"
+package "libdbd-pg-perl"
 
 # Install plugins to /usr/local/share/munin/plugins/
 plugins_dir = "/usr/local/share/munin/plugins"
@@ -89,18 +89,18 @@ directory plugins_dir do
 end
 
 # Enable plugins by creating links in /etc/munin/plugins/
-execute 'enable default munin node plugins' do
-  command 'munin-node-configure --suggest --shell | sh'
+execute "enable default munin node plugins" do
+  command "munin-node-configure --suggest --shell | sh"
 end
 
-service 'munin-node' do
+service "munin-node" do
   action :restart
 end
 
-service 'rrdcached' do
+service "rrdcached" do
   action :restart
 end
 
-service 'apache2' do
+service "apache2" do
   action :restart
 end

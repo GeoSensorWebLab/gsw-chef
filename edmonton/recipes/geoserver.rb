@@ -123,7 +123,7 @@ systemd_unit "tomcat.service" do
 end
 
 # Create resource to refer to in other resource notifications
-service 'tomcat' do
+service "tomcat" do
   supports [:start, :stop, :restart]
   action :nothing
 end
@@ -153,7 +153,7 @@ bash "extract GeoServer" do
     unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" -d .
   EOH
   not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver.war") }
-  notifies :restart, 'service[tomcat]'
+  notifies :restart, "service[tomcat]"
 end
  
 ###########################
@@ -183,7 +183,7 @@ bash "extract GeoServer vector tiles plugin" do
   EOH
   timeout 120
   not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver/WEB-INF/lib/gs-vectortiles-#{node["geoserver"]["version"]}.jar") }
-  notifies :restart, 'service[tomcat]'
+  notifies :restart, "service[tomcat]"
 end
  
 ##########################

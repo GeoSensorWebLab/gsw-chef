@@ -300,7 +300,7 @@ projections.each do |projection|
     live_stream true
     user "root"
     timeout 86400
-    notifies :create, 'template[import-configuration]', :before
+    notifies :create, "template[import-configuration]", :before
     not_if { ::File.exists?(last_import) }
   end
 
