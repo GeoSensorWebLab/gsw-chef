@@ -61,3 +61,13 @@ default["tomcat"]["prefix"] = "/opt/tomcat"
 default["tomcat"]["download_url"] = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.30/bin/apache-tomcat-9.0.30.tar.gz"
 default["tomcat"]["checksum_url"] = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.30/bin/apache-tomcat-9.0.30.tar.gz.sha512"
 default["tomcat"]["checksum_type"] = "SHA512"
+
+############
+## GeoServer
+############
+default["geoserver"]["version"] = "2.16.2"
+default["geoserver"]["prefix"] = "/opt/geoserver"
+default["geoserver"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/geoserver-2.16.2-war.zip"
+default["geoserver"]["gdal_plugin"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/extensions/geoserver-2.16.2-gdal-plugin.zip"
+default["geoserver"]["css_plugin"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/extensions/geoserver-2.16.2-css-plugin.zip"
+default["geoserver"]["vectortiles_plugin"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/extensions/geoserver-2.16.2-vectortiles-plugin.zip"

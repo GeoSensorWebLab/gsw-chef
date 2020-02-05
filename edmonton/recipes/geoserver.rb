@@ -131,7 +131,30 @@ end
 ###################
 # Install GeoServer
 ###################
+geoserver_data = "#{tomcat_home}/webapps/geoserver/data"
 
+directory node["geoserver"]["prefix"] do
+  recursive true
+  action :create
+end
+
+geoserver_filename = filename_from_url(node["geoserver"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" do
+  source node["geoserver"]["download_url"]
+end
+
+package "unzip"
+
+bash "extract GeoServer" do
+  cwd "#{tomcat_home}/webapps"
+  user node["tomcat"]["user"]
+  code <<-EOH
+    unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" -d .
+  EOH
+  not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver.war") }
+  notifies :restart, 'service[tomcat]'
+end
  
 ###########################
 # Install GeoServer Plugins
