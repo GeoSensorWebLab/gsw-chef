@@ -303,5 +303,28 @@ projections.each do |projection|
     notifies :create, 'template[import-configuration]', :before
     not_if { ::File.exists?(last_import) }
   end
+
+  # Clean up the database by running a PostgreSQL VACUUM and ANALYZE.
+  # These improve performance and disk space usage, and therefore queries 
+  # for generating tiles.
+  # This should not take very long for small extracts (city/province
+  # level). Continent/planet level databases will probably have to
+  # increase the timeout.
+  # A timestamp file is created after the run, and used to determine if
+  # the resource should be re-run.
+  post_import_vacuum_file = "#{node[:edmonton][:data_prefix]}/extract/post-import-vacuum-#{projection}"
+
+  maps_server_execute "VACUUM FULL VERBOSE ANALYZE" do
+    cluster "12/main"
+    database database_name
+    timeout 86400
+    not_if { ::File.exists?(post_import_vacuum_file) }
+  end
+
+
+  file post_import_vacuum_file do
+    action :touch
+    not_if { ::File.exists?(post_import_vacuum_file) }
+  end
 end
 
