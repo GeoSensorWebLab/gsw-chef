@@ -27,6 +27,7 @@ Installs Munin for resource monitoring, and ZFS for storing databases and tile c
 $ sudo zpool create tiledb /dev/sdb
 $ sudo zfs create tiledb/postgresql
 $ sudo zfs create tiledb/tiles
+$ sudo zfs create tiledb/geoserver
 ```
 
 In the above example, a volume mounted at `/dev/sdb` is used as the zpool. Then two volumes are created for snapshot purposes at `/tiledb/postgresql` and `/tiledb/tiles`.
@@ -39,7 +40,7 @@ Installs PostgreSQL 12 with PostGIS and imports an OpenStreetMap extract into mu
 
 ## `edmonton::geoserver` recipe
 
-Installs OpenJDK 13, Apache Tomcat, GeoServer with vector tile plugins. Will automatically pre-configure GeoServer using its REST API.
+Installs OpenJDK 13, Apache Tomcat, GeoServer with vector tile plugins. Will automatically pre-configure GeoServer using its REST API. The GeoServer data directory will be moved onto the ZFS volume at `/tiledb/geoserver` (customizeable in attributes).
 
 ## `edmonton::tilestrata` recipe
 

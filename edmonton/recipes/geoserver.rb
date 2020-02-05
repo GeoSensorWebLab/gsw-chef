@@ -108,6 +108,7 @@ systemd_unit "tomcat.service" do
   Environment="CATALINA_HOME=#{tomcat_home}"
   Environment="CATALINA_BASE=#{tomcat_home}"
   Environment="CATALINA_OPTS="
+  Environment="GEOSERVER_DATA_DIR=#{node["geoserver"]["data_directory"]}"
   Environment="LD_LIBRARY_PATH=$LD_LIBRARY_PATH:#{tomcat_home}/lib"
   Environment="JAVA_OPTS=-Dfile.encoding=UTF-8 -Djava.library.path=/usr/local/lib:#{tomcat_home}/lib -Xms#{node["tomcat"]["Xms"]} -Xmx#{node["tomcat"]["Xmx"]}"
 
@@ -130,7 +131,13 @@ end
 ###################
 # Install GeoServer
 ###################
-geoserver_data = "#{tomcat_home}/webapps/geoserver/data"
+default_geoserver_data = "#{tomcat_home}/webapps/geoserver/data"
+
+# Create new GeoServer data directory
+directory node["geoserver"]["data_directory"] do
+  recursive true
+  action :create
+end
 
 directory node["geoserver"]["prefix"] do
   recursive true
@@ -154,6 +161,23 @@ bash "extract GeoServer" do
   not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver.war") }
   notifies :restart, "service[tomcat]"
 end
+
+# Relocate default geoserver data directory onto mounted volume.
+# This resource will wait 120 seconds for Tomcat to start up GeoServer
+# and have the default data directory created. Afterwards, Tomcat is
+# restarted so that GeoServer re-reads the new data directory.
+bash "Copy GeoServer data directory" do
+  code <<-EOH
+   while ! test -d "#{default_geoserver_data}"; do
+      sleep 10
+      echo "Waiting for GeoServer data directory to be created"
+    done
+    rmdir #{node["geoserver"]["data_directory"]}
+    cp -rp #{default_geoserver_data} #{node["geoserver"]["data_directory"]}
+  EOH
+  not_if { File.exists?("#{node["geoserver"]["data_directory"]}/logs") }
+  notifies :restart, "service[tomcat]"
+end
  
 ###########################
 # Install GeoServer Plugins
@@ -166,7 +190,7 @@ end
 
 # Extract vector tiles plugin to GeoServer, waiting for Tomcat to start
 # GeoServer and create the plugins directory first. If it doesn't exist
-# within 120seconds, then there is probably a problem and the chef 
+# within 120 seconds, then there is probably a problem and the chef 
 # client should stop.
 bash "extract GeoServer vector tiles plugin" do
   cwd node["geoserver"]["prefix"]

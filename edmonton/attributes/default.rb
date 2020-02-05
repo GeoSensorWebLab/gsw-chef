@@ -67,5 +67,6 @@ default["tomcat"]["checksum_type"] = "SHA512"
 ############
 default["geoserver"]["version"] = "2.16.2"
 default["geoserver"]["prefix"] = "/opt/geoserver"
+default["geoserver"]["data_directory"] = "/tiledb/geoserver/data"
 default["geoserver"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/geoserver-2.16.2-war.zip"
 default["geoserver"]["vectortiles_plugin"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/extensions/geoserver-2.16.2-vectortiles-plugin.zip"
