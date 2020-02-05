@@ -159,7 +159,32 @@ end
 ###########################
 # Install GeoServer Plugins
 ###########################
+geoserver_vectortiles_filename = filename_from_url(node["geoserver"]["vectortiles_plugin"]["download_url"])
 
+remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_vectortiles_filename}" do
+  source node["geoserver"]["vectortiles_plugin"]["download_url"]
+end
+
+# Extract vector tiles plugin to GeoServer, waiting for Tomcat to start
+# GeoServer and create the plugins directory first. If it doesn't exist
+# within 120seconds, then there is probably a problem and the chef 
+# client should stop.
+bash "extract GeoServer vector tiles plugin" do
+  cwd node["geoserver"]["prefix"]
+  code <<-EOH
+    while ! test -d "#{tomcat_home}/webapps/geoserver/WEB-INF/lib"; do
+      sleep 10
+      echo "Waiting for GeoServer lib directory to be created"
+    done
+    rm -rf geoserver-vectortiles-plugin
+    unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_vectortiles_filename}" -d geoserver-vectortiles-plugin
+    cp geoserver-vectortiles-plugin/*.jar "#{tomcat_home}/webapps/geoserver/WEB-INF/lib/."
+    chown -R #{node["tomcat"]["user"]} #{tomcat_home}/webapps/geoserver/WEB-INF/lib
+  EOH
+  timeout 120
+  not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver/WEB-INF/lib/gs-vectortiles-#{node["geoserver"]["version"]}.jar") }
+  notifies :restart, 'service[tomcat]'
+end
  
 ##########################
 # Auto-Configure GeoServer
