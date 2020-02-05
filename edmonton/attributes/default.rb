@@ -40,3 +40,12 @@ default[:edmonton][:node_cache_size] = 800
 # Number of processes to use for osm2pgsql import.
 # Should match number of threads/cores.
 default[:edmonton][:import_procs] = 6
+
+##########
+## OpenJDK
+##########
+default["openjdk"]["version"] = "13.0.2"
+default["openjdk"]["prefix"] = "/opt/java"
+default["openjdk"]["download_url"] = "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz"
+default["openjdk"]["checksum_url"] = "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz.sha256"
+default["openjdk"]["checksum_type"] = "SHA256"

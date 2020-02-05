@@ -39,7 +39,7 @@ Installs PostgreSQL 12 with PostGIS and imports an OpenStreetMap extract into mu
 
 ## `edmonton::geoserver` recipe
 
-Installs Java JRE, Apache Tomcat, GeoServer with vector tile plugins. Will automatically pre-configure GeoServer using its REST API.
+Installs OpenJDK 13, Apache Tomcat, GeoServer with vector tile plugins. Will automatically pre-configure GeoServer using its REST API.
 
 ## `edmonton::tilestrata` recipe
 
