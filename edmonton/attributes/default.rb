@@ -44,33 +44,34 @@ default["edmonton"]["import_procs"] = 6
 ##########
 ## OpenJDK
 ##########
-default["openjdk"]["version"] = "13.0.2"
-default["openjdk"]["prefix"] = "/opt/java"
-default["openjdk"]["download_url"] = "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz"
-default["openjdk"]["checksum_url"] = "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz.sha256"
+default["openjdk"]["version"]       = "13.0.2"
+default["openjdk"]["prefix"]        = "/opt/java"
+default["openjdk"]["download_url"]  = "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz"
+default["openjdk"]["checksum_url"]  = "https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz.sha256"
 default["openjdk"]["checksum_type"] = "SHA256"
 
 ################
 ## Apache Tomcat
 ################
-default["tomcat"]["version"] = "9.0.30"
-default["tomcat"]["user"] = "tomcat"
-default["tomcat"]["Xms"] = "256m"
-default["tomcat"]["Xmx"] = "4g"
-default["tomcat"]["prefix"] = "/opt/tomcat"
-default["tomcat"]["download_url"] = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.30/bin/apache-tomcat-9.0.30.tar.gz"
-default["tomcat"]["checksum_url"] = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.30/bin/apache-tomcat-9.0.30.tar.gz.sha512"
+default["tomcat"]["version"]       = "9.0.30"
+default["tomcat"]["user"]          = "tomcat"
+default["tomcat"]["Xms"]           = "256m"
+default["tomcat"]["Xmx"]           = "4g"
+default["tomcat"]["prefix"]        = "/opt/tomcat"
+default["tomcat"]["download_url"]  = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.30/bin/apache-tomcat-9.0.30.tar.gz"
+default["tomcat"]["checksum_url"]  = "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.30/bin/apache-tomcat-9.0.30.tar.gz.sha512"
 default["tomcat"]["checksum_type"] = "SHA512"
 
 ############
 ## GeoServer
 ############
-default["geoserver"]["version"] = "2.16.2"
-default["geoserver"]["prefix"] = "/opt/geoserver"
-default["geoserver"]["data_directory"] = "/tiledb/geoserver/data"
-default["geoserver"]["default_master_username"] = "admin"
-default["geoserver"]["default_master_password"] = "geoserver"
-default["geoserver"]["master_password_updated"] = false
-default["geoserver"]["admin_password_updated"] = false
-default["geoserver"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/geoserver-2.16.2-war.zip"
+default["geoserver"]["version"]                            = "2.16.2"
+default["geoserver"]["prefix"]                             = "/opt/geoserver"
+default["geoserver"]["data_directory"]                     = "/tiledb/geoserver/data"
+default["geoserver"]["default_master_username"]            = "admin"
+default["geoserver"]["default_master_password"]            = "geoserver"
+default["geoserver"]["master_password_updated"]            = false
+default["geoserver"]["admin_password_updated"]             = false
+default["geoserver"]["download_url"]                       = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/geoserver-2.16.2-war.zip"
 default["geoserver"]["vectortiles_plugin"]["download_url"] = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/extensions/geoserver-2.16.2-vectortiles-plugin.zip"
+default["geoserver"]["css_plugin"]["download_url"]         = "http://sourceforge.net/projects/geoserver/files/GeoServer/2.16.2/extensions/geoserver-2.16.2-css-plugin.zip"
