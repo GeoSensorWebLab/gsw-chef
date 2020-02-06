@@ -245,6 +245,7 @@ end
 # Create database user for rendering
 maps_server_user node["edmonton"]["render_user"] do
   cluster "12/main"
+  password "render"
   superuser true
 end
 
@@ -296,6 +297,9 @@ projections.each do |projection|
                 --hstore -E #{projection} -G #{merged_extract} &&
       date > #{last_import}
     EOH
+    environment({
+      PG_PASSWORD: "render"
+    })
     cwd node["edmonton"]["data_prefix"]
     live_stream true
     user "root"
