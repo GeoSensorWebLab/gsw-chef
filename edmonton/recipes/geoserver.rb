@@ -16,12 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 require "shellwords"
-require "uri"
-
-def filename_from_url(url)
-  uri = URI.parse(url)
-  File.basename(uri.path)
-end
 
 apt_update
 
@@ -35,7 +29,7 @@ directory node["openjdk"]["prefix"] do
   action :create
 end
 
-jdk_filename = filename_from_url(node["openjdk"]["download_url"])
+jdk_filename = FilenameFromURL.get_filename(node["openjdk"]["download_url"])
 
 remote_file "#{Chef::Config["file_cache_path"]}/#{jdk_filename}" do
   source node["openjdk"]["download_url"]
@@ -70,7 +64,7 @@ directory node["tomcat"]["prefix"] do
   action :create
 end
 
-tomcat_filename = filename_from_url(node["tomcat"]["download_url"])
+tomcat_filename = FilenameFromURL.get_filename(node["tomcat"]["download_url"])
 
 remote_file "#{Chef::Config["file_cache_path"]}/#{tomcat_filename}" do
   source node["tomcat"]["download_url"]
@@ -145,7 +139,7 @@ directory node["geoserver"]["prefix"] do
   action :create
 end
 
-geoserver_filename = filename_from_url(node["geoserver"]["download_url"])
+geoserver_filename = FilenameFromURL.get_filename(node["geoserver"]["download_url"])
 
 remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" do
   source node["geoserver"]["download_url"]
@@ -183,7 +177,7 @@ end
 ###########################
 # Install GeoServer Plugins
 ###########################
-geoserver_vectortiles_filename = filename_from_url(node["geoserver"]["vectortiles_plugin"]["download_url"])
+geoserver_vectortiles_filename = FilenameFromURL.get_filename(node["geoserver"]["vectortiles_plugin"]["download_url"])
 
 remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_vectortiles_filename}" do
   source node["geoserver"]["vectortiles_plugin"]["download_url"]
@@ -210,7 +204,7 @@ bash "extract GeoServer vector tiles plugin" do
   notifies :restart, "service[tomcat]"
 end
 
-geoserver_css_filename = filename_from_url(node["geoserver"]["css_plugin"]["download_url"])
+geoserver_css_filename = FilenameFromURL.get_filename(node["geoserver"]["css_plugin"]["download_url"])
 
 remote_file "#{Chef::Config["file_cache_path"]}/#{geoserver_css_filename}" do
   source node["geoserver"]["css_plugin"]["download_url"]
