@@ -22,6 +22,10 @@ driver:
 provisioner:
   name: chef_zero
   always_update_cookbooks: true
+  nodes_path: test/fixtures/nodes
+  clients_path: test/fixtures/clients
+  environments_path: test/fixtures/environments
+  data_bags_path: test/fixtures/data_bags
   client_rb:
     chef_license: accept
 
@@ -41,3 +45,5 @@ suites:
       inspec_tests:
         - test/smoke/default
     attributes:
+      chef_vault:
+        databags_fallback: true

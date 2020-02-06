@@ -42,6 +42,28 @@ Installs PostgreSQL 12 with PostGIS and imports an OpenStreetMap extract into mu
 
 Installs OpenJDK 13, Apache Tomcat, GeoServer with vector tile plugins. Will automatically pre-configure GeoServer using its REST API. The GeoServer data directory will be moved onto the ZFS volume at `/tiledb/geoserver` (customizeable in attributes).
 
+The default GeoServer master password will be replaced by the `master_password` defined in Chef Vault or a Data bag. The admin user's password will be replaced with the contents of `password`.
+
+```terminal
+$ knife vault create passwords geoserver
+{
+    "id": "geoserver",
+    "master_password": "new_password_here",
+    "password": "new_password_here",
+}
+```
+
+Or using data bags:
+
+```terminal
+$ knife data bag create passwords geoserver --secret-file path/to/secret-file
+{
+    "id": "geoserver",
+    "master_password": "new_password_here",
+    "password": "new_password_here"
+}
+```
+
 ## `edmonton::tilestrata` recipe
 
 Installs Node.js and requirements for TileStrata.

@@ -15,6 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+require "shellwords"
 require "uri"
 
 def filename_from_url(url)
@@ -156,7 +157,7 @@ bash "extract GeoServer" do
   cwd "#{tomcat_home}/webapps"
   user node["tomcat"]["user"]
   code <<-EOH
-    unzip "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" -d .
+    unzip -o "#{Chef::Config["file_cache_path"]}/#{geoserver_filename}" -d .
   EOH
   not_if { ::File.exists?("#{tomcat_home}/webapps/geoserver.war") }
   notifies :restart, "service[tomcat]"
@@ -212,4 +213,66 @@ end
 ##########################
 # Auto-Configure GeoServer
 ##########################
+
+# Retrieve new GeoServer master password from chef-vault
+if ChefVault::Item.vault?("passwords", "geoserver")
+  geoserver_vault = ChefVault::Item.load("passwords", "geoserver")
+else
+  geoserver_vault = Chef::DataBagItem.load("passwords", "geoserver")
+end
+
+new_master_password = geoserver_vault["master_password"]
+new_admin_password = geoserver_vault["password"]
+
+ruby_block "Store master password update flag" do
+  block do
+    node.normal["geoserver"]["master_password_updated"] = true
+  end
+  not_if { node["geoserver"]["master_password_updated"] }
+  action :nothing
+end
+
+ruby_block "Store admin password update flag" do
+  block do
+    node.normal["geoserver"]["admin_password_updated"] = true
+  end
+  not_if { node["geoserver"]["admin_password_updated"] }
+  action :nothing
+end
+
+# Create XML change file for CURL request
+template "#{node["geoserver"]["prefix"]}/changes.xml" do
+  source "geoserver/changes.xml.erb"
+  sensitive true
+  variables({
+    old_password: node["geoserver"]["default_master_password"],
+    new_password: new_master_password
+  })
+end
+
+# Change the default master password
+bash "Update GeoServer master password" do
+  code <<-EOH
+    curl -u #{node["geoserver"]["default_master_username"]}:#{node["geoserver"]["default_master_password"]} \
+      -XPUT -H "Content-type: text/xml" -d @changes.xml \
+      http://localhost:8080/geoserver/rest/security/masterpw.xml
+  EOH
+  cwd node["geoserver"]["prefix"]
+  sensitive true
+  not_if { node["geoserver"]["master_password_updated"] }
+  notifies :run, "ruby_block[Store master password update flag]", :immediate
+end
+
+# Change the default admin password
+bash "Update GeoServer admin password" do
+  code <<-EOH
+    curl -u #{node["geoserver"]["default_master_username"]}:#{node["geoserver"]["default_master_password"]} \
+      -XPUT -H "Content-type: application/json" -d '{ "newPassword": "#{Shellwords.escape(new_admin_password)}" }' \
+      http://localhost:8080/geoserver/rest/security/self/password
+  EOH
+  cwd node["geoserver"]["prefix"]
+  sensitive true
+  not_if { node["geoserver"]["admin_password_updated"] }
+  notifies :run, "ruby_block[Store admin password update flag]", :immediate
+end
 
