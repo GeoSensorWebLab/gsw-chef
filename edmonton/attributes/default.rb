@@ -41,6 +41,20 @@ default["edmonton"]["node_cache_size"] = 800
 # Should match number of threads/cores.
 default["edmonton"]["import_procs"] = 6
 
+#######
+## PROJ
+#######
+default["proj"]["version"] = "6.3.0"
+default["proj"]["download_url"] = "https://download.osgeo.org/proj/proj-6.3.0.tar.gz"
+default["proj_datumgrid"]["version"] = "1.8"
+default["proj_datumgrid"]["download_url"] = "https://download.osgeo.org/proj/proj-datumgrid-1.8.zip"
+
+#######
+## GDAL
+#######
+default["gdal"]["version"] = "3.0.4"
+default["gdal"]["download_url"] = "https://github.com/OSGeo/gdal/releases/download/v3.0.4/gdal-3.0.4.tar.gz"
+
 ##########
 ## OpenJDK
 ##########

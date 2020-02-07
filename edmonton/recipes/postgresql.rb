@@ -85,33 +85,80 @@ end
 
 # Install GDAL and libraries from source to get full support for PostGIS
 
-# liblwgeom provides ST_MakeValid and similar.
-package %w(liblwgeom-dev)
-
-ruby_block "Store libspatialite build flag" do
+# Install Proj from source
+ruby_block "Store PROJ build flag" do
   block do
-    node.normal["edmonton"]["built_libspatialite"] = true
+    node.normal["edmonton"]["built_proj"] = true
   end
-  not_if { node["edmonton"]["built_libspatialite"] }
+  not_if { node["edmonton"]["built_proj"] }
   action :nothing
 end
 
-bash "custom install libspatialite-dev" do
-  code <<-EOH
-  apt-get build-dep -y libspatialite-dev
-  apt-get source libspatialite-dev
-  cd spatialite-*
-  sed -i 's/--enable-lwgeom=no/--enable-lwgeom=yes/g' debian/rules
-  dpkg-buildpackage -us -uc
-  dpkg -i ../*.deb
-  apt-get install -f
-  EOH
-  cwd "/usr/local/src"
-  not_if { node["edmonton"]["built_libspatialite"] }
-  notifies :run, "ruby_block[Store libspatialite build flag]", :immediate
+proj_filename = FilenameFromURL.get_filename(node["proj"]["download_url"])
+proj_datumgrid_filename = FilenameFromURL.get_filename(node["proj_datumgrid"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{proj_filename}" do
+  source node["proj"]["download_url"]
+  action :create
 end
 
-package %w(gdal-bin gdal-data libgdal-dev libgdal20)
+remote_file "#{Chef::Config["file_cache_path"]}/#{proj_datumgrid_filename}" do
+  source node["proj_datumgrid"]["download_url"]
+  action :create
+end
+
+directory "/opt/proj" do
+  recursive true
+  action :create
+end
+
+# Sqlite3 is needed for PROJ and GDAL
+package %w(sqlite3 libsqlite3-dev)
+
+bash "custom install proj" do
+  code <<-EOH
+    tar xf #{Chef::Config["file_cache_path"]}/#{proj_filename}
+    cd proj-#{node["proj"]["version"]}
+    unzip #{Chef::Config["file_cache_path"]}/#{proj_datumgrid_filename} -d data
+    ./configure && make -j2 && make install
+  EOH
+  cwd "/opt/proj"
+  not_if { node["edmonton"]["built_proj"] }
+  notifies :run, "ruby_block[Store PROJ build flag]", :immediate
+end
+
+# Install GDAL from source to fix PostgreSQL 12 issues
+ruby_block "Store GDAL build flag" do
+  block do
+    node.normal["edmonton"]["built_gdal"] = true
+  end
+  not_if { node["edmonton"]["built_gdal"] }
+  action :nothing
+end
+
+gdal_filename = FilenameFromURL.get_filename(node["gdal"]["download_url"])
+
+remote_file "#{Chef::Config["file_cache_path"]}/#{gdal_filename}" do
+  source node["gdal"]["download_url"]
+  action :create
+end
+
+directory "/opt/gdal" do
+  recursive true
+  action :create
+end
+
+bash "custom install gdal" do
+  code <<-EOH
+    tar xf #{Chef::Config["file_cache_path"]}/#{gdal_filename}
+    cd gdal-#{node["gdal"]["version"]}
+    
+  EOH
+  # ./configure --with-proj=/usr/local && make -j2 && make install
+  cwd "/opt/gdal"
+  not_if { node["edmonton"]["built_gdal"] }
+  notifies :run, "ruby_block[Store GDAL build flag]", :immediate
+end
 
 # Install PostGIS
 package %w(postgresql-12-postgis-3 postgresql-12-postgis-3-scripts)
