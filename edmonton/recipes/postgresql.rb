@@ -379,6 +379,50 @@ projections.each do |projection|
   end
 end
 
+###########################################
+# Import OSM Water Polygons into PostgreSQL
+###########################################
+
+maps_server_database "osm_water" do
+  cluster "12/main"
+  owner node["edmonton"]["render_user"]
+end
+
+maps_server_extension "postgis" do
+  cluster "12/main"
+  database "osm_water"
+end
+
+water_low_filename = FilenameFromURL.get_filename(node["osm_water_low"]["download_url"])
+
+# Download the low-resolution OSM water shapefiles
+remote_file "#{node["edmonton"]["data_prefix"]}/#{water_low_filename}" do
+  source node["osm_water_low"]["download_url"]
+  action :create
+end
+
+package "unzip"
+
+bash "extract low-resolution water shapefiles" do
+  cwd node["edmonton"]["data_prefix"]
+  code <<-EOH
+    unzip -o "#{node["edmonton"]["data_prefix"]}/#{water_low_filename}" -d .
+  EOH
+  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/simplified-water-polygons-split-3857") }
+end
+
+bash "import low-resolution water shapefiles into PostgreSQL" do
+  cwd "#{node["edmonton"]["data_prefix"]}/simplified-water-polygons-split-3857"
+  code <<-EOH
+    ogr2ogr -f "PostgreSQL" PG:"host=localhost user=render dbname=osm_water password=render" \
+      -lco GEOMETRY_NAME=wkb_geometry \
+      -lco FID=ogc_fid \
+      simplified_water_polygons.shp -nln osm_water_low
+    touch pg_import
+  EOH
+  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/simplified-water-polygons-split-3857/pg_import") }
+end
+
 # Optimize PostgreSQL for tile serving
 rendering_conf = node["postgresql"]["settings"]["defaults"].merge(node["postgresql"]["settings"]["tiles"])
 
