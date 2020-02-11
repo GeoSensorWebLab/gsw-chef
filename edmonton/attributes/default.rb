@@ -28,7 +28,7 @@ default["edmonton"]["extracts"] = [{
   extract_checksum_url:     "https://download.geofabrik.de/north-america/canada/nunavut-latest.osm.pbf.md5"
 }]
 
-default["osm_water_low"]["download_url"] = "https://osmdata.openstreetmap.de/download/simplified-water-polygons-split-3857.zip"
+default["osm_water"]["download_url"] = "https://osmdata.openstreetmap.de/download/water-polygons-split-4326.zip"
 
 #################
 ## Rendering User

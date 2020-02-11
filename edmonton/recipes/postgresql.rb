@@ -393,34 +393,34 @@ maps_server_extension "postgis" do
   database "osm_water"
 end
 
-water_low_filename = FilenameFromURL.get_filename(node["osm_water_low"]["download_url"])
+osm_water_filename = FilenameFromURL.get_filename(node["osm_water"]["download_url"])
 
-# Download the low-resolution OSM water shapefiles
-remote_file "#{node["edmonton"]["data_prefix"]}/#{water_low_filename}" do
-  source node["osm_water_low"]["download_url"]
+# Download the high-resolution OSM water shapefiles
+remote_file "#{node["edmonton"]["data_prefix"]}/#{osm_water_filename}" do
+  source node["osm_water"]["download_url"]
   action :create
 end
 
 package "unzip"
 
-bash "extract low-resolution water shapefiles" do
+bash "extract OSM water shapefiles" do
   cwd node["edmonton"]["data_prefix"]
   code <<-EOH
-    unzip -o "#{node["edmonton"]["data_prefix"]}/#{water_low_filename}" -d .
+    unzip -o "#{node["edmonton"]["data_prefix"]}/#{osm_water_filename}" -d .
   EOH
-  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/simplified-water-polygons-split-3857") }
+  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/water-polygons-split-4326") }
 end
 
-bash "import low-resolution water shapefiles into PostgreSQL" do
-  cwd "#{node["edmonton"]["data_prefix"]}/simplified-water-polygons-split-3857"
+bash "import OSM water shapefiles into PostgreSQL in EPSG:3857" do
+  cwd "#{node["edmonton"]["data_prefix"]}/water-polygons-split-4326"
   code <<-EOH
     ogr2ogr -f "PostgreSQL" PG:"host=localhost user=render dbname=osm_water password=render" \
       -lco GEOMETRY_NAME=wkb_geometry \
       -lco FID=ogc_fid \
-      simplified_water_polygons.shp -nln osm_water_low
-    touch pg_import
+      water_polygons.shp -nln osm_water_4326 && \
+    touch pg_import_4326
   EOH
-  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/simplified-water-polygons-split-3857/pg_import") }
+  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/water-polygons-split-4326/pg_import_4326") }
 end
 
 # Optimize PostgreSQL for tile serving
