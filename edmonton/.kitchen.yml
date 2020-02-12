@@ -40,6 +40,7 @@ suites:
     run_list:
       - recipe[edmonton::default]
       - recipe[edmonton::postgresql]
+      - recipe[edmonton::shapefiles]
       - recipe[edmonton::geoserver]
     verifier:
       inspec_tests:

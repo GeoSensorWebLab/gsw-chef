@@ -379,50 +379,6 @@ projections.each do |projection|
   end
 end
 
-###########################################
-# Import OSM Water Polygons into PostgreSQL
-###########################################
-
-maps_server_database "osm_water" do
-  cluster "12/main"
-  owner node["edmonton"]["render_user"]
-end
-
-maps_server_extension "postgis" do
-  cluster "12/main"
-  database "osm_water"
-end
-
-osm_water_filename = FilenameFromURL.get_filename(node["osm_water"]["download_url"])
-
-# Download the high-resolution OSM water shapefiles
-remote_file "#{node["edmonton"]["data_prefix"]}/#{osm_water_filename}" do
-  source node["osm_water"]["download_url"]
-  action :create
-end
-
-package "unzip"
-
-bash "extract OSM water shapefiles" do
-  cwd node["edmonton"]["data_prefix"]
-  code <<-EOH
-    unzip -o "#{node["edmonton"]["data_prefix"]}/#{osm_water_filename}" -d .
-  EOH
-  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/water-polygons-split-4326") }
-end
-
-bash "import OSM water shapefiles into PostgreSQL in EPSG:3857" do
-  cwd "#{node["edmonton"]["data_prefix"]}/water-polygons-split-4326"
-  code <<-EOH
-    ogr2ogr -f "PostgreSQL" PG:"host=localhost user=render dbname=osm_water password=render" \
-      -lco GEOMETRY_NAME=wkb_geometry \
-      -lco FID=ogc_fid \
-      water_polygons.shp -nln osm_water_4326 && \
-    touch pg_import_4326
-  EOH
-  not_if { ::File.exists?("#{node["edmonton"]["data_prefix"]}/water-polygons-split-4326/pg_import_4326") }
-end
-
 # Optimize PostgreSQL for tile serving
 rendering_conf = node["postgresql"]["settings"]["defaults"].merge(node["postgresql"]["settings"]["tiles"])
 

@@ -38,6 +38,10 @@ Installs PostgreSQL 12 with PostGIS and imports an OpenStreetMap extract into mu
 
 `osm2pgsql` is installed from source (v1.2.1) instead of Ubuntu Apt (v0.9.4).
 
+## `edmonton::shapefiles` recipe
+
+Uses GDAL to import shapefiles from different sources into PostGIS databases.
+
 ## `edmonton::geoserver` recipe
 
 Installs OpenJDK 13, Apache Tomcat, GeoServer with multiple plugins:
