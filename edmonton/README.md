@@ -26,11 +26,17 @@ Installs Munin for resource monitoring, and ZFS for storing databases and tile c
 ```
 $ sudo zpool create tiledb /dev/sdb
 $ sudo zfs create tiledb/postgresql
+$ sudo zfs set recordsize=8K tiledb/postgresql
+$ sudo zfs set atime=off tiledb/postgresql
+$ sudo zfs set relatime=on tiledb/postgresql
+$ sudo zfs set logbias=throughput tiledb/postgresql
+$ sudo zfs set xattr=sa tiledb/postgresql
+$ sudo zfs set primarycache=metadata tiledb/postgresql
 $ sudo zfs create tiledb/tiles
 $ sudo zfs create tiledb/geoserver
 ```
 
-In the above example, a volume mounted at `/dev/sdb` is used as the zpool. Then two volumes are created for snapshot purposes at `/tiledb/postgresql` and `/tiledb/tiles`.
+In the above example, a volume mounted at `/dev/sdb` is used as the zpool. Then volumes are created for snapshot purposes. Special options are configured for PostgreSQL performance on that filesystem volume.
 
 ## `edmonton::postgresql` recipe
 
