@@ -119,6 +119,12 @@ Example:
 $ knife vault create secrets pgbackrest -C "shaganappi" -A "jpbadger"
 ```
 
+And for updating the configuration:
+
+```terminal
+$ knife vault edit secrets pgbackrest
+```
+
 ## Developer Notes
 
 For future cookbook editors/developers: be careful upgrading the PostgreSQL version as there is no automated cluster upgrade code in this cookbook. Also be sure to make sure it works with pgbackrest backup and restore.
