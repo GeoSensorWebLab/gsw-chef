@@ -62,7 +62,7 @@ EOF
 
 resource "aws_iam_role_policy" "inline-sta-s3-bucket-rw" {
     name = "inline-sta-s3-bucket-rw"
-    role = "${aws_iam_role.lambda_sta_indexer.id}"
+    role = aws_iam_role.lambda_sta_indexer.id
     policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -160,7 +160,7 @@ resource "aws_lambda_function" "sta-index-arctic-sensors" {
   s3_bucket     = "sta-schema-org-indexes"
   s3_key        = "lambda.zip"
   function_name = "sta-index-arctic-sensors"
-  role          = "${aws_iam_role.lambda_sta_indexer.arn}"
+  role          = aws_iam_role.lambda_sta_indexer.arn
   handler       = "index.handler"
   runtime       = "nodejs12.x"
   timeout = "180"
@@ -173,4 +173,10 @@ resource "aws_lambda_function" "sta-index-arctic-sensors" {
       STA_URL = "https://arctic-sensors.sensorup.com/v1.0"
     }
   }
+}
+
+resource "aws_cloudwatch_event_target" "sta-indexer" {
+  target_id = "daily"
+  rule      = aws_cloudwatch_event_rule.daily.name
+  arn       = aws_lambda_function.sta-index-arctic-sensors.arn
 }

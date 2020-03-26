@@ -16,7 +16,7 @@ Start by creating the AWS resources:
 $ terraform apply
 ```
 
-Next, package the Lambda application (in our case, the Node.js schema.org indexer) and upload to S3:
+The run may fail due to the application not being uploaded to S3 yet. Package the Lambda application (in our case, the Node.js schema.org indexer) and upload to S3:
 
 ```
 $ cd path/to/indexer
@@ -24,4 +24,8 @@ $ ./bin/lambda.sh
 $ aws s3 cp lambda.zip s3://sta-schema-org-indexes/lambda.zip
 ```
 
-TODO: Connect trigger to Lambda, test
+Then re-run terraform:
+
+```
+$ terraform apply
+```
