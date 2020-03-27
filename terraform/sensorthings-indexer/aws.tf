@@ -163,16 +163,24 @@ resource "aws_lambda_function" "sta-index-arctic-sensors" {
   role          = aws_iam_role.lambda_sta_indexer.arn
   handler       = "index.handler"
   runtime       = "nodejs12.x"
-  timeout = "180"
+  timeout       = "180"
 
   environment {
     variables = {
       S3_BUCKET = "sta-schema-org-indexes"
-      S3_PATH = "arctic-sensors.sensorup.com"
+      S3_PATH   = "arctic-sensors.sensorup.com"
       S3_REGION = "us-west-2"
-      STA_URL = "https://arctic-sensors.sensorup.com/v1.0"
+      STA_URL   = "https://arctic-sensors.sensorup.com/v1.0"
     }
   }
+}
+
+resource "aws_lambda_permission" "run-sta-indexer" {
+  statement_id = "run-sta-indexer"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.sta-index-arctic-sensors.function_name
+  principal = "events.amazonaws.com"
+  source_arn = aws_cloudwatch_event_rule.daily.arn
 }
 
 resource "aws_cloudwatch_event_target" "sta-indexer" {
