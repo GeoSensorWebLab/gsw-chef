@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>SensorThings API Indexes</title>
+	<style>
+		body {
+			max-width: 960px;
+			margin: 1em auto;
+			padding: 0 1em;
+		}
+
+		footer {
+			font-style: italic;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<h2>SensorThings API Indexes</h2>
+		<p>An indexer is ran once per day for multiple OGC SensorThings API instances and the output is formatted as JSON-LD Schema.org documents. Please contact the <a href="https://github.com/GeoSensorWebLab">GeoSensorWeb Lab at the University of Calgary, Canada</a> for more information.</p>
+	</div>
+
+	<div id="navigation"></div>
+	<div id="listing"></div>
+
+	<footer>
+		<p>Directory indexing script provided by <a href="https://github.com/rufuspollock/s3-bucket-listing">rufuspollock/s3-bucket-listing</a>.</p>
+	</footer>
+
+	<!-- add jQuery - if you already have it just ignore this line -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+	<!-- the JS variables for the listing -->
+	<script>
+	  var S3BL_IGNORE_PATH = true;
+	  // var BUCKET_NAME = 'sta-schema-org-indexes';
+	  var BUCKET_URL = 'https://sta-schema-org-indexes.s3-us-west-2.amazonaws.com';
+	  var S3B_ROOT_DIR = '';
+	  // var S3B_SORT = 'DEFAULT';
+	  // var EXCLUDE_FILE = 'index.html';  // change to array to exclude multiple files
+	  // var AUTO_TITLE = true;
+	  // var S3_REGION = 'us-west-2'; // for us-east-1
+	</script>
+
+	<!-- the JS to the do the listing -->
+	<script src="https://rufuspollock.github.io/s3-bucket-listing/list.js"></script>
+</body>
+</html>

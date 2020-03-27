@@ -39,3 +39,13 @@ $ openssl dgst -sha256 -binary lambda.zip| openssl enc -base64
 ```
 
 After updating `aws.tf`, re-run `terraform apply` to force an update of the Lambda function with the latest version of the code.
+
+## Adding the S3 Bucket Web Index
+
+An `index.html` page has been included here for use as the index page in the S3 bucket, providing web users with a list of files in the bucket. Use the aws tool to upload it:
+
+```
+$ aws s3 cp index.html s3://sta-schema-org-indexes/index.html --acl public-read
+```
+
+It will then be available at [https://sta-schema-org-indexes.s3-us-west-2.amazonaws.com/index.html](https://sta-schema-org-indexes.s3-us-west-2.amazonaws.com/index.html).
