@@ -157,13 +157,14 @@ EOF
 }
 
 resource "aws_lambda_function" "sta-index-arctic-sensors" {
-  s3_bucket     = "sta-schema-org-indexes"
-  s3_key        = "lambda.zip"
-  function_name = "sta-index-arctic-sensors"
-  role          = aws_iam_role.lambda_sta_indexer.arn
-  handler       = "index.handler"
-  runtime       = "nodejs12.x"
-  timeout       = "180"
+  s3_bucket         = "sta-schema-org-indexes"
+  s3_key            = "lambda.zip"
+  source_code_hash  = "9DBmNW914K0DcszmUIZuFI6A2KYfQGSFSqgNmSsCiPI="
+  function_name     = "sta-index-arctic-sensors"
+  role              = aws_iam_role.lambda_sta_indexer.arn
+  handler           = "index.handler"
+  runtime           = "nodejs12.x"
+  timeout           = "180"
 
   environment {
     variables = {

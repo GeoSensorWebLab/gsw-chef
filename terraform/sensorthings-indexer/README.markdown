@@ -29,3 +29,13 @@ Then re-run terraform:
 ```
 $ terraform apply
 ```
+
+## Updating the Lambda
+
+If the source code used in the Lambda is updated, then it must be re-zipped and uploaded to Amazon S3. Then the `source_code_hash` in `aws.tf` must be updated, using the output from the following command:
+
+```
+$ openssl dgst -sha256 -binary lambda.zip| openssl enc -base64
+```
+
+After updating `aws.tf`, re-run `terraform apply` to force an update of the Lambda function with the latest version of the code.
