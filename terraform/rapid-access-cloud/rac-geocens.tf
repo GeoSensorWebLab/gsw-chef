@@ -1,0 +1,128 @@
+# Set up OpenStack Provider for Rapid Access Cloud.
+# Parameters are inherited from Environment Variables:
+# 
+# * `password`:    `OS_PASSWORD`
+# * `auth_url`:    `OS_AUTH_URL`
+# * `user_name`:   `OS_USERNAME`
+# * `region`:      `OS_REGION_NAME`
+# 
+provider "openstack" {
+  delayed_auth = false
+  tenant_name = "geocens"
+  auth_url = "https://keystone-yyc.cloud.cybera.ca:5000/v3"
+}
+
+# "Internal" Security Group
+# 
+# ID: 355aee62-0d8b-4685-81ac-11bf57290cee
+resource "openstack_networking_secgroup_v2" "internal" {
+  name        = "internal"
+  description = "Internal ports between instances, mysql, postgres, munin"
+}
+
+# ID: ae85f80b-d170-4f7f-b902-61f600ef2330
+resource "openstack_networking_secgroup_rule_v2" "internal_1" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 3306
+  port_range_max    = 3306
+  remote_ip_prefix  = "10.1.0.0/16"
+  security_group_id = openstack_networking_secgroup_v2.internal.id
+}
+
+# ID: 36538b5b-50d3-4580-bea8-a31b70d9b2fc
+resource "openstack_networking_secgroup_rule_v2" "internal_2" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 5432
+  port_range_max    = 5432
+  remote_ip_prefix  = "10.1.0.0/16"
+  security_group_id = openstack_networking_secgroup_v2.internal.id
+}
+
+# ID: 4fcafebb-2b02-4610-8d93-097a4ff42215
+resource "openstack_networking_secgroup_rule_v2" "internal_3" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 4949
+  port_range_max    = 4949
+  remote_ip_prefix  = "10.1.0.0/16"
+  security_group_id = openstack_networking_secgroup_v2.internal.id
+}
+
+# "Primary" Security Group
+# 
+# ID: 3ddf9fa8-12b1-490f-a7e2-8e529a922fd8
+resource "openstack_networking_secgroup_v2" "primary" {
+  name        = "primary"
+  description = "Opens typical SSH, HTTP and HTTPS ports."
+}
+
+# ID: aa9ad05f-d9da-438d-928d-9d81f5fb7164
+resource "openstack_networking_secgroup_rule_v2" "primary_1" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 22
+  port_range_max    = 22
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.primary.id
+}
+
+# ID: adfe3bb9-ff03-4406-906c-ac56b777e34d
+resource "openstack_networking_secgroup_rule_v2" "primary_2" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 80
+  port_range_max    = 80
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.primary.id
+}
+
+# ID: 9f8ea5d4-259f-4182-817f-d0543e2b02c2
+resource "openstack_networking_secgroup_rule_v2" "primary_3" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 443
+  port_range_max    = 443
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.primary.id
+}
+
+# ID: 860209cb-f495-4023-be3b-dd08bc33f690
+resource "openstack_networking_secgroup_rule_v2" "primary_4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 2080
+  port_range_max    = 2080
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.primary.id
+}
+
+# ID: 5eb10dd5-2a14-4923-a618-b3076b420c50
+resource "openstack_networking_secgroup_rule_v2" "primary_5" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 8080
+  port_range_max    = 8080
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.primary.id
+}
+
+# ID: 33d9a279-e823-44b3-af75-7479a3bb06ff
+resource "openstack_networking_secgroup_rule_v2" "primary_6" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 8443
+  port_range_max    = 8443
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.primary.id
+}
