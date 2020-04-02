@@ -67,6 +67,13 @@ resource "aws_iam_role" "lambda_sta_indexer" {
 EOF
 }
 
+# Apply `AWSLambdaBasicExecutionRole` to IAM role to allow access to
+# running the Lambda and sending logs to CloudWatch.
+resource "aws_iam_role_policy_attachment" "terraform_lambda_policy" {
+  role       = "${aws_iam_role.lambda_sta_indexer.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 # The AWS Lambda IAM role above needs to be modified to include an
 # inline access policy for reading and writing to the S3 bucket.
 resource "aws_iam_role_policy" "inline-sta-s3-bucket-rw" {
