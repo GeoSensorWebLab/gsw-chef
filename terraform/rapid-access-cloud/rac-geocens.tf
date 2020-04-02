@@ -70,6 +70,20 @@ resource "openstack_networking_secgroup_rule_v2" "internal_4" {
   provider          = openstack.geocens
 }
 
+# Allow ipv6 pings
+# ID: 9e1c60ea-9abe-4cd9-a417-30242f073a11
+resource "openstack_networking_secgroup_rule_v2" "internal_5" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  protocol          = "icmp"
+  remote_ip_prefix  = "2605:fd00:4:1000:f816:3eff:fec3:c4d5/96"
+  security_group_id = openstack_networking_secgroup_v2.internal.id
+  provider          = openstack.geocens
+}
+
+
+
+
 # "Primary" Security Group
 # 
 # ID: 3ddf9fa8-12b1-490f-a7e2-8e529a922fd8

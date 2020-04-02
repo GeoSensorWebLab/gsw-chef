@@ -70,6 +70,20 @@ resource "openstack_networking_secgroup_rule_v2" "ac_internal_4" {
   provider          = openstack.arcticconnect
 }
 
+# Allow ipv6 pings
+# ID: d583282a-1fea-447a-84d1-ff56704576e4
+resource "openstack_networking_secgroup_rule_v2" "ac_internal_5" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  protocol          = "icmp"
+  remote_ip_prefix  = "2605:fd00:4:1000:f816:3eff:fec3:c4d5/96"
+  security_group_id = openstack_networking_secgroup_v2.ac_internal.id
+  provider          = openstack.arcticconnect
+}
+
+
+
+
 # "Primary" Security Group
 # 
 # ID: 3ddf9fa8-12b1-490f-a7e2-8e529a922fd8
