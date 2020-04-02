@@ -18,7 +18,7 @@ default['icinga2']['host_objects'] = [
 },
 {
   name: "barlow",
-  address: "162.246.156.221",
+  address: "10.1.11.170",
   address6: "2605:fd00:4:1000:f816:3eff:fe7c:7c2a",
   groups: ["arcticconnect"],
   check_command: "hostalive"
@@ -39,7 +39,7 @@ default['icinga2']['host_objects'] = [
 },
 {
   name: "macleod",
-  address: "199.116.235.109",
+  address: "10.1.0.186",
   address6: "2605:fd00:4:1000:f816:3eff:fe83:4b52",
   groups: ["geocens"],
   check_command: "hostalive"
@@ -60,7 +60,7 @@ default['icinga2']['host_objects'] = [
 },
 {
   name: "stoney",
-  address: "199.116.235.80",
+  address: "10.1.0.111",
   address6: "2605:fd00:4:1000:f816:3eff:fe17:ad18",
   groups: ["geocens"],
   check_command: "hostalive"
