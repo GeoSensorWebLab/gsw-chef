@@ -59,6 +59,17 @@ resource "openstack_networking_secgroup_rule_v2" "internal_3" {
   provider          = openstack.geocens
 }
 
+# Allow pings
+# ID: dfcc3016-3063-4eb6-8384-471807caa1ff
+resource "openstack_networking_secgroup_rule_v2" "internal_4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "icmp"
+  remote_ip_prefix  = "10.1.0.0/16"
+  security_group_id = openstack_networking_secgroup_v2.internal.id
+  provider          = openstack.geocens
+}
+
 # "Primary" Security Group
 # 
 # ID: 3ddf9fa8-12b1-490f-a7e2-8e529a922fd8
