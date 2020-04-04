@@ -38,6 +38,29 @@ resource "aws_s3_bucket" "sta-schema-org-indexes" {
     error_document = "error.html"
     index_document = "index.html"
   }
+
+  # TODO: Is there a way to interpolate the ARN for the bucket?
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowS3Access",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "${aws_iam_role.lambda_sta_indexer.arn}"
+            },
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::sta-schema-org-indexes",
+                "arn:aws:s3:::sta-schema-org-indexes/*"
+            ]
+        }
+    ]
+}
+EOF
 }
 
 # Indexing happens once per day.
@@ -70,7 +93,7 @@ EOF
 # Apply `AWSLambdaBasicExecutionRole` to IAM role to allow access to
 # running the Lambda and sending logs to CloudWatch.
 resource "aws_iam_role_policy_attachment" "terraform_lambda_policy" {
-  role       = "${aws_iam_role.lambda_sta_indexer.name}"
+  role       = aws_iam_role.lambda_sta_indexer.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
