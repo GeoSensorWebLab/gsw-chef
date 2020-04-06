@@ -8,6 +8,8 @@ Terraform scripts to set up AWS with SensorThings API indexers on AWS Lambda. Wi
 * CloudWatch event for running Lambda once per day
 * AWS Lambda functions for each STA instance to be indexed
 
+![Architecture Diagram](architecture_diagram.png)
+
 ## Instructions
 
 Start by creating the AWS resources:
