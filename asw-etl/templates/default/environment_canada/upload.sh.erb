@@ -1,0 +1,23 @@
+#!/bin/bash
+# Managed by Chef.
+# Uploads observations for Environment Canada.
+set -e
+
+source "$HOME/.bashrc"
+
+# Interval should be an ISO8601 interval string
+INTERVAL="$2"
+ULOG="<%= @log_dir %>/upload.log"
+
+touch "$ULOG"
+cd "<%= @work_dir %>"
+
+ruby transload put observations \
+  --provider environment_canada \
+  --station_id $1 \
+  --cache <%= @cache_dir %> \
+  --date $INTERVAL \
+  <% if @basic_user -%>
+  --user '<%= @basic_user %>:<%= @basic_password %>' \
+  <% end -%>
+  --destination "<%= @sta_endpoint %>" | tee -a $ULOG

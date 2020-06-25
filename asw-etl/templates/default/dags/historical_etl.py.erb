@@ -1,0 +1,39 @@
+"""
+Set up a DAG to run a historical ETL using a bash script
+"""
+from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
+from datetime import datetime, timedelta
+
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'start_date': datetime(<%= @start_date[:year] %>, <%= @start_date[:month] %>, <%= @start_date[:day] %>),
+    'email': ['airflow@example.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 0,
+    'retry_delay': timedelta(minutes=5),
+    'end_date': datetime(<%= @end_date[:year] %>, <%= @end_date[:month] %>, <%= @end_date[:day] %>),
+    # 'queue': 'bash_queue',
+    # 'pool': 'backfill',
+    # 'priority_weight': 10,
+}
+
+dag = DAG('<%= @dag_id %>', default_args=default_args, schedule_interval='<%= @schedule_interval %>')
+
+# try to load data before the DAG is loaded into Airflow?
+dag.catchup = <%= @catchup ? "True" : "False" %>
+
+t1 = BashOperator(
+    task_id='download_observations',
+    bash_command='<%= @download_script %>',
+    dag=dag)
+
+t2 = BashOperator(
+    task_id='upload_observations',
+    bash_command='<%= @upload_script %> {{ ts }}/{{ next_execution_date }}',
+    dag=dag)
+
+t2.set_upstream(t1)
