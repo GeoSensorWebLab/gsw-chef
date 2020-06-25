@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: blackfoot
+# Cookbook Name:: asw-etl
 # Recipe:: default
 #
 # Copyright 2019–2020 GeoSensorWeb Lab, University of Calgary
@@ -144,7 +144,7 @@ arctic_sensors_vault = chef_vault_item("secrets", "arctic_sensors")
 
 basic_user     = nil
 basic_password = nil
-x_api_key      = nil # TODO: Deploy api key to scripts, if available
+x_api_key      = nil
 
 # If the airflow vault item doesn't exist, skip this next section.
 if arctic_sensors_vault && arctic_sensors_vault["http_basic_enabled"]
@@ -189,7 +189,8 @@ template "#{ec_scripts_home}/upload" do
     cache_dir:      cache_dir,
     log_dir:        node["etl"]["log_dir"],
     sta_endpoint:   node["sensorthings"]["external_uri"],
-    work_dir:       node["transloader"]["install_home"]
+    work_dir:       node["transloader"]["install_home"],
+    x_api_key:      x_api_key
   })
 end
 
@@ -227,7 +228,8 @@ template "#{dg_scripts_home}/upload" do
     cache_dir:      cache_dir,
     log_dir:        node["etl"]["log_dir"],
     sta_endpoint:   node["sensorthings"]["external_uri"],
-    work_dir:       node["transloader"]["install_home"]
+    work_dir:       node["transloader"]["install_home"],
+    x_api_key:      x_api_key
   })
 end
 
@@ -285,7 +287,8 @@ node["transloader"]["campbell_scientific_stations"].each do |station|
       log_dir:        node["etl"]["log_dir"],
       sta_endpoint:   node["sensorthings"]["external_uri"],
       station:        station,
-      work_dir:       node["transloader"]["install_home"]
+      work_dir:       node["transloader"]["install_home"],
+      x_api_key:      x_api_key
     })
   end
 
@@ -322,6 +325,10 @@ if basic_user.nil? || basic_user.empty?
   sensorthings_auth = ""
 else
   sensorthings_auth = "--user '#{basic_user}:#{basic_password}'"
+end
+
+if !(x_api_key.nil? || x_api_key.empty?)
+  sensorthings_auth += " --header 'X-Api-Key: #{x_api_key}'"
 end
 
 # ENVIRONMENT CANADA
