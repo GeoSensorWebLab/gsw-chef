@@ -500,22 +500,12 @@ node["transloader"]["campbell_scientific_stations"].each do |stn|
   end
 end
 
-#############################
-# Set up Database for Airflow
-#############################
-# TODO: This must be changed to use Amazon RDS instead, where a database
-# user has already been configured. This will then create the DB only.
-
-pg_airflow_user = "airflow"
-pg_airflow_pass = SecureRandom.hex(16)
-pg_airflow_db   = "airflow"
-
 ########################
 # Install Apache Airflow
 ########################
-
-airflow_home = node["airflow"]["home"]
-airflow_port = "5080"
+airflow_vault = chef_vault_item("secrets", "airflow")
+airflow_home  = node["airflow"]["home"]
+airflow_port  = "5080"
 
 package %w(python3-pip)
 
@@ -599,8 +589,7 @@ template "#{airflow_home}/airflow.cfg" do
     logs_directory:          airflow_logs_directory,
     max_active_runs_per_dag: node["airflow"]["max_active_runs_per_dag"],
     parallelism:             node["airflow"]["parallelism"],
-    # TODO: Change pg_connection to use Amazon RDS
-    pg_connection:           "#{pg_airflow_user}:#{pg_airflow_pass}@localhost:5432/#{pg_airflow_db}",
+    postgresql_url:          airflow_vault["postgresql_url"],
     secret_key:              SecureRandom.hex
   })
   sensitive true
@@ -627,8 +616,7 @@ end
 # Create htpassword for Airflow HTTP Basic authentication
 package %w(apache2-utils)
 
-ht_file       = nil
-airflow_vault = chef_vault_item("secrets", "airflow")
+ht_file = nil
 
 # If the airflow vault item doesn't exist, skip this next section.
 if airflow_vault

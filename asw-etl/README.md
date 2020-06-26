@@ -3,22 +3,32 @@
 Cookbook for setting up a node with Arctic Sensor Web ETL:
 
 * Nginx
-* GSW Data Transloader
-* Apache Airflow for monitoring/scheduling Data Transloader
+  - For restricting access to Apache Airflow
+* [GSW Data Transloader][data-transloader]
+  - for bringing external sensor data into [OGC SensorThings API][STA]
+* [Apache Airflow][airflow]
+  - for monitoring/scheduling Data Transloader
 
 This cookbook is based on the `blackfoot` node cookbook. This node is intended to run on AWS EC2.
 
-Arctic Sensor Web is a part of the [Arctic Connect platform](https://www.arcticconnect.ca).
+Arctic Sensor Web is a part of the [Arctic Connect platform][arcticconnect].
+
+[airflow]: https://airflow.apache.org
+[arcticconnect]: https://www.arcticconnect.ca
+[data-transloader]: https://github.com/GeoSensorWebLab/data-transloader/
+[STA]: https://www.ogc.org/standards/sensorthings
 
 ## Supported Platforms
 
 * Ubuntu Server 18.04 LTS
+* Ubuntu Server 20.04 LTS?
+  - This will be tested soon
 
 ## Usage
 
 ## `default` recipe
 
-Installs the [GSW Data Transloader](https://github.com/GeoSensorWebLab/data-transloader/), scripts to automate the ETL, and Apache Airflow for managing the ETL jobs (as DAGs). Attributes are used to specify which stations to import for each data provider, as well as versions of software.
+Installs the [GSW Data Transloader][data-transloader], scripts to automate the ETL, and Apache Airflow for managing the ETL jobs (as DAGs). Attributes are used to specify which stations to import for each data provider, as well as versions of software.
 
 **Please Note:** The recipe requires a Chef vault item. See the "Chef Vault" section below for more details.
 
@@ -39,7 +49,7 @@ See `attributes/default.rb` for documentation on available attributes in this co
 
 ## Chef Vault
 
-The following Chef Vault items are required for the recipes in this cookbook.
+The following Chef Vault items are required for the recipes in this cookbook. Note the different keys for different vault items (`airflow` vs `arctic_sensors`).
 
 <table>
   <tr>
@@ -65,6 +75,12 @@ The following Chef Vault items are required for the recipes in this cookbook.
     <td>String</td>
     <td>HTTP Basic Password for accessing the Apache Airflow web interface through nginx</td>
     <td></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/airflow['postgresql_url']</tt></td>
+    <td>String</td>
+    <td>PostgreSQL connection string for Airflow's access to PostgreSQL on RDS. Uses [SQLAlchemy's database URL API](https://docs.sqlalchemy.org/en/13/core/engines.html), so a driver may be specified as well.</td>
+    <td><tt>postgresql://USER:PASS@HOST:PORT/DATABASE</tt></td>
   </tr>
   <tr>
     <td><tt>secrets/arctic_sensors['id']</tt></td>
