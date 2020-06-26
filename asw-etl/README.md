@@ -36,6 +36,12 @@ The recipe requires a Chef vault item. See the "Chef Vault" section below for mo
 
 This recipe requires a PostgreSQL user and database be **pre-configured** in your database, likely Amazon RDS. The connection details are stored in a Chef vault item (`postgresql_url`).
 
+```
+postgres=> CREATE ROLE airflow WITH CREATEDB LOGIN PASSWORD '';
+postgres=> CREATE DATABASE airflow;
+postgres=> ALTER DATABASE airflow OWNER TO airflow;
+```
+
 **Recommendations:** Before bootstrapping a compute node with this cookbook and a connection to Chef Server, I recommend setting up a mounted volume for storing cached station observations and metadata and logs. These are stored in the following cookbook attributes:
 
 * `default["etl"]["cache_dir"]`
