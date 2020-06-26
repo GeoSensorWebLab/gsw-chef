@@ -140,7 +140,7 @@ end
 # Retrieve HTTP Basic Settings
 ##############################
 # Read from Chef Vault (or Data Bag)
-arctic_sensors_vault = chef_vault_item("secrets", "arctic_sensors")
+arctic_sensors_vault = chef_vault_item("secrets", node["transloader"]["etl_vault"])
 
 basic_user     = nil
 basic_password = nil

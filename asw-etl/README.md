@@ -59,9 +59,9 @@ See `attributes/default.rb` for documentation on available attributes in this co
 
 ## Chef Vault
 
-The following Chef Vault items are required for the recipes in this cookbook. Note the different keys for different vault items (`asw-airflow-1` vs `arctic_sensors`).
+The following Chef Vault items are required for the recipes in this cookbook. Note the different keys for different vault items (`asw-airflow-1` vs `asw-etl-1`).
 
-The names of the Vault items can be overridden in the attributes, under the `node["transloader"]["airflow_vault"]` key.
+The names of the Vault items can be overridden in the attributes, under the `node["transloader"]["airflow_vault"]` and `node["transloader"]["etl_vault"]` keys.
 
 <table>
   <tr>
@@ -74,7 +74,7 @@ The names of the Vault items can be overridden in the attributes, under the `nod
     <td><tt>secrets/asw-airflow-1['id']</tt></td>
     <td>String</td>
     <td>Vault Item ID</td>
-    <td><tt>airflow</tt></td>
+    <td><tt>asw-airflow-1</tt></td>
   </tr>
   <tr>
     <td><tt>secrets/asw-airflow-1['username']</tt></td>
@@ -95,31 +95,31 @@ The names of the Vault items can be overridden in the attributes, under the `nod
     <td><tt>postgresql://USER:PASS@HOST:PORT/DATABASE</tt></td>
   </tr>
   <tr>
-    <td><tt>secrets/arctic_sensors['id']</tt></td>
+    <td><tt>secrets/asw-etl-1['id']</tt></td>
     <td>String</td>
     <td>Vault Item ID</td>
-    <td><tt>arctic_sensors</tt></td>
+    <td><tt>asw-etl-1</tt></td>
   </tr>
   <tr>
-    <td><tt>secrets/arctic_sensors['http_basic_enabled']</tt></td>
+    <td><tt>secrets/asw-etl-1['http_basic_enabled']</tt></td>
     <td>Boolean</td>
     <td>If enabled, HTTP Basic parameters from this vault will be used for connections to SensorThings API. This is necessary for upload access to some STA instances.</td>
     <td></td>
   </tr>
   <tr>
-    <td><tt>secrets/arctic_sensors['username']</tt></td>
+    <td><tt>secrets/asw-etl-1['username']</tt></td>
     <td>String</td>
     <td>HTTP Basic Username for uploading to SensorThings API</td>
     <td></td>
   </tr>
   <tr>
-    <td><tt>secrets/arctic_sensors['password']</tt></td>
+    <td><tt>secrets/asw-etl-1['password']</tt></td>
     <td>String</td>
     <td>HTTP Basic Password for uploading to SensorThings API</td>
     <td></td>
   </tr>
   <tr>
-    <td><tt>secrets/arctic_sensors['x-api-key']</tt></td>
+    <td><tt>secrets/asw-etl-1['x-api-key']</tt></td>
     <td>String</td>
     <td>"X-Api-Key" header value for uploading to SensorThings API. If an empty string is used, then this header will be omitted.</td>
     <td></td>

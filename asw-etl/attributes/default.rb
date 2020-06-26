@@ -10,6 +10,9 @@ default["transloader"]["user"]         = "transloader"
 # Airflow. This is an attribute so it may be overridden with another
 # configuration.
 default["transloader"]["airflow_vault"] = "asw-airflow-1"
+# Vault name for the credentials the ETL (Data Transloader) will use for
+# uploading to SensorThings API. (e.g. HTTP Basic, API Key Header)
+default["transloader"]["etl_vault"] = "asw-etl-1"
 
 ####################
 # Ruby Configuration
