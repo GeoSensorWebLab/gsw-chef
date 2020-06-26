@@ -91,7 +91,7 @@ execute "Install ruby-build" do
 end
 
 # Install Ruby dependencies
-package %w(autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm5 libgdbm-dev)
+package %w(build-essential)
 
 ruby_version = node["ruby"]["version"]
 
@@ -109,10 +109,12 @@ bash "Link Ruby" do
   EOH
 end
 
+bundler_version = node["ruby"]["bundler_version"]
+
 bash "install transloader deps" do
   cwd node["transloader"]["install_home"]
   code <<-EOH
-  gem install bundler
+  gem install bundler:#{bundler_version}
   bundle install
   EOH
   environment({
