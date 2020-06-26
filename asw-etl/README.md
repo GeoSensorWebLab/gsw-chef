@@ -135,6 +135,15 @@ $ knife vault create secrets asw-airflow-1 -C "airflow-server-1" -A "jpbadger"
 
 (For local development usage in Test Kitchen, an unencrypted data bag in `test/fixtures/data_bags/secrets` is used instead.)
 
+## Roadmap
+
+This cookbook is currently intended for a single compute node to run Airflow scheduler + web UI + executors and the ETL tool. In the future, this may be separated to better scale the heavy part (executors) from the lighter parts (scheduler, web UI).
+
+* Switch to newer version of Data Transloader (v0.8.0+)
+  - This provides access to the Postgres data and metadata store, which allows multiple ETL processes to run simultaneously
+* Move Data Transloader execution into Docker
+  - This would reduce the work required to set up a Ruby interpreter, and the Airflow executors could take advantage of Docker operators instead of Bash operators
+
 ## License and Authors
 
 James Badger (jpbadger@ucalgary.ca)
