@@ -30,7 +30,11 @@ Arctic Sensor Web is a part of the [Arctic Connect platform][arcticconnect].
 
 Installs the [GSW Data Transloader][data-transloader], scripts to automate the ETL, and Apache Airflow for managing the ETL jobs (as DAGs). Attributes are used to specify which stations to import for each data provider, as well as versions of software.
 
-**Please Note:** The recipe requires a Chef vault item. See the "Chef Vault" section below for more details.
+### Requirements
+
+The recipe requires a Chef vault item. See the "Chef Vault" section below for more details.
+
+This recipe requires a PostgreSQL user and database be **pre-configured** in your database, likely Amazon RDS. The connection details are stored in a Chef vault item (`postgresql_url`).
 
 **Recommendations:** Before bootstrapping a compute node with this cookbook and a connection to Chef Server, I recommend setting up a mounted volume for storing cached station observations and metadata and logs. These are stored in the following cookbook attributes:
 
