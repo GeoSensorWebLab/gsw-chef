@@ -11,7 +11,6 @@ privacy          true
 
 # Public Cookbooks
 depends 'chef-vault'
-depends 'postgresql'
 
 # Private Cookbooks
 # depends 'gsw-apt-mirror'
