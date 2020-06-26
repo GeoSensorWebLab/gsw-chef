@@ -149,13 +149,12 @@ arctic_sensors_vault = chef_vault_item("secrets", node["transloader"]["etl_vault
 
 basic_user     = nil
 basic_password = nil
-x_api_key      = nil
+x_api_key      = arctic_sensors_vault["x-api-key"]
 
 # If the airflow vault item doesn't exist, skip this next section.
 if arctic_sensors_vault && arctic_sensors_vault["http_basic_enabled"]
   basic_user     = arctic_sensors_vault["username"]
   basic_password = arctic_sensors_vault["password"]
-  x_api_key      = arctic_sensors_vault["x-api-key"]
 end
 
 # Install automatic transloading scripts, to be ran by AirFlow DAGs.
@@ -326,10 +325,10 @@ end
 # Run initial metadata fetch
 ############################
 
-if basic_user.nil? || basic_user.empty?
-  sensorthings_auth = ""
-else
-  sensorthings_auth = "--user '#{basic_user}:#{basic_password}'"
+sensorthings_auth = ""
+
+if !(basic_user.nil? || basic_user.empty?)
+  sensorthings_auth += "--user '#{basic_user}:#{basic_password}'"
 end
 
 if !(x_api_key.nil? || x_api_key.empty?)
