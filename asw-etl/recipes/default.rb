@@ -503,7 +503,7 @@ end
 ########################
 # Install Apache Airflow
 ########################
-airflow_vault = chef_vault_item("secrets", "airflow")
+airflow_vault = chef_vault_item("secrets", node["transloader"]["airflow_vault"])
 airflow_home  = node["airflow"]["home"]
 airflow_port  = "5080"
 

@@ -6,6 +6,10 @@ default["transloader"]["revision"]     = "v0.7.0"
 default["transloader"]["install_home"] = "/opt/data-transloader"
 default["transloader"]["user_home"]    = "/home/transloader"
 default["transloader"]["user"]         = "transloader"
+# The Chef Vault that contains the secret configuration details for
+# Airflow. This is an attribute so it may be overridden with another
+# configuration.
+default["transloader"]["airflow_vault"] = "asw-airflow-1"
 
 ####################
 # Ruby Configuration
