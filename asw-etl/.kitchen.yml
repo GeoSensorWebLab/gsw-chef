@@ -29,12 +29,13 @@ suites:
       network:
         - ["private_network", { ip: "192.168.33.55" }]
     run_list:
+      - recipe[asw-etl::frost]
       - recipe[asw-etl::default]
     verifier:
       inspec_tests:
         - test/smoke/default
     attributes:
       sensorthings:
-        external_uri: "https://ucalgary-sandbox-01.sensorup.com/v1.0/"
+        external_uri: "https://localhost:8080/FROST-Server/v1.0/"
       chef_vault:
         databags_fallback: true

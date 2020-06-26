@@ -127,14 +127,17 @@ end
 
 # Set up data storage
 cache_dir = node["etl"]["cache_dir"]
+
 directory cache_dir do
   owner tl_user
+  recursive true
   action :create
 end
 
 # Set up log directory
 directory node["etl"]["log_dir"] do
   owner tl_user
+  recursive true
   action :create
 end
 

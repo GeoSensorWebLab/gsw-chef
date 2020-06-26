@@ -49,6 +49,10 @@ postgres=> ALTER DATABASE airflow OWNER TO airflow;
 
 For using the file-based storage for the ETL, I recommend 10 GB for storage at least; more for a larger number of stations. If using the PostgreSQL backend for the ETL instead, a mounted volume may not be necessary as only log data will be output by the ETL tool.
 
+## `frost` recipe
+
+Install FROST SensorThings API server using Docker. This instance can then be used locally with the GSW Data Transloader instead of pushing to a public STA instance.
+
 ## `unpause` recipe
 
 Will use the Airflow command line interface to iteratively unpause all the DAGs found in the DAGs directory. This is kind of slow, so only run it when you need it.
