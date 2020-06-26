@@ -20,9 +20,9 @@ Arctic Sensor Web is a part of the [Arctic Connect platform][arcticconnect].
 
 ## Supported Platforms
 
-* Ubuntu Server 18.04 LTS
-* Ubuntu Server 20.04 LTS?
-  - This will be tested soon
+* Ubuntu Server 20.04 LTS
+
+Ubuntu Server 18.04 LTS is untested.
 
 ## Usage
 

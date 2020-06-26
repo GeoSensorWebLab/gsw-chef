@@ -1,8 +1,6 @@
 ---
 driver:
   name: vagrant
-  network:
-    - ["private_network", { ip: "192.168.33.55" }]
   customize:
     cpus: 2
     memory: 2048
@@ -23,10 +21,13 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-18.04
+  - name: ubuntu-20.04
 
 suites:
   - name: default
+    driver:
+      network:
+        - ["private_network", { ip: "192.168.33.55" }]
     run_list:
       - recipe[asw-etl::default]
     verifier:
