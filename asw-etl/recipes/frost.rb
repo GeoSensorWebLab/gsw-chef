@@ -61,11 +61,6 @@ directory "opt/frost" do
   action :create
 end
 
-git "/opt/frost" do
-  repository node["frost"]["repository"]
-  depth 1
-end
-
 template "/opt/frost/docker-compose.yaml" do
   source "frost-compose.yaml"
   variables({
