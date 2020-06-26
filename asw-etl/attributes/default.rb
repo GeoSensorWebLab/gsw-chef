@@ -17,7 +17,7 @@ default["transloader"]["etl_vault"] = "asw-etl-1"
 ####################
 # Ruby Configuration
 ####################
-default["ruby"]["version"] = "2.7.1"
+default["ruby"]["version"] = "2.6.6"
 # This is the version of Bundler required to install dependencies for
 # the transloader Ruby gems
 default["ruby"]["bundler_version"] = "1.17.2"
