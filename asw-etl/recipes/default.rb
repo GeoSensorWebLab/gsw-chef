@@ -91,7 +91,7 @@ execute "Install ruby-build" do
 end
 
 # Install Ruby dependencies
-package %w(build-essential)
+package %w(build-essential libssl-dev libreadline-dev zlib1g-dev)
 
 ruby_version = node["ruby"]["version"]
 
