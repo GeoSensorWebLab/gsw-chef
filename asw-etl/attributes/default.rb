@@ -23,8 +23,8 @@ default["ruby"]["version"] = "2.6.6"
 default["etl"]["year"]  = 2016
 default["etl"]["month"] = 1
 default["etl"]["day"]   = 1
-default["etl"]["cache_dir"] = "/srv/data"
-default["etl"]["log_dir"]   = "/srv/logs"
+default["etl"]["cache_dir"] = "/etl/data"
+default["etl"]["log_dir"]   = "/etl/logs"
 
 ################
 # Apache Airflow
