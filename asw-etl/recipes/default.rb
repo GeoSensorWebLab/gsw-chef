@@ -593,7 +593,7 @@ template "#{airflow_home}/airflow.cfg" do
     logs_directory:          airflow_logs_directory,
     max_active_runs_per_dag: node["airflow"]["max_active_runs_per_dag"],
     parallelism:             node["airflow"]["parallelism"],
-    postgresql_url:          airflow_vault["postgresql_url"],
+    database_url:            airflow_vault["database_url"],
     secret_key:              SecureRandom.hex
   })
   sensitive true

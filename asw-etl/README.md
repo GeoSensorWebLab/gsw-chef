@@ -34,7 +34,7 @@ Installs the [GSW Data Transloader][data-transloader], scripts to automate the E
 
 The recipe requires a Chef vault item. See the "Chef Vault" section below for more details.
 
-This recipe requires a PostgreSQL user and database be **pre-configured** in your database, likely Amazon RDS. The connection details are stored in a Chef vault item (`postgresql_url`).
+This recipe requires a PostgreSQL user and database be **pre-configured** in your database, likely Amazon RDS. The connection details are stored in a Chef vault item (`database_url`).
 
 ```
 postgres=> CREATE ROLE airflow WITH CREATEDB LOGIN PASSWORD '';
@@ -93,9 +93,9 @@ The names of the Vault items can be overridden in the attributes, under the `nod
     <td></td>
   </tr>
   <tr>
-    <td><tt>secrets/asw-airflow-1['postgresql_url']</tt></td>
+    <td><tt>secrets/asw-airflow-1['database_url']</tt></td>
     <td>String</td>
-    <td>PostgreSQL connection string for Airflow's access to PostgreSQL on RDS. Uses [SQLAlchemy's database URL API](https://docs.sqlalchemy.org/en/13/core/engines.html), so a driver may be specified as well.</td>
+    <td>Database connection string for Airflow's access to PostgreSQL on RDS. Uses [SQLAlchemy's database URL API](https://docs.sqlalchemy.org/en/13/core/engines.html), so a driver may be specified as well.</td>
     <td><tt>postgresql://USER:PASS@HOST:PORT/DATABASE</tt></td>
   </tr>
   <tr>
