@@ -32,6 +32,11 @@ service "nginx" do
   action :nothing
 end
 
+# Remove default site
+file "/etc/nginx/sites-enabled/default" do
+  action :delete
+end
+
 ##########################
 # Install data transloader
 ##########################
