@@ -588,19 +588,22 @@ directory airflow_logs_directory do
   action :create
 end
 
+airflow_cfg = node["airflow"]
+
 template "#{airflow_home}/airflow.cfg" do
   source "airflow.cfg.erb"
   variables({
-    airflow_home:            airflow_home,
-    base_url:                node["airflow"]["base_url"],
-    dag_concurrency:         node["airflow"]["dag_concurrency"],
-    executor:                node["airflow"]["executor"],
-    fernet_key:              Base64.strict_encode64(SecureRandom.hex(16)),
-    logs_directory:          airflow_logs_directory,
-    max_active_runs_per_dag: node["airflow"]["max_active_runs_per_dag"],
-    parallelism:             node["airflow"]["parallelism"],
-    database_url:            airflow_vault["database_url"],
-    secret_key:              SecureRandom.hex
+    airflow_home:                airflow_home,
+    base_url:                    airflow_cfg["base_url"],
+    dags_are_paused_at_creation: airflow_cfg["dags_are_paused_at_creation"],
+    dag_concurrency:             airflow_cfg["dag_concurrency"],
+    executor:                    airflow_cfg["executor"],
+    fernet_key:                  Base64.strict_encode64(SecureRandom.hex(16)),
+    logs_directory:              airflow_logs_directory,
+    max_active_runs_per_dag:     airflow_cfg["max_active_runs_per_dag"],
+    parallelism:                 airflow_cfg["parallelism"],
+    database_url:                airflow_vault["database_url"],
+    secret_key:                  SecureRandom.hex
   })
   sensitive true
   # Restart the Airflow applications when the configuration changes
