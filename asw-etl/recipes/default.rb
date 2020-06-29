@@ -151,7 +151,7 @@ basic_user     = nil
 basic_password = nil
 x_api_key      = arctic_sensors_vault["x-api-key"]
 
-# If the airflow vault item doesn't exist, skip this next section.
+# If the ETL vault item doesn't exist, skip this next section.
 if arctic_sensors_vault && arctic_sensors_vault["http_basic_enabled"]
   basic_user     = arctic_sensors_vault["username"]
   basic_password = arctic_sensors_vault["password"]

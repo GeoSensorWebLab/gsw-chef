@@ -20,9 +20,9 @@ Arctic Sensor Web is a part of the [Arctic Connect platform][arcticconnect].
 
 ## Supported Platforms
 
-* Ubuntu Server 20.04 LTS
+* Ubuntu Server 18.04 LTS
 
-Ubuntu Server 18.04 LTS is untested.
+Ubuntu 20.04 LTS contains Python 3.8 by default, and the latest stable Apache Airflow is not compatible with 3.8 (yet).
 
 ## Usage
 
