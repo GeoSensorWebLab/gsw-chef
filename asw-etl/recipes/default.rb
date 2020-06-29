@@ -17,6 +17,7 @@
 # limitations under the License.
 require 'base64'
 require 'securerandom'
+require 'shellwords'
 require 'time'
 
 apt_update
@@ -635,12 +636,12 @@ ht_file = nil
 if airflow_vault
   ht_file   = "#{airflow_home}/htpasswd"
   ht_user   = airflow_vault["username"]
-  ht_passwd = airflow_vault["password"]
+  ht_passwd = Shellwords.escape(airflow_vault["password"])
 
   # Note that nginx does not support bcrypt passwords created by
   # Apache's htpasswd utility.
   execute "Create airflow http basic auth file" do
-    command %Q[htpasswd -bcs #{ht_file} #{ht_user} "#{ht_passwd}"]
+    command %Q[htpasswd -bcs #{ht_file} #{ht_user} #{ht_passwd}]
     creates ht_file
     sensitive true
   end
@@ -648,7 +649,7 @@ if airflow_vault
   # Run update even after create to make sure the latest username/password
   # exists in the file.
   execute "Update airflow http basic auth file" do
-    command %Q[htpasswd -bs #{ht_file} #{ht_user} "#{ht_passwd}"]
+    command %Q[htpasswd -bs #{ht_file} #{ht_user} #{ht_passwd}]
     sensitive true
   end
 
