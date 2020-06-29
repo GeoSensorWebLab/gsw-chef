@@ -589,6 +589,7 @@ template "#{airflow_home}/airflow.cfg" do
     airflow_home:            airflow_home,
     base_url:                node["airflow"]["base_url"],
     dag_concurrency:         node["airflow"]["dag_concurrency"],
+    executor:                node["airflow"]["executor"],
     fernet_key:              Base64.strict_encode64(SecureRandom.hex(16)),
     logs_directory:          airflow_logs_directory,
     max_active_runs_per_dag: node["airflow"]["max_active_runs_per_dag"],

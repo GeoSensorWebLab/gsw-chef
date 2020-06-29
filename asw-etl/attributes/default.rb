@@ -41,6 +41,8 @@ default["airflow"]["home"] = "/opt/airflow"
 default["airflow"]["base_url"] = "https://asw-etl.gswlab.ca"
 # If false, will automatically enable all DAGs when added to scheduler
 default["airflow"]["dags_are_paused_at_creation"] = true
+# Name of the Executor class to use.
+default["airflow"]["executor"] = "LocalExecutor"
 # Limit number of DAGs that can run at the same time
 default["airflow"]["parallelism"] = 1
 # Limit the number of runs of the *same* DAG that can happen at the same
