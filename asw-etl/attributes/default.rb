@@ -38,7 +38,7 @@ default["etl"]["log_dir"]   = "/etl/logs"
 # Installation directory for Airflow
 default["airflow"]["home"] = "/opt/airflow"
 # Base URL for Airflow interface
-default["airflow"]["base_url"] = "https://asw-etl.gswlab.ca"
+default["airflow"]["base_url"] = "https://arctic-sta-airflow.gswlab.ca"
 # If false, will automatically enable all DAGs when added to scheduler
 default["airflow"]["dags_are_paused_at_creation"] = true
 # Name of the Executor class to use.

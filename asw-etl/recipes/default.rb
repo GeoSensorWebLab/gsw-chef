@@ -19,6 +19,7 @@ require 'base64'
 require 'securerandom'
 require 'shellwords'
 require 'time'
+require 'uri'
 
 apt_update
 
@@ -663,6 +664,7 @@ end
 template "/etc/nginx/sites-available/airflow" do
   source "nginx/airflow.conf.erb"
   variables({
+    host:    URI(airflow_cfg["base_url"]).hostname,
     ht_file: ht_file,
     port:    airflow_port
   })
