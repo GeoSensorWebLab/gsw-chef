@@ -44,7 +44,7 @@ default["airflow"]["dags_are_paused_at_creation"] = true
 # Name of the Executor class to use.
 default["airflow"]["executor"] = "LocalExecutor"
 # Limit number of DAGs that can run at the same time
-default["airflow"]["parallelism"] = 1
+default["airflow"]["parallelism"] = 2
 # Limit the number of runs of the *same* DAG that can happen at the same
 # time
 default["airflow"]["dag_concurrency"] = 1
