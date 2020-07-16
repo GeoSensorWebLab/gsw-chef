@@ -2,7 +2,7 @@
 # Cookbook Configuration
 ########################
 default["transloader"]["repository"]   = "https://github.com/GeoSensorWebLab/data-transloader"
-default["transloader"]["revision"]     = "master"
+default["transloader"]["revision"]     = "v0.7.0"
 default["transloader"]["install_home"] = "/opt/data-transloader"
 default["transloader"]["user_home"]    = "/home/transloader"
 default["transloader"]["user"]         = "transloader"
