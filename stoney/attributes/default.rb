@@ -63,19 +63,19 @@ default["stoney"]["vhosts"] = [{
   "proxy_port"  => 2080
 }, {
   "id"          => "bera-dashboard",
-  "domains"     => ["dashboard.geocens.ca", "dashboard.gswlab.ca"],
+  "domains"     => ["dashboard.gswlab.ca"],
   "ssl_enabled" => true,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "geocens-portal",
-  "domains"     => ["dev.geocens.ca", "geocens.gswlab.ca"],
+  "domains"     => ["geocens.gswlab.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "eaglewatch-portal",
-  "domains"     => ["eaglewatch.geocens.ca", "eaglewatch.gswlab.ca"],
+  "domains"     => ["eaglewatch.gswlab.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
@@ -87,19 +87,19 @@ default["stoney"]["vhosts"] = [{
   "proxy_port"  => 80
 }, {
   "id"          => "aafc-portal",
-  "domains"     => ["aafc.geocens.ca", "aafc.gswlab.ca"],
+  "domains"     => ["aafc.gswlab.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "sta-time-vis",
-  "domains"     => ["visualize.geocens.ca", "visualize.gswlab.ca"],
+  "domains"     => ["visualize.gswlab.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
 }, {
   "id"          => "sta-webcam",
-  "domains"     => ["webcam.geocens.ca", "webcam.gswlab.ca"],
+  "domains"     => ["webcam.gswlab.ca"],
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
