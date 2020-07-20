@@ -2,7 +2,11 @@
 
 Will set up on AINA's AWS account:
 
-* EC2 Instance for running FROST Server
+* `relational-database-service.tf`
+    - DB Instance for SensorThings
+* `elastic-compute-cloud.tf`
+* `virtual-private-cloud.tf`
+    - VPC for SensorThings-related servers
 
 ## Usage Instructions
 
