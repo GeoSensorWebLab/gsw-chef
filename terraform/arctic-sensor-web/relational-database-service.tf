@@ -7,7 +7,7 @@ resource "aws_db_instance" "frost-database-1" {
   backup_window                         = "12:56-13:26"
   ca_cert_identifier                    = "rds-ca-2019"
   copy_tags_to_snapshot                 = true
-  db_subnet_group_name                  = "default-vpc-042223c2c1eb1bfa4"
+  db_subnet_group_name                  = "default-${aws_vpc.sensorthings-vpc.id}"
   delete_automated_backups              = true
   deletion_protection                   = true
   enabled_cloudwatch_logs_exports       = [
@@ -40,8 +40,8 @@ resource "aws_db_instance" "frost-database-1" {
   }
   username                              = "postgres"
   vpc_security_group_ids                = [
-      "sg-093fa52d414fa29f2",
-      "sg-0c1b169e9bdd9e7f6",
+      aws_security_group.airflow-group-1.id,
+      aws_security_group.frost-server-group.id,
   ]
 
   timeouts {}
