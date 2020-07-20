@@ -81,3 +81,14 @@ actions need to be performed.
 ```
 
 This is perfect. Now that this resource is configured using Terraform, we can move on to the next resource and repeat the steps. This may seem tedious, but it does provide the safest way to review the state and prevent mis-configurations.
+
+### How to determine which resources to import
+
+As far as I can tell, there is no way to ask Terraform for a list of all the resources in AWS that you can import. What I have been doing is finding the resources in the AWS Web Console, and then using that as reference for the Terraform resources. I then check any linked resources in the web console, and then import those to Terraform.
+
+So for example, the VPC in AWS also links to the Network ACL, DHCP options set, and Route Table; each of those also need to be checked and imported.
+
+Additionally, anywhere in the Terraform configuration that refers to an ID or ARN is probably referring to a resource that should also be added to Terraform. The IDs can then be replaced with local references instead (e.g. `aws_vpc.sensorthings-vpc.id`).
+
+
+
