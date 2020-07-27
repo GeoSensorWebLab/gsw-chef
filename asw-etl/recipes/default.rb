@@ -343,10 +343,27 @@ if !(x_api_key.nil? || x_api_key.empty?)
   sensorthings_auth += " --header 'X-Api-Key: #{x_api_key}'"
 end
 
+imported_stations = "#{node["transloader"]["user_home"]}/imported"
+
+directory imported_stations do
+  owner tl_user
+  recursive true
+  action :create
+end
+
 # ENVIRONMENT CANADA
+ec_run_dir = "#{imported_stations}/environment_canada"
+
+directory ec_run_dir do
+  owner tl_user
+  recursive true
+  action :create
+end
+
 # We use the "creates" property to prevent re-running this resource
 node["transloader"]["environment_canada_stations"].each do |stn|
-  # TODO: Update variable names for ETL v0.8 changes
+  run_file = "#{ec_run_dir}/#{stn}"
+
   bash "import Environment Canada station #{stn} metadata" do
     code <<-EOH
       ruby transload get metadata \
@@ -360,8 +377,10 @@ node["transloader"]["environment_canada_stations"].each do |stn|
         --cache "#{cache_dir}" \
         --destination "#{node["sensorthings"]["external_uri"]}" \
         #{sensorthings_auth}
+
+        touch #{run_file}
     EOH
-    creates "#{cache_dir}/environment_canada/metadata/#{stn}.json"
+    creates run_file
     cwd node["transloader"]["install_home"]
     # Some stations may have missing SWOB-ML files occasionally —
     # the reason is currently unknown. When that happens this step would
@@ -377,8 +396,16 @@ node["transloader"]["environment_canada_stations"].each do |stn|
 end
 
 # DATA GARRISON
+dg_run_dir = "#{imported_stations}/data_garrison"
+
+directory dg_run_dir do
+  owner tl_user
+  recursive true
+  action :create
+end
+
 node["transloader"]["data_garrison_stations"].each do |stn|
-  metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}-#{stn["station_id"]}.json"
+  run_file = "#{dg_run_dir}/#{stn["user_id"]}-#{stn["station_id"]}"
 
   # TODO: Update variable names for ETL v0.8 changes
   bash "import Data Garrison station #{stn["station_id"]} metadata" do
@@ -430,8 +457,10 @@ node["transloader"]["data_garrison_stations"].each do |stn|
         --cache "#{cache_dir}" \
         --destination "#{node["sensorthings"]["external_uri"]}" \
         #{sensorthings_auth}
+
+      touch #{run_file}
     EOH
-    creates metadata_file
+    creates run_file
     cwd node["transloader"]["install_home"]
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
@@ -443,8 +472,16 @@ node["transloader"]["data_garrison_stations"].each do |stn|
 end
 
 # CAMPBELL SCIENTIFIC
+cs_run_dir = "#{imported_stations}/campbell_scientific"
+
+directory cs_run_dir do
+  owner tl_user
+  recursive true
+  action :create
+end
+
 node["transloader"]["campbell_scientific_stations"].each do |stn|
-  metadata_file = "#{cache_dir}/campbell_scientific/metadata/#{stn["station_id"]}.json"
+  run_file = "#{cs_run_dir}/#{stn["station_id"]}"
 
   # Convert data URLs to arguments
   data_urls_arg = stn["data_files"].reduce("") do |memo, url|
@@ -500,8 +537,10 @@ node["transloader"]["campbell_scientific_stations"].each do |stn|
         --destination "#{node["sensorthings"]["external_uri"]}" \
         --blocked #{node["transloader"]["campbell_scientific_blocked"]} \
         #{sensorthings_auth}
+
+      touch #{run_file}
     EOH
-    creates metadata_file
+    creates run_file
     cwd node["transloader"]["install_home"]
     environment({
       GEM_HOME: "#{tl_home}/.ruby",
