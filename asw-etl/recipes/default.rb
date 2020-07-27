@@ -86,6 +86,7 @@ end
 # Install Ruby
 git "/opt/ruby-build" do
   repository "https://github.com/rbenv/ruby-build.git"
+  reference node["ruby-build"]["reference"]
 end
 
 execute "Install ruby-build" do

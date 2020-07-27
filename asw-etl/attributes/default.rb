@@ -21,6 +21,7 @@ default["ruby"]["version"] = "2.6.6"
 # This is the version of Bundler required to install dependencies for
 # the transloader Ruby gems
 default["ruby"]["bundler_version"] = "1.17.2"
+default["ruby-build"]["reference"] = "v20200727"
 
 ###################
 # ETL Configuration
