@@ -15,6 +15,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+include_recipe "chef-vault::default"
+
 docker_service "default" do
   action [:create, :start]
 end
@@ -24,7 +26,9 @@ docker_network "frost_server_net" do
 end
 
 # Load ENV for FROST Server
-# TODO: Merge in ENV from Chef Vault
+frost_vault = chef_vault_item(
+  node["frost_server"]["frost_env_vault"],
+  node["frost_server"]["frost_env_item"])
 
 # Optionally deploy PostGIS for FROST Server.
 # If not set, then you must specify an external database in the
@@ -68,7 +72,7 @@ docker_image node["frost_server"]["docker_repo"] do
 end
 
 # Convert env Hash to Array for Docker
-container_env = node["frost_server"]["env"].reduce([]) do |memo, pair|
+container_env = frost_vault["env"].reduce([]) do |memo, pair|
   memo.push("#{pair[0]}=#{pair[1].to_s}")
   memo
 end

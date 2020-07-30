@@ -20,6 +20,20 @@ Include `gsw-frost-server` in your node's `run_list`:
 }
 ```
 
+The environment variables used to customize FROST Server must be specified in a [Chef Vault](https://github.com/chef/chef-vault) item. The recipe will look for a vault with a name from `node['frost_server']['frost_env_vault']` with an item with a name from `node['frost_server']['frost_env_item']`. This will then be decrypted and must have the following format:
+
+```json
+{
+  "id": "vault_item",
+  "env": {
+    "http_cors_enable": "true",
+    …
+  }
+}
+```
+
+The `env` object is then passed to Docker when starting FROST Server in a container.
+
 ## Attributes
 
 <table>
@@ -46,12 +60,6 @@ Include `gsw-frost-server` in your node's `run_list`:
     <td>String</td>
     <td>The Docker Hub repository for the combined FROST HTTP+MQTT Server will use this tag.</td>
     <td><tt>latest</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['frost_server']['env']</tt></td>
-    <td>Hash</td>
-    <td>A key-value list (both Strings) of Environment Variables that will be sent to the FROST Server Docker container.</td>
-    <td><tt>See attributes/default.rb</tt></td>
   </tr>
 </table>
 
