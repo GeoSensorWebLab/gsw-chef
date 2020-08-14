@@ -11,6 +11,8 @@ Cookbook for setting up a node with Arctic Sensor Web ETL:
 
 This cookbook is based on the `blackfoot` node cookbook. This node is intended to run on AWS EC2.
 
+When ran in local development mode, Test Kitchen will also install FROST Server (from the `gsw-frost-server` cookbook) for a temporary database. This is only used as a safe non-production database; when deployed to AWS, the ETL should be pointed to a separately-hosted OGC SensorThings API instance. For our production usage, we run Amazon API Gateway with EC2 (FROST Server on Docker) and RDS for hosting OGC SensorThings API.
+
 Arctic Sensor Web is a part of the [Arctic Connect platform][arcticconnect].
 
 [airflow]: https://airflow.apache.org
@@ -48,10 +50,6 @@ postgres=> ALTER DATABASE airflow OWNER TO airflow;
 * `default["etl"]["log_dir"]`
 
 For using the file-based storage for the ETL, I recommend 10 GB for storage at least; more for a larger number of stations. If using the PostgreSQL backend for the ETL instead, a mounted volume may not be necessary as only log data will be output by the ETL tool.
-
-## `frost` recipe
-
-Install FROST SensorThings API server using Docker. This instance can then be used locally with the GSW Data Transloader instead of pushing to a public STA instance.
 
 ## `unpause` recipe
 

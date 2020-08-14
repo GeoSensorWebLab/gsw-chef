@@ -13,4 +13,4 @@ privacy          true
 depends 'chef-vault'
 
 # Private Cookbooks
-# depends 'gsw-apt-mirror'
+depends 'gsw-frost-server'

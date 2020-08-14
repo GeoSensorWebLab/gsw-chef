@@ -29,7 +29,7 @@ suites:
       network:
         - ["private_network", { ip: "192.168.33.55" }]
     run_list:
-      - recipe[asw-etl::frost]
+      - recipe[gsw-frost-server::default]
       - recipe[asw-etl::default]
     verifier:
       inspec_tests:

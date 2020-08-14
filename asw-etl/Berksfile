@@ -3,4 +3,4 @@ source 'https://supermarket.chef.io'
 metadata
 
 # List Private Cookbooks (not from Chef supermarket) here
-# 
+cookbook 'gsw-frost-server', path: '../gsw-frost-server'
