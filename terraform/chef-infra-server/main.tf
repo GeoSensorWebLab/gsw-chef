@@ -3,7 +3,6 @@ provider "aws" {
   allowed_account_ids = ["546905020646"]
   profile             = "gswlab"
   region              = "us-west-2"
-  version             = "~> 3.0"
 }
 
 # Some resources must be in the "global" region
@@ -12,7 +11,6 @@ provider "aws" {
   allowed_account_ids = ["546905020646"]
   profile             = "gswlab"
   region              = "us-east-1"
-  version             = "~> 3.0"
 }
 
 ########################
@@ -148,7 +146,7 @@ resource "aws_instance" "chef_server" {
   root_block_device {
     delete_on_termination = true
     encrypted             = true
-    kms_key_id            = aws_kms_key.chef_key.id
+    kms_key_id            = aws_kms_key.chef_key.arn
     volume_size           = 30
     volume_type           = "gp2"
   }
