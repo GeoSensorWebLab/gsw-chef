@@ -169,3 +169,19 @@ output "instance_pub_ip_addr" {
   value       = aws_instance.chef_server.public_ip
   description = "The public IP address of the Chef Infra Server instance."
 }
+
+#########
+# Route53
+#########
+
+data "aws_route53_zone" "gswlab_ca" {
+  name = "gswlab.ca"
+}
+
+resource "aws_route53_record" "chef" {
+  zone_id = data.aws_route53_zone.gswlab_ca.zone_id
+  name    = "chef.gswlab.ca"
+  type    = "A"
+  ttl     = "300"
+  records = [aws_instance.chef_server.public_ip]
+}
