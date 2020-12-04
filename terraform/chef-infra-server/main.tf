@@ -3,7 +3,7 @@ provider "aws" {
   allowed_account_ids = ["546905020646"]
   profile             = "gswlab"
   region              = "us-west-2"
-  version             = "~> 2.0"
+  version             = "~> 3.0"
 }
 
 # Some resources must be in the "global" region
@@ -12,7 +12,7 @@ provider "aws" {
   allowed_account_ids = ["546905020646"]
   profile             = "gswlab"
   region              = "us-east-1"
-  version             = "~> 2.0"
+  version             = "~> 3.0"
 }
 
 ########################
