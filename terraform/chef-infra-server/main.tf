@@ -77,6 +77,49 @@ resource "aws_key_pair" "gswlab_key" {
   }
 }
 
+resource "aws_security_group" "chef_infra_server" {
+  name        = "chef_infra_server"
+  description = "Allow SSH, HTTP/HTTPS inbound"
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    terraform = "chef-infra-server"
+  }
+}
+
+resource "aws_security_group_rule" "allow_ssh" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.chef_infra_server.id
+}
+
+resource "aws_security_group_rule" "allow_http" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.chef_infra_server.id
+}
+
+resource "aws_security_group_rule" "allow_https" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.chef_infra_server.id
+}
+
 data "aws_ami" "ubuntu2004" {
   most_recent = true
 
@@ -100,6 +143,7 @@ resource "aws_instance" "chef_server" {
   iam_instance_profile        = aws_iam_instance_profile.chef_server_profile.name
   instance_type               = "t2.medium"
   key_name                    = aws_key_pair.gswlab_key.key_name
+  vpc_security_group_ids      = [aws_security_group.chef_infra_server.id]
 
   root_block_device {
     delete_on_termination = true
