@@ -146,6 +146,9 @@ resource "aws_instance" "chef_server" {
   root_block_device {
     delete_on_termination = true
     encrypted             = true
+    # Yes, an ARN is being passed to a parameter asking for an ID.
+    # This is a "bug" or typo in the AWS API somewhere that Terraform
+    # passes through to us.
     kms_key_id            = aws_kms_key.chef_key.arn
     volume_size           = 30
     volume_type           = "gp2"
