@@ -14,10 +14,10 @@ sudo apt upgrade -y
 
 # Install Chef Infra Server
 wget --timestamping --continue \
-	"https://packages.chef.io/files/stable/chef-server/14.0.65/ubuntu/20.04/chef-server-core_14.0.65-1_amd64.deb"
+	"https://packages.chef.io/files/stable/chef-server/12.18.14/ubuntu/18.04/chef-server-core_12.18.14-1_amd64.deb"
 
 sudo dpkg --install --refuse-downgrade --skip-same-version \
-	"chef-server-core_14.0.65-1_amd64.deb"
+	"chef-server-core_12.18.14-1_amd64.deb"
 
 # https://docs.chef.io/chef_license_accept/
 sudo chef-server-ctl reconfigure --chef-license=accept
@@ -41,7 +41,7 @@ sudo certbot certonly \
 	--expand
 
 # Update Chef Infra Server to use new certs
-cat <<EOF > "/etc/opscode/chef-server.rb"
+cat <<EOF | sudo tee "/etc/opscode/chef-server.rb"
 nginx['ssl_certificate'] = '/etc/letsencrypt/live/chef.gswlab.ca/fullchain.pem'
 nginx['ssl_certificate_key'] = '/etc/letsencrypt/live/chef.gswlab.ca/privkey.pem'
 EOF
@@ -58,6 +58,9 @@ sudo sh -c 'printf "#!/bin/sh\nchef-server-ctl start\n" > /etc/letsencrypt/renew
 # Start up Chef Infra Server, picking up changes to chef-server.rb
 sudo chef-server-ctl reconfigure
 sudo chef-server-ctl start
+
+# Install AWS CLI
+sudo snap install aws-cli --classic
 
 # Output runfile to prevent re-runs
 date --utc --iso-8601=seconds > bootstrap_complete

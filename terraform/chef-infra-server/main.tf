@@ -118,12 +118,12 @@ resource "aws_security_group_rule" "allow_https" {
   security_group_id = aws_security_group.chef_infra_server.id
 }
 
-data "aws_ami" "ubuntu2004" {
+data "aws_ami" "ubuntu1804" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
   filter {
@@ -135,7 +135,7 @@ data "aws_ami" "ubuntu2004" {
 }
 
 resource "aws_instance" "chef_server" {
-  ami                         = data.aws_ami.ubuntu2004.id
+  ami                         = data.aws_ami.ubuntu1804.id
   associate_public_ip_address = true
   hibernation                 = true
   iam_instance_profile        = aws_iam_instance_profile.chef_server_profile.name

@@ -23,7 +23,14 @@ After copying a backup `tgz` file from S3:
 
 ```
 $ sudo chef-server-ctl restore chef-backup-2020-10-27-21-27-16.tgz
+$ sudo chef-server-ctl reconfigure
 ```
+
+**DISCLAIMER:** you MUST use the same version of Chef to restore the backup as the version that created the backup. Backups older than Dec 2020 require Chef Infra Server 12.
+
+After restoring to the same version, Chef Infra Server can then be upgraded to a newer version.
+
+The version for "Chef Infra Client" does not need to be the same; don't worry if it is a newer version. Let the all-in-one package handle Chef Infra Client.
 
 ## Import Log
 
