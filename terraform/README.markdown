@@ -16,4 +16,9 @@ A software tool is required to run the configuration scripts, and this tool can 
 
 I highly recommend setting up [named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html) for the AWS command line interface. Create a specific `gswlab` profile with the key credentials you use for the lab, as a way to separate them from other AWS accounts you may be using.
 
-Once set up, Terraform providers should then be using `profile = "gswlab"` to ensure the correct credentials are being used.
+Once set up, Terraform providers should then be using `profile = "gswlab"` to ensure the correct credentials are being used. For executing Terraform from the command line, an environment variable should be defined before running the `terraform` tool.
+
+```terminal
+$ export AWS_PROFILE=gswlab
+$ terraform plan
+```
