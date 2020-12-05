@@ -1,5 +1,10 @@
 # Changelog for stoney
 
+## v1.1.0
+
+* Replace `certbot-auto` with `certbot` installed via snap
+* Lock the version of the `docker` cookbook dependency to `5.0.0` as newer versions require an upgrade of Chef Client which I don't have time for
+
 ## v1.0.0
 
 Stable release of cookbook.

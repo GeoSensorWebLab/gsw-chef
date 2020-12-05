@@ -4,7 +4,11 @@ This cookbook sets up the `stoney` node as a reverse proxy server on the Cybera 
 
 * hostsfile entries for other nodes
 * nginx
-* SSL certificates from Let's Encrypt
+* HTTPS certificates from Let's Encrypt
+
+TODO:
+
+* Set up auto-renewals using `certbot`
 
 ## Supported Platforms
 

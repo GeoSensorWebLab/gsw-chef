@@ -3,13 +3,13 @@
 # Recipe:: default
 #
 # Copyright 2019–2020 GeoSensorWeb Lab, University of Calgary
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,42 +28,16 @@ include_recipe "gsw-hostsfile::default"
 # 2. Install certbot
 ####################
 
-# Install certbot auto instead of package, to get the latest version
-directory node["certbot"]["prefix"] do
-  recursive true
-  action :create
-end
+execute "snap install core"
+execute "snap refresh core"
+execute "snap install --classic certbot"
 
-certbot_auto = "#{node["certbot"]["prefix"]}/certbot-auto"
-
-remote_file certbot_auto do
-  source 'https://dl.eff.org/certbot-auto'
-  mode '0755'
-  action :create
-end
-
-remote_file "#{node["certbot"]["prefix"]}/certbot-auto.asc" do
-  source 'https://dl.eff.org/certbot-auto.asc'
-  action :create
-end
-
-bash 'verify certbot-auto' do
-  code <<-EOH
-    gpg --keyserver #{node["certbot"]["keyserver"]} --recv-key A2CFB51FA275A7286234E7B24D17C995CD9775F2
-    gpg --trusted-key 4D17C995CD9775F2 --verify certbot-auto.asc certbot-auto
-  EOH
-  cwd node["certbot"]["prefix"]
-  user 'root'
-end
-
-execute 'install certbot' do
-  command "#{certbot_auto} --non-interactive --install-only"
-  cwd node["certbot"]["prefix"]
-  user 'root'
+link "/usr/bin/certbot" do
+  to "/snap/bin/certbot"
 end
 
 # Filter the vhosts with SSL enabled, and create self-signed certs for
-# the domains on that vhost. self-signed are needed to start nginx if 
+# the domains on that vhost. self-signed are needed to start nginx if
 # existing certs don't exist.
 node["stoney"]["vhosts"].each do |vhost|
   if vhost["ssl_enabled"]
@@ -158,9 +132,13 @@ node["stoney"]["vhosts"].each do |vhost|
 
       execute "certbot" do
         command <<-EOH
-        #{certbot_auto} certonly --noninteractive --agree-tos -m #{node["acme"]["email"]} \
-          --webroot --webroot-path /var/www/html \
-          --domains #{domain} \
+        /usr/bin/certbot certonly \
+          --non-interactive \
+          --agree-tos \
+          -m #{node["acme"]["email"]} \
+          --webroot \
+          --webroot-path /var/www/html \
+          --domain #{domain} \
           --keep-until-expiring --expand --renew-with-new-domains \
           --rsa-key-size 2048 --server "#{node['acme']['dir']}" #{verify}
         EOH
