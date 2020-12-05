@@ -185,3 +185,30 @@ resource "aws_route53_record" "chef" {
   ttl     = "300"
   records = [aws_instance.chef_server.public_ip]
 }
+
+####
+# S3
+####
+# Grant access to the gswlab-chef-backups bucket for the instance role
+
+data "aws_s3_bucket" "chef_backups" {
+  bucket = "gswlab-chef-backups"
+}
+
+data "aws_iam_policy_document" "policy_chef_backups" {
+  # Allow access from EC2 role
+  statement {
+    actions   = ["s3:*"]
+    resources = [data.aws_s3_bucket.chef_backups.arn, "${data.aws_s3_bucket.chef_backups.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.chef_role.arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "chef_backups" {
+  bucket = data.aws_s3_bucket.chef_backups.id
+  policy = data.aws_iam_policy_document.policy_chef_backups.json
+}
