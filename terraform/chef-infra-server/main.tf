@@ -165,9 +165,14 @@ output "instance_ip_addr" {
   description = "The private IP address of the Chef Infra Server instance."
 }
 
-output "instance_pub_ip_addr" {
+output "instance_public_ip_addr" {
   value       = aws_instance.chef_server.public_ip
   description = "The public IP address of the Chef Infra Server instance."
+}
+
+output "instance_id" {
+  value       = aws_instance.chef_server.id
+  description = "The Instance ID of the Chef Infra Server instance, can be used for remote start/stop."
 }
 
 #########
