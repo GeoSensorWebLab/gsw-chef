@@ -135,7 +135,8 @@ data "aws_ami" "ubuntu1804" {
 }
 
 resource "aws_instance" "chef_server" {
-  ami                         = data.aws_ami.ubuntu1804.id
+  # Hard-coded to prevent replacement!
+  ami                         = "ami-0b24de764f65580a5"
   associate_public_ip_address = true
   hibernation                 = true
   iam_instance_profile        = aws_iam_instance_profile.chef_server_profile.name
