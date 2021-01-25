@@ -65,7 +65,7 @@ default["stoney"]["vhosts"] = [{
   "id"          => "arctic-xwiki",
   "domains"     => ["xwiki.arcticconnect.ca"],
   "ssl_enabled" => true,
-  "proxy_host"  => "beddington",
+  "proxy_host"  => "beddington.gswlab.ca",
   "proxy_port"  => 8080
 }, {
   "id"          => "bera-dashboard",
