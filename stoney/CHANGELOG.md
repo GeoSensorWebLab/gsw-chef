@@ -1,5 +1,9 @@
 # Changelog for stoney
 
+## v1.2.0
+
+* Enable HSTS for some proxy hosts
+
 ## v1.1.0
 
 * Replace `certbot-auto` with `certbot` installed via snap

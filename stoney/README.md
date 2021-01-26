@@ -68,6 +68,12 @@ This recipe is for testing locally only with Test Kitchen. The recipe will insta
     <td></td>
   </tr>
   <tr>
+    <td><tt>['stoney']['vhosts'][]['hsts_enabled']</tt></td>
+    <td>Boolean</td>
+    <td>If enabled, then Nginx will enable HTTP Strict Transport Security headers for the HTTP and HTTPS proxy configurations. Used to instruct browsers to use HTTPS.</td>
+    <td></td>
+  </tr>
+  <tr>
     <td><tt>['stoney']['vhosts'][]['ssl_enabled']</tt></td>
     <td>Boolean</td>
     <td>If enabled, then certbot will be used to get certificates for each domain from Let's Encrypt.</td>
