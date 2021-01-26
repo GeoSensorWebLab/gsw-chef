@@ -13,7 +13,7 @@ default["gsw-hostsfile"]["hostsfile"] = [
   },
   {
     "hostname" => "beddington.gswlab.ca",
-    "ip"       => "10.1.6.97"
+    "ip"       => "10.1.6.127"
   },
   {
     "hostname" => "blackfoot.gswlab.ca",
