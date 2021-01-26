@@ -94,10 +94,11 @@ node["stoney"]["vhosts"].each do |vhost|
   template "/etc/nginx/conf.d/#{vhost["id"]}.conf" do
     source "reverse-proxy-vhost.conf.erb"
     variables({
-      domains: vhost["domains"],
-      ssl_enabled: vhost["ssl_enabled"],
-      proxy_host: vhost["proxy_host"],
-      proxy_port: vhost["proxy_port"]
+      domains:      vhost["domains"],
+      hsts_enabled: vhost["hsts_enabled"],
+      ssl_enabled:  vhost["ssl_enabled"],
+      proxy_host:   vhost["proxy_host"],
+      proxy_port:   vhost["proxy_port"]
     })
   end
 end

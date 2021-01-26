@@ -1,27 +1,43 @@
-# Managed by Chef, do not edit
+# Managed by Chef, do not edit;
+# See "gsw-chef/stoney" cookbook templates.
 
 # VIRTUAL HOST for HTTP
 server {
-	listen 80;
-	listen [::]:80;
+    listen 80;
+    listen [::]:80;
 
-	# root is used for well-known challenges for certbot
-	root /var/www/html;
+    # root is used for well-known challenges for certbot
+    root /var/www/html;
 
-	# domain(s) for this virtual host
-	server_name  <%= @domains.join(" ") %>;
+    # domain(s) for this virtual host
+    server_name  <%= @domains.join(" ") %>;
 
-	location /.well-known/acme-challenge/ {
+    location /.well-known/acme-challenge/ {
         alias /var/www/html/.well-known/acme-challenge/;
     }
 
-	location / {
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		# If server is offline, return an error quickly
-		proxy_connect_timeout 2s;
-		proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
-	}
+    location / {
+        <% if @hsts_enabled %>
+        # Use HTTP Strict Transport Security for 1 year. Preload enabled
+        # for browsers that support it.
+        add_header Strict-Transport-Security "max-age=31536000; preload";
+        <% end %>
+        
+        # Prevent re-interpretation of content types
+        add_header X-Content-Type-Options nosniff;
+
+        # Block cross-site scripting requests
+        add_header X-XSS-Protection "1; mode=block";
+
+        # Only send the domain (no path) as a referrer
+        add_header Referrer-Policy "origin";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        # If server is offline, return an error quickly
+        proxy_connect_timeout 2s;
+        proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
+    }
 }
 
 <% if @ssl_enabled %>
@@ -38,11 +54,26 @@ server {
     ssl_prefer_server_ciphers on;
 
     location / {
+        <% if @hsts_enabled %>
+        # Use HTTP Strict Transport Security for 1 year. Preload enabled
+        # for browsers that support it.
+        add_header Strict-Transport-Security "max-age=31536000; preload";
+        <% end %>
+        
+        # Prevent re-interpretation of content types
+        add_header X-Content-Type-Options nosniff;
+
+        # Block cross-site scripting requests
+        add_header X-XSS-Protection "1; mode=block";
+
+        # Only send the domain (no path) as a referrer
+        add_header Referrer-Policy "origin";
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
-		# If server is offline, return an error quickly
-		proxy_connect_timeout 2s;
-		proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
+        # If server is offline, return an error quickly
+        proxy_connect_timeout 2s;
+        proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
     }
 
     error_page   500 502 503 504  /50x.html;
