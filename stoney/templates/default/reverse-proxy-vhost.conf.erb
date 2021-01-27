@@ -30,7 +30,7 @@ server {
     tcp_nodelay on;
 
     # Enable compression configuration
-    include compression.conf;
+    include includes/compression.conf;
 
     # This is a semi-secret directory not for public use; it is only
     # used to verify the server identify with "Let's Encrypt", so they
@@ -94,7 +94,7 @@ server {
     tcp_nodelay on;
 
     # Enable compression configuration
-    include compression.conf;
+    include includes/compression.conf;
 
     ssl_certificate /etc/letsencrypt/live/<%= domain %>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<%= domain %>/privkey.pem;

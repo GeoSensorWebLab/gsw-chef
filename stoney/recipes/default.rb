@@ -81,18 +81,23 @@ directory '/var/www/html/.well-known/acme-challenge' do
   action :create
 end
 
+# Install shared configuration directive files
+nginx_includes_dir = "/etc/nginx/includes"
+
+directory nginx_includes_dir do
+  action :create
+end
+
+cookbook_file "#{nginx_includes_dir}/compression.conf" do
+  source "compression.conf"
+end
+
 # Empty the conf.d directory of old vhost entries.
 # When a virtualhost is removed from the attributes, then it will have
 # its conf removed as well.
 execute "empty previous nginx configurations" do
   command "rm /etc/nginx/conf.d/*"
   ignore_failure true
-end
-
-# Install shared configuration directive files **after** emptying
-# configuration directory.
-cookbook_file "/etc/nginx/conf.d/compression.conf" do
-  source "compression.conf"
 end
 
 # Create nginx sites for each reverse-proxy
