@@ -44,10 +44,14 @@ server {
         # Only send the domain (no path) as a referrer
         add_header Referrer-Policy "origin";
 
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
         # If server is offline, return an error quickly
         proxy_connect_timeout 2s;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Real-IP $remote_addr;
+
         proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
     }
 }
@@ -62,7 +66,7 @@ server {
 server {
     # Port 443 is the default for HTTPS, and clients will default
     # to using this port if the scheme is HTTPS.
-    listen       443 ssl;
+    listen 443 ssl;
 
     # Clients will send the domain as the "Host" header and nginx will
     # use that to proxy to this vhost when port 443 is used.
@@ -74,7 +78,7 @@ server {
     # Enable compression configuration
     include includes/compression.conf;
 
-    ssl_certificate /etc/letsencrypt/live/<%= domain %>/fullchain.pem;
+    ssl_certificate     /etc/letsencrypt/live/<%= domain %>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<%= domain %>/privkey.pem;
     
     # Shared SSL configuration
@@ -96,10 +100,14 @@ server {
         # Only send the domain (no path) as a referrer
         add_header Referrer-Policy "origin";
 
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
         # If server is offline, return an error quickly
         proxy_connect_timeout 2s;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Real-IP $remote_addr;
+
         proxy_pass http://<%= @proxy_host %>:<%= @proxy_port %>/;
     }
 }
