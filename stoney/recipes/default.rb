@@ -88,8 +88,16 @@ directory nginx_includes_dir do
   action :create
 end
 
+cookbook_file "#{nginx_includes_dir}/common.conf" do
+  source "common.conf"
+end
+
 cookbook_file "#{nginx_includes_dir}/compression.conf" do
   source "compression.conf"
+end
+
+cookbook_file "#{nginx_includes_dir}/ssl.conf" do
+  source "ssl.conf"
 end
 
 # Empty the conf.d directory of old vhost entries.
