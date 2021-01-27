@@ -1,10 +1,13 @@
 # Managed by Chef, do not edit;
 # See "gsw-chef/stoney" cookbook templates.
 
-# VIRTUAL HOST for HTTP
+# Virtual Host for HTTP (no security)
 server {
     listen 80;
     listen [::]:80;
+
+    # Do not send nginx version to clients
+    server_tokens off;
 
     # root is used for well-known challenges for certbot
     root /var/www/html;
@@ -41,12 +44,15 @@ server {
 }
 
 <% if @ssl_enabled %>
-# VIRTUAL HOSTS for HTTPS
+# Virtual Host for HTTPS (security certificates enabled)
 <% for domain in @domains %>
 # HTTPS for <%= domain %>
 server {
     listen       443 ssl;
     server_name  <%= domain %>;
+
+    # Do not send nginx version to clients
+    server_tokens off;
 
     ssl_certificate /etc/letsencrypt/live/<%= domain %>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<%= domain %>/privkey.pem;
