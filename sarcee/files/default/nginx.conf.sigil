@@ -18,12 +18,7 @@ server {
 {{ else }}
   location    / {
 
-    gzip on;
-    gzip_min_length  1100;
-    gzip_buffers  4 32k;
-    gzip_types    text/css text/javascript text/xml text/plain text/x-component application/javascript application/x-javascript application/json application/xml  application/rss+xml font/truetype application/x-font-ttf font/opentype application/vnd.ms-fontobject image/svg+xml;
-    gzip_vary on;
-    gzip_comp_level  6;
+    gzip off;
 
     proxy_pass  http://{{ $.APP }}-{{ $upstream_port }};
     proxy_http_version 1.1;
@@ -82,12 +77,7 @@ server {
 
   location    / {
 
-    gzip on;
-    gzip_min_length  1100;
-    gzip_buffers  4 32k;
-    gzip_types    text/css text/javascript text/xml text/plain text/x-component application/javascript application/x-javascript application/json application/xml  application/rss+xml font/truetype application/x-font-ttf font/opentype application/vnd.ms-fontobject image/svg+xml;
-    gzip_vary on;
-    gzip_comp_level  6;
+    gzip off;
 
     proxy_pass  http://{{ $.APP }}-{{ $upstream_port }};
     {{ if eq $.HTTP2_PUSH_SUPPORTED "true" }}http2_push_preload on; {{ end }}
