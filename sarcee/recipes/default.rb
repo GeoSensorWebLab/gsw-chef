@@ -141,6 +141,19 @@ execute "install dokku core plugins" do
   command "dokku plugin:install-dependencies --core"
 end
 
+# Install override for default nginx configuration; allows us to
+# disable features that we don't need because this site is behind a
+# reverse proxy on another node.
+cookbook_file "/var/lib/dokku/core-plugins/available/nginx-vhosts/templates/nginx.conf.sigil" do
+  source "nginx.conf.sigil"
+  owner "dokku"
+  group "dokku"
+  mode "644"
+end
+
+# Find Chef data bag users that are allowed to access Dokku, and add
+# their SSH keys as allowed for Dokku's `authorized_keys`
+# TODO: Add check to remove users who no longer have dokku access.
 users = search("users", "*:*")
 
 users.each do |user|
