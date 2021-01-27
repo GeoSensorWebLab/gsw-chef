@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Digest is used to create hashes of app environment variables
+require "digest"
 
 # Apply custom Apt proxies, if necessary
 template "/etc/apt/apt.conf.d/01proxy" do
@@ -151,8 +153,6 @@ users.each do |user|
         sensitive true
         not_if "dokku ssh-keys:list | grep -q #{id}-#{i}"
       end
-
-
     end
   end
 end
@@ -229,8 +229,24 @@ dokku_apps.each do |app|
 
     unless env.empty?
       execute "set environment for #{app_id}" do
-        command "dokku config:set #{app_id} #{env}"
+        command "dokku config:set --no-restart #{app_id} #{env}"
         sensitive true
+      end
+
+      # create a unique digest of the environment variables to compare
+      # to previous versions.
+      env_digest = Digest::SHA256.hexdigest(env)
+
+      # only restart application if environment changed.
+      bash "set environment digest for #{app_id}" do
+        code <<-EOH
+        PREV_DIGEST=$(dokku config:get #{app_id} env_digest)
+        if [ "$PREV_DIGEST" != "#{env_digest}" ]; then
+          dokku config:set #{app_id} env_digest=#{env_digest}
+        else
+          echo "No environment change, app restart skipped"
+        fi
+        EOH
       end
     end
   end
