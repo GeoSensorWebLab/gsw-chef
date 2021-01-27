@@ -1,11 +1,11 @@
 #!/usr/local/bin/ruby
 # This file is managed by Chef.
-# 
+#
 # Script to read ETL download and upload stats from GSW Data Transloader
-# log files, and output statistics for Munin. Intended to be ran once 
+# log files, and output statistics for Munin. Intended to be ran once
 # an hour instead of every five minutes because statistics change slowly
 # with the ETL.
-# 
+#
 # License: MIT
 # Author: James Badger (<jpbadger@ucalgary.ca>)
 require 'time'
@@ -15,7 +15,7 @@ require 'zlib'
 log_dir = "<%= @log_dir %>"
 
 # Duration between runs in seconds
-duration = <%= @duration %>
+duration = "<%= @duration %>".to_i
 
 # Only collect log values after this timestamp.
 # Note that it is assumed the log timezone is the same as the script
@@ -117,7 +117,7 @@ download_logs.each do |log_file|
     end
 
     file.each_line do |line|
-      # This replaces any invalid characters in the log file, usually 
+      # This replaces any invalid characters in the log file, usually
       # from logged HTTP responses.
       line.encode!("ISO-8859-1", invalid: :replace, replace: " ")
       stat_lines.push(line) if download_statistic_regex.match?(line)
@@ -139,7 +139,7 @@ download_logs.each do |log_file|
 
   # Extract data provider and counts from lines
   collective_download_statistics = stat_lines.reduce(collective_download_statistics) do |memo, line|
-    # Extract provider 
+    # Extract provider
     match_info = download_statistic_regex.match(line)
     provider = match_category(match_info[4].split("::")[1])
     memo[provider] ||= 0
@@ -189,7 +189,7 @@ upload_logs.each do |log_file|
     end
 
     file.each_line do |line|
-      # This replaces any invalid characters in the log file, usually 
+      # This replaces any invalid characters in the log file, usually
       # from logged HTTP responses.
       line.encode!("ISO-8859-1", invalid: :replace, replace: " ")
       stat_lines.push(line) if upload_statistic_regex.match?(line)
@@ -211,7 +211,7 @@ upload_logs.each do |log_file|
 
   # Extract data provider and counts from lines
   collective_upload_statistics = stat_lines.reduce(collective_upload_statistics) do |memo, line|
-    # Extract provider 
+    # Extract provider
     match_info = upload_statistic_regex.match(line)
     provider = match_category(match_info[4].split("::")[1])
     group = case match_info[5]

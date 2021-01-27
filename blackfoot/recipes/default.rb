@@ -3,13 +3,13 @@
 # Recipe:: default
 #
 # Copyright 2019–2020 GeoSensorWeb Lab, University of Calgary
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -357,11 +357,11 @@ end
 # DATA GARRISON
 node["transloader"]["data_garrison_stations"].each do |stn|
   metadata_file = "#{cache_dir}/data_garrison/metadata/#{stn["user_id"]}-#{stn["station_id"]}.json"
-  
+
   bash "import Data Garrison station #{stn["station_id"]} metadata" do
     code <<-EOH
       set -e
-      
+
       ruby transload get metadata \
         --provider data_garrison \
         --user_id #{stn["user_id"]} \
@@ -436,11 +436,11 @@ node["transloader"]["campbell_scientific_stations"].each do |stn|
     memo += "--data_url #{url} "
     memo
   end
-  
+
   bash "import Campbell Scientific station #{stn["station_id"]} metadata" do
     code <<-EOH
       set -e
-      
+
       ruby transload get metadata \
         --provider campbell_scientific \
         --station_id #{stn["station_id"]} \
@@ -642,7 +642,7 @@ if airflow_vault
   ht_user   = airflow_vault["username"]
   ht_passwd = airflow_vault["password"]
 
-  # Note that nginx does not support bcrypt passwords created by 
+  # Note that nginx does not support bcrypt passwords created by
   # Apache's htpasswd utility.
   execute "Create airflow http basic auth file" do
     command %Q[htpasswd -bcs #{ht_file} #{ht_user} "#{ht_passwd}"]
@@ -727,7 +727,7 @@ node["transloader"]["data_garrison_stations"].each do |station|
     variables({
       dag_id: "data_garrison_etl_#{station_name}",
       # Runs every hour at one minute past the hour.
-      # Data Garrison weather stations log every 15 minutes, but only 
+      # Data Garrison weather stations log every 15 minutes, but only
       # upload every 120 minutes.
       schedule_interval: "1 * * * *",
       download_script:   "sudo -u transloader -i #{tl_home}/data_garrison/download #{station_id} #{station_user_id}",
@@ -824,7 +824,7 @@ end
 execute "Install npm dependencies" do
   cwd node["dashboard"]["prefix"]
   user tl_user
-  environment({ 
+  environment({
     HOME: tl_home,
     USER: tl_user
   })
@@ -835,7 +835,7 @@ end
 execute "Build site to static files" do
   cwd node["dashboard"]["prefix"]
   user tl_user
-  environment({ 
+  environment({
     HOME: tl_home,
     USER: tl_user
   })
@@ -903,7 +903,7 @@ directory munin_plugins_dir do
 end
 
 template "#{munin_plugins_dir}/etl_stats" do
-  source "munin-plugins/etl_stats.rb"
+  source "munin-plugins/etl_stats.erb"
   mode '755'
   variables({
     log_dir: "/srv/logs",
