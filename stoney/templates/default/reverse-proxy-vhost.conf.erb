@@ -29,6 +29,35 @@ server {
     # proxies, and WebSocket proxies, so it can stay on.
     tcp_nodelay on;
 
+    # Enable on-the-fly compression for responses sent to clients that
+    # support it (by the Accept-Encoding header).
+    gzip            on;
+    # '1' is low compression but has the lowest CPU load
+    gzip_comp_level 1;
+    # Use "Vary: Accept-Encoding" header so clients cache gzip and
+    # non-gzip responses for the same resource differently
+    gzip_vary       on;
+    # Enable compression when passing responses back to clients that
+    # come from a proxied server (as a reverse proxy, this is very
+    # important).
+    gzip_proxied    any;
+    # Specify additional MIME types that can be compressed
+    gzip_types      text/css
+                    text/javascript
+                    text/xml
+                    text/plain
+                    text/x-component
+                    application/javascript
+                    application/x-javascript
+                    application/json
+                    application/xml
+                    application/rss+xml
+                    application/atom+xml
+                    font/truetype
+                    font/opentype
+                    application/vnd.ms-fontobject
+                    image/svg+xml;
+
     # This is a semi-secret directory not for public use; it is only
     # used to verify the server identify with "Let's Encrypt", so they
     # know we own it when we are setting up the free HTTPS certificate.
@@ -89,6 +118,35 @@ server {
     # nodelay is used with keep-alive, SSL connections, unbuffered 
     # proxies, and WebSocket proxies, so it can stay on.
     tcp_nodelay on;
+
+    # Enable on-the-fly compression for responses sent to clients that
+    # support it (by the Accept-Encoding header).
+    gzip            on;
+    # '1' is low compression but has the lowest CPU load
+    gzip_comp_level 1;
+    # Use "Vary: Accept-Encoding" header so clients cache gzip and
+    # non-gzip responses for the same resource differently
+    gzip_vary       on;
+    # Enable compression when passing responses back to clients that
+    # come from a proxied server (as a reverse proxy, this is very
+    # important).
+    gzip_proxied    any;
+    # Specify additional MIME types that can be compressed
+    gzip_types      text/css
+                    text/javascript
+                    text/xml
+                    text/plain
+                    text/x-component
+                    application/javascript
+                    application/x-javascript
+                    application/json
+                    application/xml
+                    application/rss+xml
+                    application/atom+xml
+                    font/truetype
+                    font/opentype
+                    application/vnd.ms-fontobject
+                    image/svg+xml;
 
     ssl_certificate /etc/letsencrypt/live/<%= domain %>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<%= domain %>/privkey.pem;
