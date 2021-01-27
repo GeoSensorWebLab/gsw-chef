@@ -1,5 +1,10 @@
 # Changelog for sarcee
 
+## v1.1.0
+
+* Only restart applications if the environment variables actually were updated
+* Deploy custom Dokku nginx virtual host configurations
+
 ## v1.0.0
 
 * Deploy "End of Life" web pages for web applications we are not actively maintaining
