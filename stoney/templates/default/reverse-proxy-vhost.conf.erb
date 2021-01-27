@@ -3,6 +3,8 @@
 
 # Virtual Host for HTTP (no security)
 server {
+    # Port 80 is the default for regular HTTP, and clients will default
+    # to using this port.
     listen 80;
     listen [::]:80;
 
@@ -12,9 +14,24 @@ server {
     # root is used for well-known challenges for certbot
     root /var/www/html;
 
-    # domain(s) for this virtual host
+    # domain(s) for this virtual host. Clients will send the domain as
+    # the "Host" header and nginx will use that to proxy to this vhost.
     server_name  <%= @domains.join(" ") %>;
 
+    # sendfile is not useful for reverse proxies as static files on this
+    # server are not being sent to clients.
+    sendfile off;
+
+    # tcp_nopush is only used with sendfile, so it can stay off.
+    tcp_nopush off;
+
+    # nodelay is used with keep-alive, SSL connections, unbuffered 
+    # proxies, and WebSocket proxies, so it can stay on.
+    tcp_nodelay on;
+
+    # This is a semi-secret directory not for public use; it is only
+    # used to verify the server identify with "Let's Encrypt", so they
+    # know we own it when we are setting up the free HTTPS certificate.
     location /.well-known/acme-challenge/ {
         alias /var/www/html/.well-known/acme-challenge/;
     }
@@ -45,14 +62,33 @@ server {
 
 <% if @ssl_enabled %>
 # Virtual Host for HTTPS (security certificates enabled)
+
+# We will loop through each domain and create a vhost for each one, as
+# each one will have its own separate HTTPS certificate.
 <% for domain in @domains %>
 # HTTPS for <%= domain %>
 server {
+    # Port 443 is the default for HTTPS, and clients will default
+    # to using this port if the scheme is HTTPS.
     listen       443 ssl;
+
+    # Clients will send the domain as the "Host" header and nginx will
+    # use that to proxy to this vhost when port 443 is used.
     server_name  <%= domain %>;
 
     # Do not send nginx version to clients
     server_tokens off;
+
+    # sendfile is not useful for reverse proxies as static files on this
+    # server are not being sent to clients.
+    sendfile off;
+
+    # tcp_nopush is only used with sendfile, so it can stay off.
+    tcp_nopush off;
+
+    # nodelay is used with keep-alive, SSL connections, unbuffered 
+    # proxies, and WebSocket proxies, so it can stay on.
+    tcp_nodelay on;
 
     ssl_certificate /etc/letsencrypt/live/<%= domain %>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<%= domain %>/privkey.pem;
