@@ -173,7 +173,7 @@ resource "openstack_networking_secgroup_rule_v2" "ac_primary_6" {
 resource "openstack_compute_instance_v2" "blackfoot" {
   name            = "blackfoot"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
-  flavor_id       = "3"
+  flavor_id       = data.openstack_compute_flavor_v2.medium.id
   key_pair        = "James Desktop"
   security_groups = ["ac_internal", "ac_primary"]
   provider        = openstack.arcticconnect
@@ -183,22 +183,10 @@ resource "openstack_compute_instance_v2" "blackfoot" {
   }
 }
 
-resource "openstack_compute_instance_v2" "sarcee" {
-  name            = "sarcee"
-  image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
-  flavor_id       = "6d0115c2-ec4c-4458-b638-ce631186dc90"
-  key_pair        = "James Desktop"
-  security_groups = ["ac_internal", "ac_primary"]
-  provider        = openstack.arcticconnect
-
-  metadata = {
-  }
-}
-
 resource "openstack_compute_instance_v2" "deerfoot" {
   name            = "deerfoot"
   image_id        = "d42c3ac7-a442-49f8-a5a2-63a01d83a911"
-  flavor_id       = "6d0115c2-ec4c-4458-b638-ce631186dc90"
+  flavor_id       = data.openstack_compute_flavor_v2.large.id
   key_pair        = "James Desktop"
   security_groups = ["ac_internal", "ac_primary"]
   provider        = openstack.arcticconnect
@@ -207,3 +195,14 @@ resource "openstack_compute_instance_v2" "deerfoot" {
   }
 }
 
+resource "openstack_compute_instance_v2" "sarcee" {
+  name            = "sarcee"
+  image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
+  flavor_id       = data.openstack_compute_flavor_v2.large.id
+  key_pair        = "James Desktop"
+  security_groups = ["ac_internal", "ac_primary"]
+  provider        = openstack.arcticconnect
+
+  metadata = {
+  }
+}

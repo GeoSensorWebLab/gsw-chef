@@ -173,7 +173,7 @@ resource "openstack_networking_secgroup_rule_v2" "primary_6" {
 resource "openstack_compute_instance_v2" "stoney" {
   name            = "stoney"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
-  flavor_id       = "1"
+  flavor_id       = data.openstack_compute_flavor_v2.tiny.id
   key_pair        = "James Desktop"
   security_groups = ["internal", "primary"]
   provider        = openstack.geocens
@@ -185,7 +185,7 @@ resource "openstack_compute_instance_v2" "stoney" {
 resource "openstack_compute_instance_v2" "airport" {
   name            = "airport"
   image_id        = "a36ff0a8-1cb6-4d8f-b092-f00070ed9aac"
-  flavor_id       = "20c6e92e-5ae4-4032-9f12-d8783beb75ff"
+  flavor_id       = data.openstack_compute_flavor_v2.xlarge.id
   key_pair        = "James Desktop"
   security_groups = ["internal", "primary"]
   provider        = openstack.geocens
@@ -198,7 +198,7 @@ resource "openstack_compute_instance_v2" "airport" {
 resource "openstack_compute_instance_v2" "shaganappi" {
   name            = "shaganappi"
   image_id        = "a36ff0a8-1cb6-4d8f-b092-f00070ed9aac"
-  flavor_id       = "3"
+  flavor_id       = data.openstack_compute_flavor_v2.medium.id
   key_pair        = "James Desktop"
   security_groups = ["internal", "primary"]
   provider        = openstack.geocens
@@ -211,7 +211,7 @@ resource "openstack_compute_instance_v2" "shaganappi" {
 resource "openstack_compute_instance_v2" "crowchild" {
   name            = "crowchild"
   image_id        = "a36ff0a8-1cb6-4d8f-b092-f00070ed9aac"
-  flavor_id       = "2"
+  flavor_id       = data.openstack_compute_flavor_v2.small.id
   key_pair        = "James Desktop"
   security_groups = ["internal", "primary"]
   provider        = openstack.geocens
@@ -224,7 +224,7 @@ resource "openstack_compute_instance_v2" "crowchild" {
 resource "openstack_compute_instance_v2" "macleod" {
   name            = "macleod"
   image_id        = "499360f6-4b27-44b1-b346-2394a53a2a3e"
-  flavor_id       = "2"
+  flavor_id       = data.openstack_compute_flavor_v2.small.id
   key_pair        = "james-imac"
   security_groups = ["internal", "primary"]
   provider        = openstack.geocens
