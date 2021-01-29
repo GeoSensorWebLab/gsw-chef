@@ -172,6 +172,23 @@ resource "openstack_networking_secgroup_rule_v2" "ac_primary_6" {
 # INSTANCES
 ###########
 
+resource "openstack_compute_instance_v2" "beddington" {
+  name            = "beddington"
+  image_id        = data.openstack_images_image_v2.ubuntu2004.id
+  flavor_id       = data.openstack_compute_flavor_v2.tiny.id
+  key_pair        = "James Desktop"
+  security_groups = ["ac_internal", "ac_primary"]
+  provider        = openstack.arcticconnect
+
+  metadata = {
+  }
+}
+
+output "beddington_internal_ipv4" {
+  value       = openstack_compute_instance_v2.beddington.access_ip_v4
+  description = "The private IP address of the instance."
+}
+
 resource "openstack_compute_instance_v2" "blackfoot" {
   name            = "blackfoot"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
