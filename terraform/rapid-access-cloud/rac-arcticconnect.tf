@@ -170,19 +170,6 @@ resource "openstack_networking_secgroup_rule_v2" "ac_primary_6" {
 
 # INSTANCES
 # 
-resource "openstack_compute_instance_v2" "edmonton" {
-  name            = "edmonton"
-  image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
-  flavor_id       = "20c6e92e-5ae4-4032-9f12-d8783beb75ff"
-  key_pair        = "james-laptop"
-  security_groups = ["ac_internal", "ac_primary"]
-  provider        = openstack.arcticconnect
-
-  metadata = {
-    dns = "1ce1d.yyc.cybera.ca"
-  }
-}
-
 resource "openstack_compute_instance_v2" "blackfoot" {
   name            = "blackfoot"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
@@ -220,15 +207,3 @@ resource "openstack_compute_instance_v2" "deerfoot" {
   }
 }
 
-resource "openstack_compute_instance_v2" "barlow" {
-  name            = "barlow"
-  image_id        = "a36ff0a8-1cb6-4d8f-b092-f00070ed9aac"
-  flavor_id       = "765eb725-abc5-4c9a-bf23-d8b0dca90f64"
-  key_pair        = "James Desktop"
-  security_groups = ["ac_internal", "ac_primary"]
-  provider        = openstack.arcticconnect
-
-  metadata = {
-    dns = "186e9.yyc.cybera.ca"
-  }
-}

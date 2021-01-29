@@ -1,4 +1,4 @@
-# Rapid Access Cloud
+# Terraform 0.12: Rapid Access Cloud
 
 This sets up resources in the OpenStack cloud ran by Cybera, known as the "Rapid Access Cloud". We are using this cloud for the ArcticConnect and GeoCENS projects.
 
