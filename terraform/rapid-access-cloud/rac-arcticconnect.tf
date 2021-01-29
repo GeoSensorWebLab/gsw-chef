@@ -168,8 +168,10 @@ resource "openstack_networking_secgroup_rule_v2" "ac_primary_6" {
 
 
 
+###########
 # INSTANCES
-# 
+###########
+
 resource "openstack_compute_instance_v2" "blackfoot" {
   name            = "blackfoot"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
@@ -181,6 +183,11 @@ resource "openstack_compute_instance_v2" "blackfoot" {
   metadata = {
     dns = "1b6d5.yyc.cybera.ca"
   }
+}
+
+output "blackfoot_internal_ipv4" {
+  value       = openstack_compute_instance_v2.blackfoot.access_ip_v4
+  description = "The private IP address of the instance."
 }
 
 resource "openstack_compute_instance_v2" "deerfoot" {
@@ -195,6 +202,11 @@ resource "openstack_compute_instance_v2" "deerfoot" {
   }
 }
 
+output "deerfoot_internal_ipv4" {
+  value       = openstack_compute_instance_v2.deerfoot.access_ip_v4
+  description = "The private IP address of the instance."
+}
+
 resource "openstack_compute_instance_v2" "sarcee" {
   name            = "sarcee"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
@@ -205,4 +217,9 @@ resource "openstack_compute_instance_v2" "sarcee" {
 
   metadata = {
   }
+}
+
+output "sarcee_internal_ipv4" {
+  value       = openstack_compute_instance_v2.sarcee.access_ip_v4
+  description = "The private IP address of the instance."
 }

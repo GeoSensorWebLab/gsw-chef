@@ -168,19 +168,9 @@ resource "openstack_networking_secgroup_rule_v2" "primary_6" {
 
 
 
+###########
 # INSTANCES
-# 
-resource "openstack_compute_instance_v2" "stoney" {
-  name            = "stoney"
-  image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
-  flavor_id       = data.openstack_compute_flavor_v2.tiny.id
-  key_pair        = "James Desktop"
-  security_groups = ["internal", "primary"]
-  provider        = openstack.geocens
-
-  metadata = {
-  }
-}
+###########
 
 resource "openstack_compute_instance_v2" "airport" {
   name            = "airport"
@@ -195,17 +185,9 @@ resource "openstack_compute_instance_v2" "airport" {
   }
 }
 
-resource "openstack_compute_instance_v2" "shaganappi" {
-  name            = "shaganappi"
-  image_id        = "a36ff0a8-1cb6-4d8f-b092-f00070ed9aac"
-  flavor_id       = data.openstack_compute_flavor_v2.medium.id
-  key_pair        = "James Desktop"
-  security_groups = ["internal", "primary"]
-  provider        = openstack.geocens
-
-  metadata = {
-    dns = "18b1e.yyc.cybera.ca"
-  }
+output "airport_internal_ipv4" {
+  value       = openstack_compute_instance_v2.airport.access_ip_v4
+  description = "The private IP address of the instance."
 }
 
 resource "openstack_compute_instance_v2" "crowchild" {
@@ -221,6 +203,11 @@ resource "openstack_compute_instance_v2" "crowchild" {
   }
 }
 
+output "crowchild_internal_ipv4" {
+  value       = openstack_compute_instance_v2.crowchild.access_ip_v4
+  description = "The private IP address of the instance."
+}
+
 resource "openstack_compute_instance_v2" "macleod" {
   name            = "macleod"
   image_id        = "499360f6-4b27-44b1-b346-2394a53a2a3e"
@@ -231,4 +218,44 @@ resource "openstack_compute_instance_v2" "macleod" {
 
   metadata = {
   }
+}
+
+output "macleod_internal_ipv4" {
+  value       = openstack_compute_instance_v2.macleod.access_ip_v4
+  description = "The private IP address of the instance."
+}
+
+resource "openstack_compute_instance_v2" "shaganappi" {
+  name            = "shaganappi"
+  image_id        = "a36ff0a8-1cb6-4d8f-b092-f00070ed9aac"
+  flavor_id       = data.openstack_compute_flavor_v2.medium.id
+  key_pair        = "James Desktop"
+  security_groups = ["internal", "primary"]
+  provider        = openstack.geocens
+
+  metadata = {
+    dns = "18b1e.yyc.cybera.ca"
+  }
+}
+
+output "shaganappi_internal_ipv4" {
+  value       = openstack_compute_instance_v2.shaganappi.access_ip_v4
+  description = "The private IP address of the instance."
+}
+
+resource "openstack_compute_instance_v2" "stoney" {
+  name            = "stoney"
+  image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
+  flavor_id       = data.openstack_compute_flavor_v2.tiny.id
+  key_pair        = "James Desktop"
+  security_groups = ["internal", "primary"]
+  provider        = openstack.geocens
+
+  metadata = {
+  }
+}
+
+output "stoney_internal_ipv4" {
+  value       = openstack_compute_instance_v2.stoney.access_ip_v4
+  description = "The private IP address of the instance."
 }
