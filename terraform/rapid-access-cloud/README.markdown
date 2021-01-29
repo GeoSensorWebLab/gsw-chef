@@ -1,4 +1,4 @@
-# Terraform 0.12: Rapid Access Cloud
+# Terraform 0.13: Rapid Access Cloud
 
 This sets up resources in the OpenStack cloud ran by Cybera, known as the "Rapid Access Cloud". We are using this cloud for the ArcticConnect and GeoCENS projects.
 
@@ -40,4 +40,17 @@ $ terraform plan
 
 If it works fine, remove the old local state:
 $ rm -rf oldstate
+```
+
+## 0.12 to 0.13 Upgrade
+
+```console
+$ sudo port select --set terraform terraform0.12
+$ terraform init --upgrade=true
+$ terraform apply
+
+$ sudo port select --set terraform terraform0.13
+$ terraform 0.13upgrade
+$ terraform init --upgrade=true -reconfigure
+$ terraform apply
 ```
