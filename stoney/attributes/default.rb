@@ -62,13 +62,6 @@ default["stoney"]["vhosts"] = [{
   "proxy_host"  => "blackfoot.gswlab.ca",
   "proxy_port"  => 2080
 }, {
-  "id"           => "arctic-xwiki",
-  "domains"      => ["xwiki.arcticconnect.ca"],
-  "hsts_enabled" => true,
-  "ssl_enabled"  => true,
-  "proxy_host"   => "beddington.gswlab.ca",
-  "proxy_port"   => 8080
-}, {
   "id"          => "bera-dashboard",
   "domains"     => ["dashboard.gswlab.ca"],
   "ssl_enabled" => true,
