@@ -11,7 +11,7 @@ privacy          true
 
 # Public Cookbooks
 depends 'chef-vault'
-depends 'docker'
+depends 'docker', '~> 5.0'
 
 # Private Cookbooks
 # depends 'gsw-apt-mirror'
