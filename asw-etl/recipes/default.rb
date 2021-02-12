@@ -561,11 +561,11 @@ airflow_port  = "5080"
 package %w(python3-pip)
 
 execute "Install airflow" do
-  command "pip3 install apache-airflow"
+  command "pip3 install apache-airflow==#{node["airflow"]["version"]}"
 end
 
 execute "Install airflow postgresql support" do
-  command "pip3 install 'apache-airflow[postgres]'"
+  command "pip3 install 'apache-airflow[postgres]'==#{node["airflow"]["version"]}"
 end
 
 directory airflow_home do

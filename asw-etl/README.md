@@ -6,7 +6,7 @@ Cookbook for setting up a node with Arctic Sensor Web ETL:
   - For restricting access to Apache Airflow
 * [GSW Data Transloader][data-transloader]
   - for bringing external sensor data into [OGC SensorThings API][STA]
-* [Apache Airflow][airflow]
+* [Apache Airflow][airflow] 1.10.10
   - for monitoring/scheduling Data Transloader
 
 This cookbook is based on the `blackfoot` node cookbook. This node is intended to run on AWS EC2.

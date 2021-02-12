@@ -36,6 +36,8 @@ default["etl"]["log_dir"]   = "/etl/logs"
 ################
 # Apache Airflow
 ################
+# Version of the pip package to install
+default["airflow"]["version"] = "1.10.10"
 # Installation directory for Airflow
 default["airflow"]["home"] = "/opt/airflow"
 # Base URL for Airflow interface
