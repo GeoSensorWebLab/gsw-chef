@@ -3,6 +3,19 @@ driver:
   name: vagrant
   customize:
     cableconnected1: 'on'
+    memory: 512
+    cpus: 1
+    
+    createhd:
+      - filename: beddington.vmdk
+        size: 10240
+        format: vmdk
+    storageattach:
+      - storagectl: SATA Controller
+        port: 1
+        device: 0
+        type: hdd
+        medium: beddington.vmdk
 
 provisioner:
   name: chef_zero
@@ -14,7 +27,7 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-18.04
+  - name: ubuntu-20.04
 
 suites:
   - name: default

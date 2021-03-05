@@ -7,5 +7,10 @@ gem 'chef'
 gem 'cookstyle'
 gem 'foodcritic'
 gem 'kitchen-inspec'
-gem 'kitchen-vagrant'
+# This fork is necessary to use for creating additional HDs for local
+# testing. Can be replaced with the primary version when this PR is
+# merged: https://github.com/test-kitchen/kitchen-vagrant/pull/389
+gem 'kitchen-vagrant',
+  git: "https://github.com/Ecodev/kitchen-vagrant",
+  branch: "createhd_existing"
 gem 'test-kitchen'
