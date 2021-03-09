@@ -10,7 +10,8 @@ version          '0.1.0'
 privacy          true
 
 # Public Cookbooks
-# depends 'user'
+# Docker cookbook v5 is used as we are not using Chef Infra v15 yet
+depends 'docker', '~> 5.0'
 
 # Private Cookbooks
 # depends 'gsw-apt-mirror'

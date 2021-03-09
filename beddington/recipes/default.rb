@@ -20,9 +20,58 @@ apt_update
 
 # If the zpool does not exist, then this will have a non-zero exit code.
 # See the README for manual preconfiguration instructions.
-bash "check for 'storage' zpool" do
+pool_name = "storage"
+bash "check for '#{pool_name}' zpool" do
   code <<-EOH
-  /usr/sbin/zpool status storage
+  /usr/sbin/zpool status #{pool_name}
   EOH
+end
+
+# If the pool is available, next we create the filesystems.
+bash "create zfs filesystem for backups" do
+  code <<-EOH
+  /usr/sbin/zfs create #{pool_name}/backups
+  EOH
+  not_if "/usr/sbin/zfs list #{pool_name}/backups"
+end
+
+bash "create zfs filesystem for wiki configuration" do
+  code <<-EOH
+  /usr/sbin/zfs create #{pool_name}/config
+  EOH
+  not_if "/usr/sbin/zfs list #{pool_name}/config"
+end
+
+bash "create zfs filesystem for docker" do
+  code <<-EOH
+  /usr/sbin/zfs create #{pool_name}/docker
+  EOH
+  not_if "/usr/sbin/zfs list #{pool_name}/docker"
+end
+
+bash "set zfs quota for docker" do
+  code <<-EOH
+  /usr/sbin/zfs set quota=#{node["beddington"]["docker_quota"]} #{pool_name}/docker
+  EOH
+end
+
+# Set up Docker using 'docker' cookbook resources
+docker_service "default" do
+  action [:create, :start]
+end
+
+# Install Docker Compose
+remote_file "/usr/local/bin/docker-compose" do
+  source "https://github.com/docker/compose/releases/download/#{node["docker_compose"]["version"]}/docker-compose-#{node["docker_compose"]["os"]}-#{node["docker_compose"]["arch"]}"
+  checksum node["docker_compose"]["sha256"]
+  mode "0755"
+  owner "root"
+  group "root"
+end
+
+# Switch to ZFS storage driver for Docker
+cookbook_file "/etc/docker/daemon.json" do
+  source "docker-daemon.json"
+  notifies :restart, "docker_service[default]", :immediately
 end
 
