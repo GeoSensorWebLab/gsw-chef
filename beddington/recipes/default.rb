@@ -15,3 +15,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+apt_update
+
+# If the zpool does not exist, then this will have a non-zero exit code.
+# See the README for manual preconfiguration instructions.
+bash "check for 'storage' zpool" do
+  code <<-EOH
+  /usr/sbin/zpool status storage
+  EOH
+end
+
