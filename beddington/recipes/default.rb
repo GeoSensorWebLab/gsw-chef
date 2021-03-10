@@ -133,6 +133,11 @@ end
 # wizard. It does this by re-creating the PHP script via Chef resources.
 # Changes/updates to any of these files will queue a restart of
 # DokuWiki.
+#
+# These files are only written by Chef once, as subsequent runs may
+# overwrite changes to these files made by the administration interface
+# in DokuWiki.
+#
 # Install script for reference:
 # https://github.com/splitbrain/dokuwiki/blob/master/install.php
 
@@ -166,6 +171,9 @@ template "#{dokuwiki_config}/local.php" do
   sensitive true
   owner default_user
   group default_user
+  # important: do not overwrite existing file, as this file is also
+  # modified by DokuWiki admin UI
+  action :create_if_missing
   notifies :restart, "service[dokuwiki]"
 end
 
@@ -185,6 +193,9 @@ template "#{dokuwiki_config}/users.auth.php" do
   sensitive true
   owner default_user
   group default_user
+  # important: do not overwrite existing file, as this file is also
+  # modified by DokuWiki admin UI
+  action :create_if_missing
   notifies :restart, "service[dokuwiki]"
 end
 
@@ -196,6 +207,9 @@ template "#{dokuwiki_config}/acl.auth.php" do
   })
   owner default_user
   group default_user
+  # important: do not overwrite existing file, as this file is also
+  # modified by DokuWiki admin UI
+  action :create_if_missing
   notifies :restart, "service[dokuwiki]"
 end
 
@@ -204,6 +218,8 @@ template "#{dokuwiki_config}/plugins.local.php" do
   source "plugins.local.php.erb"
   owner default_user
   group default_user
+  # important: do not overwrite existing file, as this file is also
+  # modified by DokuWiki admin UI
+  action :create_if_missing
   notifies :restart, "service[dokuwiki]"
 end
-
