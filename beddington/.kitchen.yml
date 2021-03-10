@@ -1,6 +1,10 @@
 ---
 driver:
   name: vagrant
+  
+  network:
+    - ["private_network", { ip: "192.168.33.90" }]
+
   customize:
     cableconnected1: 'on'
     memory: 512
@@ -20,6 +24,7 @@ driver:
 provisioner:
   name: chef_zero
   always_update_cookbooks: true
+  data_bags_path: test/fixtures/data_bags
   client_rb:
     chef_license: accept
 
@@ -34,3 +39,7 @@ suites:
     run_list:
       - recipe[beddington::default]
     attributes:
+      beddington:
+        user: vagrant
+      chef_vault:
+        databags_fallback: true

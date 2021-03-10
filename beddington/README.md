@@ -29,11 +29,64 @@ The cookbook recipes will **fail** if a ZFS pool named `storage` is not availabl
 
 ## `beddington::default` recipe
 
-Installs ZFS for Linux, Docker, Docker Compose, and DokuWiki running under Docker.
+Installs ZFS for Linux, Docker, Docker Compose, and DokuWiki running under Docker. Running the "install.php" script for DokuWiki **is not** necessary.
+
+**Please Note:** The recipe requires a Chef vault item. See the "Chef Vault" section below for more details.
 
 ## Attributes
 
 Attributes are documented in the `attributes` directory.
+
+## Chef Vault
+
+The following Chef Vault items are required for the recipes in this cookbook.
+
+<table>
+  <tr>
+    <th>Key</th>
+    <th>Type</th>
+    <th>Description</th>
+    <th>Default</th>
+  </tr>
+  <tr>
+    <td><tt>secrets/dokuwiki['id']</tt></td>
+    <td>String</td>
+    <td>Vault Item ID</td>
+    <td><tt>dokuwiki</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/dokuwiki['smtp_auth_user']</tt></td>
+    <td>String</td>
+    <td>Username for accessing SMTP server</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/dokuwiki['smtp_auth_pass']</tt></td>
+    <td>String</td>
+    <td>Password for accessing SMTP server</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/dokuwiki['users']</tt></td>
+    <td>Array</td>
+    <td>List of users for DokuWiki, each is a String inside this array. The string format is described in the next table item.</td>
+    <td><tt>(empty)</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/dokuwiki['users'][]</tt></td>
+    <td>String</td>
+    <td>String representation of user for DokuWiki. Format is <tt>login:passwordhash:Real Name:email:groups,comma,separated</tt>. "passwordhash" is the PHP BCrypt hash of the user's password.</td>
+    <td></td>
+  </tr>
+</table>
+
+In the following example, a `secrets` vault is created/updated for a `dokuwiki` item, with a `smtp_auth_user`. It is only decryptable by the `beddington` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef Infra Server.
+
+```terminal
+$ knife vault create secrets airflow '{"smtp_auth_user": "username"}' -C "beddington" -A "jpbadger"
+```
+
+(For local development usage in Test Kitchen, an unencrypted data bag in `test/fixtures/data_bags/secrets` is used instead. The default password is "howdy".)
 
 ## License and Authors
 

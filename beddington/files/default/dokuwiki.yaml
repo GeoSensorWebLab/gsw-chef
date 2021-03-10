@@ -1,0 +1,19 @@
+---
+version: "2.1"
+services:
+  dokuwiki:
+    image: ghcr.io/linuxserver/dokuwiki
+    container_name: dokuwiki
+    environment:
+      # These IDs are used to make sure the mounted volume has the correct
+      # user and group identities on the host; 1000 is the default `ubuntu`
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Edmonton
+    volumes:
+      - /storage/config:/config
+    ports:
+      # only port 80 is exposed, as SSL termination is handled on a
+      # different instance
+      - 80:80
+    restart: unless-stopped
