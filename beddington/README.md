@@ -31,6 +31,14 @@ The cookbook recipes will **fail** if a ZFS pool named `storage` is not availabl
 
 Installs ZFS for Linux, Docker, Docker Compose, and DokuWiki running under Docker. Running the "install.php" script for DokuWiki **is not** necessary.
 
+A default `WikiAdmin` user will be created with a password from Chef Vault. SMTP credentials will be added from Chef Vault.
+
+For DokuWiki, the following plugins are installed:
+
+* [Display Orphans Plugin](https://www.dokuwiki.org/plugin:displayorphans)
+* [Note Plugin](https://www.dokuwiki.org/plugin:note)
+* [SMTP Plugin](https://www.dokuwiki.org/plugin:smtp)
+
 **Please Note:** The recipe requires a Chef vault item. See the "Chef Vault" section below for more details.
 
 ## Attributes

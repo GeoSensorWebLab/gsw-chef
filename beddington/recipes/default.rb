@@ -223,3 +223,27 @@ template "#{dokuwiki_config}/plugins.local.php" do
   action :create_if_missing
   notifies :restart, "service[dokuwiki]"
 end
+
+# Install plugins for DokuWiki
+# These are defined in the attributes
+plugins_dir = "/storage/config/dokuwiki/lib/plugins"
+
+node["dokuwiki"]["plugins"].each do |plugin|
+  archive_file = "#{Chef::Config["file_cache_path"]}/#{plugin["base"]}.tar.gz"
+  extract_path = "#{plugins_dir}/#{plugin["base"]}"
+
+  remote_file archive_file do
+    source plugin["source"]
+  end
+
+  bash "extract #{plugin["base"]} plugin" do
+    cwd Chef::Config["file_cache_path"]
+    code <<-EOH
+    mkdir -p #{extract_path}
+    tar xzf #{archive_file} -C #{extract_path}
+    mv #{extract_path}/*/* #{extract_path}/
+    EOH
+    notifies :restart, "service[dokuwiki]"
+    not_if { ::File.exist?(extract_path) }
+  end
+end

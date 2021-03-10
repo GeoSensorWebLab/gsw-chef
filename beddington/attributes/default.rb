@@ -41,3 +41,24 @@ default["dokuwiki"]["smtp_host"] = "email-smtp.us-west-2.amazonaws.com"
 default["dokuwiki"]["smtp_port"] = 587
 default["dokuwiki"]["smtp_ssl"] = "tls"
 default["dokuwiki"]["localdomain"] = "internal.arcticconnect.ca"
+
+# Plugins to install.
+# Each plugin will be downloaded from the "source" key, and extracted
+# into a directory with the name from the "base" key in the DokuWiki
+# plugins directory.
+# Note: only tar.gz archives are currently supported in the default
+# recipe.
+default["dokuwiki"]["plugins"] = [
+  {
+    base: "smtp",
+    source: "https://github.com/splitbrain/dokuwiki-plugin-smtp/archive/2020-11-21.tar.gz"
+  },
+  {
+    base: "note",
+    source: "https://github.com/lpaulsen93/dokuwiki_note/archive/2020-06-28.tar.gz"
+  },
+  {
+    base: "displayorphans",
+    source: "https://gitlab.com/JayJeckel/displayorphans/-/archive/master/displayorphans-master.tar.gz"
+  }
+]
