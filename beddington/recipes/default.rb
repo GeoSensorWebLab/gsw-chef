@@ -288,6 +288,7 @@ if beddington_vault && beddington_vault["restic_enabled"]
       RESTIC_PASSWORD:       beddington_vault["RESTIC_PASSWORD"],
       RESTIC_REPOSITORY:     beddington_vault["RESTIC_REPOSITORY"]
     })
+    sensitive true
     user default_user
     not_if { ::File.exist?(init_lockfile) }
   end
@@ -312,6 +313,7 @@ if beddington_vault && beddington_vault["restic_enabled"]
       RESTIC_PASSWORD:       beddington_vault["RESTIC_PASSWORD"],
       RESTIC_REPOSITORY:     beddington_vault["RESTIC_REPOSITORY"]
     })
+    sensitive true
     owner "root"
     group "root"
     mode "0755"
@@ -338,6 +340,7 @@ if beddington_vault && beddington_vault["html_backup_enabled"]
       hostname:     "internal.arcticconnect.ca",
       S3_key:       beddington_vault["html_backup_s3_key"]
     })
+    sensitive true
     owner "root"
     group "root"
     mode "0755"
@@ -352,6 +355,7 @@ if beddington_vault && beddington_vault["html_backup_enabled"]
       WIKI_USER:             beddington_vault["wiki_user"],
       WIKI_PASSWORD:         beddington_vault["wiki_password"]
     })
+    sensitive true
     owner "root"
     group "root"
     mode "0755"
