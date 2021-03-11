@@ -25,7 +25,8 @@ set --erase OS_TENANT_NAME
 
 # In addition to the owning entity (tenant), OpenStack stores the entity
 # performing the action as the **user**.
-set --export OS_USERNAME "YOUR-EMAIL-HERE@example.com"
+echo "Please enter your OpenStack Username for project $OS_PROJECT_NAME: "
+read --export OS_USERNAME
 
 # With Keystone you pass the keystone password.
 echo "Please enter your OpenStack Password for project $OS_PROJECT_NAME as user $OS_USERNAME: "
