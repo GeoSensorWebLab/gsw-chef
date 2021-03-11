@@ -240,3 +240,22 @@ output "sarcee_internal_ipv4" {
   value       = openstack_compute_instance_v2.sarcee.access_ip_v4
   description = "The private IP address of the instance."
 }
+
+#########
+# VOLUMES
+#########
+
+resource "openstack_blockstorage_volume_v2" "wiki_storage" {
+  name              = "wiki-storage"
+  description       = "Storage for wiki data"
+  size              = 25
+  provider          = openstack.arcticconnect
+  availability_zone = "nova"
+  volume_type       = "lvm"
+}
+
+resource "openstack_compute_volume_attach_v2" "wiki_storage" {
+  instance_id = openstack_compute_instance_v2.beddington.id
+  volume_id   = openstack_blockstorage_volume_v2.wiki_storage.id
+  provider    = openstack.arcticconnect
+}
