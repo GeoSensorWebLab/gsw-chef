@@ -39,7 +39,9 @@ For DokuWiki, the following plugins are installed:
 * [Note Plugin](https://www.dokuwiki.org/plugin:note)
 * [SMTP Plugin](https://www.dokuwiki.org/plugin:smtp)
 
-**Please Note:** The recipe requires a Chef vault item. See the "Chef Vault" section below for more details.
+If the Chef Vault is configured to enable Restic and/or HTML backups, then an automatic cron-based system to backup the wiki to S3 will be enabled.
+
+**Please Note:** The recipe requires Chef vault items. See the "Chef Vault" section below for more details.
 
 ## Attributes
 
@@ -55,6 +57,72 @@ The following Chef Vault items are required for the recipes in this cookbook.
     <th>Type</th>
     <th>Description</th>
     <th>Default</th>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['id']</tt></td>
+    <td>String</td>
+    <td>Vault Item ID</td>
+    <td><tt>beddington</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['html_backup_enabled']</tt></td>
+    <td>Boolean</td>
+    <td>Determines if static HTML backup system will be configured. Disabled for testing.</td>
+    <td><tt>false</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['html_backup_s3_key']</tt></td>
+    <td>String</td>
+    <td>Path to S3 object where static HTML backup archive is stored.</td>
+    <td><tt>s3://BUCKET_NAME_HERE/html-archives/htmlexport.tgz</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['restic_enabled']</tt></td>
+    <td>Boolean</td>
+    <td>Determines if Restic backup system will be configured. Disabled for testing.</td>
+    <td><tt>false</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['AWS_ACCESS_KEY_ID']</tt></td>
+    <td>String</td>
+    <td>AWS Access Key ID for uploading Restic and HTML backups to S3.</td>
+    <td><tt></tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['AWS_SECRET_ACCESS_KEY']</tt></td>
+    <td>String</td>
+    <td>AWS Secret Acces Key for uploading Restic and HTML backups to S3.</td>
+    <td><tt></tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['AWS_DEFAULT_REGION']</tt></td>
+    <td>String</td>
+    <td>Region for uploading Restic and HTML backups to S3.</td>
+    <td><tt>us-east-1</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['RESTIC_PASSWORD']</tt></td>
+    <td>String</td>
+    <td>Password for encrypting the Restic backups. Mandatory if Restic is enabled.</td>
+    <td><tt></tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['RESTIC_REPOSITORY']</tt></td>
+    <td>String</td>
+    <td>Path to S3 key where Restic backup repository is stored.</td>
+    <td><tt>s3:s3.amazonaws.com/BUCKET_NAME_HERE/BUCKET_KEY_HERE</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['wiki_user']</tt></td>
+    <td>String</td>
+    <td>Login username for DokuWiki for the user running static HTML backups. Should have read-only access.</td>
+    <td><tt>wikibackup</tt></td>
+  </tr>
+  <tr>
+    <td><tt>secrets/beddington['wiki_password']</tt></td>
+    <td>String</td>
+    <td>Password for DokuWiki for the user running static HTML backups.</td>
+    <td><tt></tt></td>
   </tr>
   <tr>
     <td><tt>secrets/dokuwiki['id']</tt></td>
@@ -96,7 +164,7 @@ In the following example, a `secrets` vault is created/updated for a `dokuwiki` 
 $ knife vault create secrets airflow '{"smtp_auth_user": "username"}' -C "beddington" -A "jpbadger"
 ```
 
-(For local development usage in Test Kitchen, an unencrypted data bag in `test/fixtures/data_bags/secrets` is used instead. The default password is "howdy".)
+(For local development usage in Test Kitchen, unencrypted data bags in `test/fixtures/data_bags/secrets` is used instead. The default `WikiAdmin` user's password is `howdy`.)
 
 ## License and Authors
 
