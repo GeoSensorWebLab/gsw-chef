@@ -247,3 +247,113 @@ node["dokuwiki"]["plugins"].each do |plugin|
     not_if { ::File.exist?(extract_path) }
   end
 end
+
+################
+# Restic Backups
+################
+restic_url   = node["restic"]["source"]
+archive_file = "#{Chef::Config["file_cache_path"]}/#{::File.basename(restic_url)}"
+restic_bin   = "/usr/local/bin/restic"
+
+remote_file archive_file do
+  source restic_url
+end
+
+bash "extract restic" do
+  cwd Chef::Config["file_cache_path"]
+  code <<-EOH
+  bzcat --keep #{archive_file} > #{restic_bin}
+  chmod 0755 #{restic_bin}
+  EOH
+  not_if { ::File.exist?(restic_bin) }
+end
+
+# Load restic configuration from Chef Vault.
+# It is not enabled in testing (test-kitchen) as I don't want to upload
+# test data to S3.
+beddington_vault = chef_vault_item("secrets", "beddington")
+
+if beddington_vault && beddington_vault["restic_enabled"]
+  init_lockfile = "/home/#{default_user}/restic_initialized"
+
+  bash "initialize restic repository" do
+    code <<-EOH
+    restic init && touch #{init_lockfile}
+    EOH
+    cwd "/home/#{default_user}"
+    environment({
+      AWS_ACCESS_KEY_ID:     beddington_vault["AWS_ACCESS_KEY_ID"],
+      AWS_SECRET_ACCESS_KEY: beddington_vault["AWS_SECRET_ACCESS_KEY"],
+      AWS_DEFAULT_REGION:    beddington_vault["AWS_DEFAULT_REGION"],
+      RESTIC_PASSWORD:       beddington_vault["RESTIC_PASSWORD"],
+      RESTIC_REPOSITORY:     beddington_vault["RESTIC_REPOSITORY"]
+    })
+    user default_user
+    not_if { ::File.exist?(init_lockfile) }
+  end
+
+  template "/usr/local/sbin/wiki-backup" do
+    source "wiki-backup.sh.erb"
+    variables({
+      snapshot_name: "storage/config@restic-backup",
+      snapshot_path: "/storage/config/.zfs/snapshot/restic-backup"
+    })
+    owner "root"
+    group "root"
+    mode "0755"
+  end
+
+  template "/etc/cron.d/wiki-backup" do
+    source "wiki-backup.cron.erb"
+    variables({
+      AWS_ACCESS_KEY_ID:     beddington_vault["AWS_ACCESS_KEY_ID"],
+      AWS_SECRET_ACCESS_KEY: beddington_vault["AWS_SECRET_ACCESS_KEY"],
+      AWS_DEFAULT_REGION:    beddington_vault["AWS_DEFAULT_REGION"],
+      RESTIC_PASSWORD:       beddington_vault["RESTIC_PASSWORD"],
+      RESTIC_REPOSITORY:     beddington_vault["RESTIC_REPOSITORY"]
+    })
+    owner "root"
+    group "root"
+    mode "0755"
+  end
+end
+
+#####################
+# Static HTML Backups
+#####################
+
+if beddington_vault && beddington_vault["html_backup_enabled"]
+  cookbook_file "/usr/local/bin/offline_wiki.sh" do
+    source "offline_dokuwiki.sh"
+    owner "root"
+    group "root"
+    mode "0755"
+  end
+
+  template "/usr/local/sbin/wiki-backup-html" do
+    source "wiki-backup-html.sh.erb"
+    variables({
+      archive_file: "/storage/backups/htmlexport.tgz",
+      backup_dir:   "/storage/backups/wiki_data",
+      hostname:     "internal.arcticconnect.ca",
+      S3_key:       beddington_vault["html_backup_s3_key"]
+    })
+    owner "root"
+    group "root"
+    mode "0755"
+  end
+
+  template "/etc/cron.d/wiki-backup-html" do
+    source "wiki-backup-html.cron.erb"
+    variables({
+      AWS_ACCESS_KEY_ID:     beddington_vault["AWS_ACCESS_KEY_ID"],
+      AWS_SECRET_ACCESS_KEY: beddington_vault["AWS_SECRET_ACCESS_KEY"],
+      AWS_DEFAULT_REGION:    beddington_vault["AWS_DEFAULT_REGION"],
+      WIKI_USER:             beddington_vault["wiki_user"],
+      WIKI_PASSWORD:         beddington_vault["wiki_password"]
+    })
+    owner "root"
+    group "root"
+    mode "0755"
+  end
+end

@@ -1,0 +1,21 @@
+#!/bin/bash
+# Backup the wiki to S3.
+# This assumes the following environment variables are set:
+# * AWS_ACCESS_KEY_ID
+# * AWS_SECRET_ACCESS_KEY
+# * AWS_DEFAULT_REGION
+# * RESTIC_PASSWORD
+# * RESTIC_REPOSITORY
+# * PATH
+set -e
+
+# Remove last ZFS snapshot of wiki configuration, if it exists
+zfs destroy <%= @snapshot_name %> || true
+# Create new snapshot. We backup from a snapshot so we can be sure it isn't changing during the backup process.
+zfs snapshot <%= @snapshot_name %>
+# Run the backup
+restic backup -o s3.storage-class=STANDARD_IA "<%= @snapshot_path %>"
+# Prune old backups after completing a backup
+restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --keep-yearly 100 --prune
+# TODO: Add notification to send when backup process is complete, or do a check-in to a dead man's switch monitoring service
+echo "Wiki backup complete."

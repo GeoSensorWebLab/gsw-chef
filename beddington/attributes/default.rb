@@ -62,3 +62,6 @@ default["dokuwiki"]["plugins"] = [
     source: "https://gitlab.com/JayJeckel/displayorphans/-/archive/master/displayorphans-master.tar.gz"
   }
 ]
+
+# Settings for Restic
+default["restic"]["source"] = "https://github.com/restic/restic/releases/download/v0.11.0/restic_0.11.0_linux_amd64.bz2"

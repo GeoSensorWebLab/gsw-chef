@@ -1,0 +1,10 @@
+# Cronjob to run wiki archive backups at 10:30 AM UTC (3:30 MST or 4:30 MDT)
+AWS_ACCESS_KEY_ID="<%= @AWS_ACCESS_KEY_ID %>"
+AWS_SECRET_ACCESS_KEY="<%= @AWS_SECRET_ACCESS_KEY %>"
+AWS_DEFAULT_REGION="<%= @AWS_DEFAULT_REGION %>"
+RESTIC_PASSWORD="<%= @RESTIC_PASSWORD %>"
+RESTIC_REPOSITORY="<%= @RESTIC_REPOSITORY %>"
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user  command
+30 10 * * * root /usr/local/sbin/wiki-backup

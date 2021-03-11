@@ -88,6 +88,8 @@ The following Chef Vault items are required for the recipes in this cookbook.
   </tr>
 </table>
 
+Samples can be found in [`test/fixtures/data_bags/secrets/beddington.json`](test/fixtures/data_bags/secrets/beddington.json) and [`test/fixtures/data_bags/secrets/dokuwiki.json`](test/fixtures/data_bags/secrets/dokuwiki.json).
+
 In the following example, a `secrets` vault is created/updated for a `dokuwiki` item, with a `smtp_auth_user`. It is only decryptable by the `beddington` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef Infra Server.
 
 ```terminal

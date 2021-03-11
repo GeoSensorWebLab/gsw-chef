@@ -1,0 +1,30 @@
+#!/bin/bash
+# Backup the wiki to S3 as an HTML dump.
+# This assumes the following environment variables are set:
+# * AWS_ACCESS_KEY_ID
+# * AWS_SECRET_ACCESS_KEY
+# * AWS_DEFAULT_REGION
+# * WIKI_USER
+# * WIKI_PASSWORD
+# * PATH
+set -e
+
+BACKUP_DIR="<%= @backup_dir %>"
+ARCHIVE_FILE="<%= @archive_file %>"
+
+rm -rf "$BACKUP_DIR"
+
+/usr/local/bin/offline_wiki.sh --login "$WIKI_USER" --passwd "$WIKI_PASSWORD" --hostname "<%= @hostname %>" --depth 10 --prefix "$BACKUP_DIR"
+
+tar czf "$ARCHIVE_FILE" "$BACKUP_DIR"
+
+s3cmd put \
+    --access_key="$AWS_ACCESS_KEY_ID" \
+    --secret_key="$AWS_SECRET_ACCESS_KEY" \
+    --region="$AWS_DEFAULT_REGION" \
+    --acl-private \
+    --storage-class=STANDARD_IA \
+    "$ARCHIVE_FILE" <%= @S3_key %>
+
+# TODO: Add notification to send when backup process is complete, or do a check-in to a dead man's switch monitoring service
+echo "Wiki HTML backup complete."
