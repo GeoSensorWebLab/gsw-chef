@@ -158,10 +158,15 @@ The following Chef Vault items are required for the recipes in this cookbook.
 
 Samples can be found in [`test/fixtures/data_bags/secrets/beddington.json`](test/fixtures/data_bags/secrets/beddington.json) and [`test/fixtures/data_bags/secrets/dokuwiki.json`](test/fixtures/data_bags/secrets/dokuwiki.json).
 
-In the following example, a `secrets` vault is created/updated for a `dokuwiki` item, with a `smtp_auth_user`. It is only decryptable by the `beddington` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef Infra Server.
+In the following example, a `secrets` vault is created/updated for a `dokuwiki` item, which will open in your `$EDITOR`. It is only decryptable by the `beddington` client node OR by an admin named `jpbadger`. The client node and admin user would be defined in the Chef Infra Server.
 
 ```terminal
-$ knife vault create secrets airflow '{"smtp_auth_user": "username"}' -C "beddington" -A "jpbadger"
+$ bundle exec knife vault create secrets dokuwiki \
+    --clients "beddington" \
+    --admins "jpbadger"
+$ bundle exec knife vault create secrets beddington \
+    --clients "beddington" \
+    --admins "jpbadger"
 ```
 
 (For local development usage in Test Kitchen, unencrypted data bags in `test/fixtures/data_bags/secrets` is used instead. The default `WikiAdmin` user's password is `howdy`.)
