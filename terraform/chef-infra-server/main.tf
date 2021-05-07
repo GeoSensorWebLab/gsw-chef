@@ -161,19 +161,27 @@ resource "aws_instance" "chef_server" {
   }
 }
 
-output "instance_ip_addr" {
-  value       = aws_instance.chef_server.private_ip
-  description = "The private IP address of the Chef Infra Server instance."
-}
-
-output "instance_public_ip_addr" {
-  value       = aws_instance.chef_server.public_ip
-  description = "The public IP address of the Chef Infra Server instance."
-}
-
 output "instance_id" {
   value       = aws_instance.chef_server.id
   description = "The Instance ID of the Chef Infra Server instance, can be used for remote start/stop."
+}
+
+# EC2 Elastic IP
+# This provides an IP for Route53 to bind the domain to, and means that
+# Terraform doesn't need to be re-run to assign the domain to the
+# instance's changing IPv4 address. The address changes when the
+# instance is restarted or offline.
+resource "aws_eip" "chef_server" {
+  vpc = true
+
+  tags = {
+    terraform = "chef-infra-server"
+  }
+}
+
+resource "aws_eip_association" "assoc_chef_server" {
+  instance_id   = aws_instance.chef_server.id
+  allocation_id = aws_eip.chef_server.id
 }
 
 #########
@@ -189,7 +197,7 @@ resource "aws_route53_record" "chef" {
   name    = "chef.gswlab.ca"
   type    = "A"
   ttl     = "300"
-  records = [aws_instance.chef_server.public_ip]
+  records = [aws_eip.chef_server.public_ip]
 }
 
 ####
