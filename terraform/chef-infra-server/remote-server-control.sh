@@ -8,7 +8,7 @@
 set -e
 
 print_usage () {
-	echo "USAGE: remote-server-control.sh <start|stop> <INSTANCE ID>"
+	echo "USAGE: remote-server-control.sh <status|start|stop> <INSTANCE ID>"
 	echo "Instance ID can be found using 'terraform plan' and checking the 'output' section."
 	exit 1
 }
@@ -19,6 +19,11 @@ if [ $# -ne 2 ]; then
 fi
 
 case $1 in
+	status)
+	echo "Checking EC2 instance status…"
+
+	aws ec2 describe-instances --instance-ids "$2"
+	;;
 	start)
 	echo "Starting EC2 instance…"
 
