@@ -185,6 +185,11 @@ resource "openstack_compute_instance_v2" "airport" {
   }
 }
 
+resource "openstack_compute_volume_attach_v2" "airport_awm_storage" {
+  instance_id = openstack_compute_instance_v2.airport.id
+  volume_id   = openstack_blockstorage_volume_v3.awm_volume.id
+}
+
 output "airport_internal_ipv4" {
   value       = openstack_compute_instance_v2.airport.access_ip_v4
   description = "The private IP address of the instance."
@@ -221,6 +226,11 @@ resource "openstack_compute_instance_v2" "macleod" {
   }
 }
 
+resource "openstack_compute_volume_attach_v2" "macleod_storage" {
+  instance_id = openstack_compute_instance_v2.macleod.id
+  volume_id   = openstack_blockstorage_volume_v3.scholar-data.id
+}
+
 output "macleod_internal_ipv4" {
   value       = openstack_compute_instance_v2.macleod.access_ip_v4
   description = "The private IP address of the instance."
@@ -237,6 +247,21 @@ resource "openstack_compute_instance_v2" "shaganappi" {
   metadata = {
     dns = "18b1e.yyc.cybera.ca"
   }
+}
+
+resource "openstack_compute_volume_attach_v2" "shagnappi_va_1" {
+  instance_id = openstack_compute_instance_v2.shaganappi.id
+  volume_id   = openstack_blockstorage_volume_v3.pg-store-22.id
+}
+
+resource "openstack_compute_volume_attach_v2" "shagnappi_va_2" {
+  instance_id = openstack_compute_instance_v2.shaganappi.id
+  volume_id   = openstack_blockstorage_volume_v3.pg-store-23.id
+}
+
+resource "openstack_compute_volume_attach_v2" "shagnappi_va_3" {
+  instance_id = openstack_compute_instance_v2.shaganappi.id
+  volume_id   = openstack_blockstorage_volume_v3.pg-store-24.id
 }
 
 output "shaganappi_internal_ipv4" {
