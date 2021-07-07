@@ -260,3 +260,37 @@ output "stoney_internal_ipv4" {
   value       = openstack_compute_instance_v2.stoney.access_ip_v4
   description = "The private IP address of the instance."
 }
+
+#########
+# VOLUMES
+#########
+
+resource "openstack_blockstorage_volume_v3" "awm_volume" {
+  name        = "awm_volume"
+  description = ""
+  size        = 100
+}
+
+resource "openstack_blockstorage_volume_v3" "pg-store-22" {
+  name        = "pg-store-22"
+  description = "ZFS volume for database storage"
+  size        = 40
+}
+
+resource "openstack_blockstorage_volume_v3" "pg-store-23" {
+  name        = "pg-store-23"
+  description = "ZFS volume for database storage"
+  size        = 40
+}
+
+resource "openstack_blockstorage_volume_v3" "pg-store-24" {
+  name        = "pg-store-24"
+  description = "ZFS volume for database storage"
+  size        = 40
+}
+
+resource "openstack_blockstorage_volume_v3" "scholar-data" {
+  name        = "scholar-data"
+  description = "Docker storage and image/containers for arctic scholar"
+  size        = 25
+}
