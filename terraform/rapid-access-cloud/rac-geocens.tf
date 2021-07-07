@@ -197,6 +197,7 @@ resource "openstack_compute_instance_v2" "crowchild" {
   key_pair        = "James Desktop"
   security_groups = ["internal", "primary"]
   provider        = openstack.geocens
+  power_state     = "shutoff"
 
   metadata = {
     dns = "18423.yyc.cybera.ca"
