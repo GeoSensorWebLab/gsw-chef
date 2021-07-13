@@ -173,6 +173,7 @@ resource "openstack_networking_secgroup_rule_v2" "ac_primary_6" {
 ###########
 # Beddington node is now managed under arcticconnect_devops repository.
 
+# ID: 0cd88c6b-0422-412b-8928-62f989f8132d
 resource "openstack_compute_instance_v2" "blackfoot" {
   name            = "blackfoot"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
@@ -186,11 +187,18 @@ resource "openstack_compute_instance_v2" "blackfoot" {
   }
 }
 
+resource "openstack_compute_volume_attach_v2" "blackfoot_storage" {
+  instance_id = openstack_compute_instance_v2.blackfoot.id
+  volume_id   = openstack_blockstorage_volume_v3.sensor-data-storage.id
+  provider    = openstack.arcticconnect
+}
+
 output "blackfoot_internal_ipv4" {
   value       = openstack_compute_instance_v2.blackfoot.access_ip_v4
   description = "The private IP address of the instance."
 }
 
+# ID: 0be6dc5c-110c-46e9-a2fc-4be81470e7bd
 resource "openstack_compute_instance_v2" "deerfoot" {
   name            = "deerfoot"
   image_id        = "d42c3ac7-a442-49f8-a5a2-63a01d83a911"
@@ -203,11 +211,25 @@ resource "openstack_compute_instance_v2" "deerfoot" {
   }
 }
 
+resource "openstack_compute_volume_attach_v2" "deerfoot_storage_1" {
+  instance_id = openstack_compute_instance_v2.deerfoot.id
+  volume_id   = openstack_blockstorage_volume_v3.arctic-map-layers.id
+  provider    = openstack.arcticconnect
+}
+
+resource "openstack_compute_volume_attach_v2" "deerfoot_storage_2" {
+  instance_id = openstack_compute_instance_v2.deerfoot.id
+  volume_id   = openstack_blockstorage_volume_v3.arctic-map-layers-2.id
+  provider    = openstack.arcticconnect
+}
+
 output "deerfoot_internal_ipv4" {
   value       = openstack_compute_instance_v2.deerfoot.access_ip_v4
   description = "The private IP address of the instance."
 }
 
+
+# ID: 730696a1-a1d7-4376-b15d-e0041e7b20b5
 resource "openstack_compute_instance_v2" "sarcee" {
   name            = "sarcee"
   image_id        = "7e5640f2-53fc-4474-bc77-d3666495218e"
@@ -220,6 +242,12 @@ resource "openstack_compute_instance_v2" "sarcee" {
   }
 }
 
+resource "openstack_compute_volume_attach_v2" "sarcee_storage" {
+  instance_id = openstack_compute_instance_v2.sarcee.id
+  volume_id   = openstack_blockstorage_volume_v3.sarcee_storage.id
+  provider    = openstack.arcticconnect
+}
+
 output "sarcee_internal_ipv4" {
   value       = openstack_compute_instance_v2.sarcee.access_ip_v4
   description = "The private IP address of the instance."
@@ -230,3 +258,32 @@ output "sarcee_internal_ipv4" {
 #########
 # wiki-storage volume is now managed under arcticconnect_devops
 # repository.
+
+resource "openstack_blockstorage_volume_v3" "sarcee_storage" {
+  name        = "sarcee-storage"
+  description = "ZFS volume for docker"
+  size        = 50
+  provider    = openstack.arcticconnect
+}
+
+resource "openstack_blockstorage_volume_v3" "arctic-map-layers-2" {
+  name        = "arctic-map-layers-2"
+  description = "replacement volume with ZFS so I don't run out of inodes"
+  size        = 50
+  provider    = openstack.arcticconnect
+}
+
+resource "openstack_blockstorage_volume_v3" "arctic-map-layers" {
+  name        = "arctic-map-layers"
+  description = "vector and raster data for geoserver"
+  size        = 50
+  provider    = openstack.arcticconnect
+}
+
+resource "openstack_blockstorage_volume_v3" "sensor-data-storage" {
+  name        = "sensor-data-storage"
+  description = "Storage for cached sensor data on \"blackfoot\" server"
+  size        = 100
+  provider    = openstack.arcticconnect
+}
+
