@@ -110,6 +110,12 @@ default["stoney"]["vhosts"] = [{
   "ssl_enabled" => false,
   "proxy_host"  => "sarcee.gswlab.ca",
   "proxy_port"  => 80
+}, {
+  "id"          => "ccadi-management-staging",
+  "domains"     => ["management.ccadi-staging.gswlab.ca", "*.management.ccadi-staging.gswlab.ca"],
+  "ssl_enabled" => false,
+  "proxy_host"  => "10.1.7.249",
+  "proxy_port"  => 80
 }]
 
 # ACME Configuration for HTTPS
